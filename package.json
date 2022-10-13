@@ -1,0 +1,24 @@
+{
+  "name": "SMASunnyportal",
+  "version": "1.0.0",
+  "description": "Retrieving solar data from SMA sunnyportal",
+  "main": "index.js",
+  "scripts": {
+    "build": "rimraf ./dist && tsc",
+    "dev": "nodemon",
+    "start": "pnpm run build && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "Peter Pallen",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.8.5",
+    "@typescript-eslint/eslint-plugin": "^5.40.0",
+    "@typescript-eslint/parser": "^5.40.0",
+    "eslint": "^8.25.0",
+    "nodemon": "^2.0.20",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4"
+  }
+}

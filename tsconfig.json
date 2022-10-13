@@ -1,0 +1,28 @@
+{
+  // "compileOnSave": true,
+  "compilerOptions": {
+    "outDir": "./dist",
+    "allowJs": true,
+    "strict": true,
+    "target": "ESNext",
+    "module": "commonjs",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowUnreachableCode": false,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    // "typeRoots": [
+    //   "./typings"
+    // ],
+    // "outFile": "./built/combined.js"
+  },
+  "include": [
+    "./**/*"
+  ],
+  "exclude": [
+    "./plugins/**/*",
+    // "./typings/**/*",
+    "./built/**/*",
+    "./eslint.cjs"
+  ]
+}
