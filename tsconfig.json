@@ -1,28 +1,38 @@
 {
   // "compileOnSave": true,
   "compilerOptions": {
-    "outDir": "./dist",
     "allowJs": true,
-    "strict": true,
-    "target": "ESNext",
-    "module": "commonjs",
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "allowUnreachableCode": false,
-    "noImplicitReturns": true,
+    // "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "lib": [
+      "ES2022"
+    ],
+    "module": "ES2022",
+    "moduleResolution": "Node",
+    // "sourceMap": true,
     "noImplicitAny": true,
     // "typeRoots": [
     //   "./typings"
     // ],
     // "outFile": "./built/combined.js"
+    "noImplicitReturns": true,
+    "outDir": "./dist",
+    "removeComments": true,
+    "strict": true,
+    "target": "ES2022"
   },
-  "include": [
-    "./**/*"
-  ],
+  "ts-node": {
+    "esm": true
+  },
   "exclude": [
     "./plugins/**/*",
     // "./typings/**/*",
     "./built/**/*",
     "./eslint.cjs"
+  ],
+  "include": [
+    "./**/*"
   ]
 }
