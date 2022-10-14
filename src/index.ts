@@ -1,8 +1,6 @@
 import pino, { Logger } from 'pino';
-import {
-	askForLoginData, checkIfFileOrPathExists,
-	createFolder, readConfigFile, writeJsonFile
-} from './utils';
+import { askForLoginData, checkIfFileOrPathExists, createFolder, readConfigFile, writeJsonFile } from './utils.js';
+
 
 // Setup
 /**
@@ -40,7 +38,7 @@ let sunnyConfig = {
 // Main logic
 if (checkIfFileOrPathExists('./dist/config/config.json')) {
 	sunnyConfig = readConfigFile('./dist/config/config.json');
-	console.log(sunnyConfig);
+	logger.info(sunnyConfig);
 } else {
 	const info = askForLoginData();
 	sunnyConfig.Login.email = info.email;
