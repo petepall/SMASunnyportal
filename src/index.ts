@@ -1,5 +1,8 @@
 import pino, { Logger } from 'pino';
-import { askForLoginData, checkIfFileExists, createFolder, readConfigFile, writeJsonFile } from './utils';
+import {
+	askForLoginData, checkIfFileOrPathExists,
+	createFolder, readConfigFile, writeJsonFile
+} from './utils';
 
 // Setup
 /**
@@ -35,7 +38,7 @@ let sunnyConfig = {
 };
 
 // Main logic
-if (checkIfFileExists('./dist/config/config.json')) {
+if (checkIfFileOrPathExists('./dist/config/config.json')) {
 	sunnyConfig = readConfigFile('./dist/config/config.json');
 	console.log(sunnyConfig);
 } else {
@@ -43,7 +46,7 @@ if (checkIfFileExists('./dist/config/config.json')) {
 	sunnyConfig.Login.email = info.email;
 	sunnyConfig.Login.password = info.password;
 
-	if (!checkIfFileExists('./dist/config')) {
+	if (!checkIfFileOrPathExists('./dist/config')) {
 		createFolder('./dist/config');
 	}
 	writeJsonFile('./dist/config/config.json', sunnyConfig);

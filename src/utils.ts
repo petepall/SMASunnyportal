@@ -1,9 +1,9 @@
 import fs from 'fs';
-import promptSync from 'prompt-sync';
 import pino, { Logger } from 'pino';
+import promptSync from 'prompt-sync';
 
 /**
- * Description placeholder
+ * Create a logger instance
  * @date 14/10/2022 - 18:42:49
  *
  * @type {Logger}
@@ -20,7 +20,7 @@ const logger: Logger = pino({
 
 // Functions
 /**
- * Description placeholder
+ * Read a JSON file and return the content
  * @date 14/10/2022 - 18:42:49
  *
  * @param {string} configFile
@@ -32,18 +32,18 @@ export function readConfigFile (configFile: string): any {
 }
 
 /**
- * Description placeholder
+ * check if a file or path exists on the filesystem
  * @date 14/10/2022 - 18:42:49
  *
  * @param {string} path
  * @returns {boolean}
  */
-export function checkIfFileExists (path: string): boolean {
+export function checkIfFileOrPathExists (path: string): boolean {
 	return fs.existsSync(path);
 }
 
 /**
- * Description placeholder
+ * Check if a folder exists, if not create it
  * @date 14/10/2022 - 18:42:49
  *
  * @param {string} path
@@ -55,7 +55,7 @@ export function createFolder (path: string): void {
 }
 
 /**
- * Description placeholder
+ * Ask user login data
  * @date 14/10/2022 - 18:42:49
  *
  * @returns {*}
@@ -70,7 +70,7 @@ export function askForLoginData (): any {
 }
 
 /**
- * Description placeholder
+ * Create a JSON file given the path and the data
  * @date 14/10/2022 - 18:42:49
  *
  * @param {string} path
