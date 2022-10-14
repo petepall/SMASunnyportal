@@ -13,6 +13,44 @@ const logger: Logger = pino({
 	level: 'info'
 });
 
+// Functions
+function readConfigFile (configFile: string): any {
+	const config = JSON.parse(fs.readFileSync(configFile).toString());
+	return config;
+}
+
+function checkIfFileExists (path: string): boolean {
+	return fs.existsSync(path);
+}
+
+function createFolder (path: string): void {
+	if (!fs.existsSync(path)) {
+		fs.mkdirSync(path);
+	}
+}
+
+function writeJsonFile (path: string, data: any): void {
+	const jsonData = JSON.stringify(data, null, "\t");
+	fs.writeFile(path, jsonData, 'utf8', err => {
+		if (err) {
+			logger.error(`The following error ocurred\n ${err}`);
+		} else {
+			logger.info('**************************');
+			logger.info('The config file is created');
+			logger.info('**************************');
+		}
+	});
+}
+
+function askForLoginData (): any {
+	console.log("The configuration file is missing. let's set it up \n");
+
+	const prompt = promptSync();
+	const email = prompt('Please enter your email: ');
+	const password = prompt('Please enter your password: ');
+	return { email, password };
+}
+
 let sunnyConfig = {
 	Login: {
 		email: '',
@@ -23,25 +61,17 @@ let sunnyConfig = {
 	}
 };
 
-// Check if the config file exists and read the data, if not existing, create it.
-if (fs.existsSync('./dist/config/config.json')) {
-	sunnyConfig = JSON.parse(fs.readFileSync('./dist/config/config.json').toString())
+// Main logic
+if (checkIfFileExists('./dist/config/config.json')) {
+	sunnyConfig = readConfigFile('./dist/config/config.json');
 	console.log(sunnyConfig);
 } else {
-	const prompt = promptSync();
-	console.log("The configuration file is missing. let's set it up \n");
-	sunnyConfig.Login.email = prompt('Please enter your email: ');
-	sunnyConfig.Login.password = prompt('Please enter your password: ');
-	const data = JSON.stringify(sunnyConfig, null, "\t");
+	const info = askForLoginData();
+	sunnyConfig.Login.email = info.email;
+	sunnyConfig.Login.password = info.password;
 
-	if (!fs.existsSync('./dist/config')) {
-		fs.mkdirSync('./dist/config');
-	};
-	fs.writeFile('./dist/config/config.json', data, 'utf8', err => {
-		if (err) {
-			logger.error(`The following error ocurred\n ${err}`);
-		} else {
-			logger.info('The config file is created');
-		}
-	})
-};
+	if (!checkIfFileExists('./dist/config')) {
+		createFolder('./dist/config');
+	}
+	writeJsonFile('./dist/config/config.json', sunnyConfig);
+}
