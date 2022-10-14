@@ -20,6 +20,7 @@
     "noImplicitReturns": true,
     "outDir": "./dist",
     "removeComments": true,
+    // "rootDir": "./",
     "strict": true,
     "target": "ES2022"
   },
@@ -29,10 +30,10 @@
   "exclude": [
     "./plugins/**/*",
     // "./typings/**/*",
-    "./built/**/*",
+    "./dist/**/*",
     "./eslint.cjs"
   ],
   "include": [
-    "./**/*"
+    "./**/*",
   ]
 }
