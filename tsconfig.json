@@ -4,7 +4,7 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "allowUnreachableCode": false,
-    // "resolveJsonModule": true,
+    "resolveJsonModule": true,
     "esModuleInterop": true,
     "lib": [
       "ES2022"

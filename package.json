@@ -7,13 +7,15 @@
   "scripts": {
     "build": "rimraf ./dist && tsc",
     "dev": "nodemon",
-    "start": "pnpm run build && node dist/index.js"
+    "start": "pnpm run build && node dist/index.js",
+    "start:dev": "tsc && node dist/index.js"
   },
   "keywords": [],
   "author": "Peter Pallen",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^18.8.5",
+    "@types/prompt-sync": "^4.2.0",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
     "eslint": "^8.25.0",
@@ -29,6 +31,7 @@
     "hashlib": "^1.0.1",
     "pino": "^8.6.1",
     "pino-pretty": "^9.1.1",
+    "prompt-sync": "^4.2.0",
     "xml2js": "^0.4.23"
   }
 }
