@@ -1,5 +1,7 @@
 import crypto from 'crypto';
 import pino, { Logger } from 'pino';
+import { Token } from './interfaces.js';
+
 
 /**
  * Class for handling requests to the Sunny Portal API.
@@ -11,7 +13,7 @@ import pino, { Logger } from 'pino';
  */
 export class RequestBase {
 	service: string;
-	token: object;
+	token: Token;
 	method: string;
 	version: number;
 	base_path: string;
@@ -20,7 +22,10 @@ export class RequestBase {
 
 	constructor(
 		service: string,
-		token = {},
+		token = {
+			'secret_key': '',
+			'identifier': '',
+		},
 		method = 'GET',
 		version = 100,
 		base_path = '/services',
@@ -68,15 +73,28 @@ export class RequestBase {
 		this.logger.info(`${method} ${url}`);
 	}
 
-	prepare_url(segments: string[], params: object) {
-		if (!this.token) {
-			const timeStamp = this.get_timestamp(this.token.server_offset);
-			const encoded = crypto.createHmac('sha1', key)
-				.update(this.method.toLowerCase())
-				.update(this.service.toLowerCase())
-				.update(timeStamp)
-				.update(this.token.identifier.toLowerCase())
-				.digest('base64');
+	generateSignature(secretKey: string, method: string, service: string, timestamp: string, identifier: string) {
+		return crypto.createHmac('sha1', secretKey)
+			.update(method.toLowerCase())
+			.update(service.toLowerCase())
+			.update(timestamp)
+			.update(identifier.toLowerCase())
+			.digest('base64');
+	}
+
+	prepareUrl(segments: string[], params: Record<string, string> = {}): string {
+		const timeStamp = this.get_timestamp();
+		params.timestamp = timeStamp;
+		if (this.token !== undefined) {
+			const sig = this.generateSignature(this.token.secret_key, this.method, this.service, timeStamp, this.token.identifier);
+			params['signature-method'] = 'auth';
+			params['signature-version'] = this.version.toString();
+			params.signature = sig;
 		}
+		this.url = `${this.base_path}/${this.service}/${this.version}`;
+		this.url += segments.length > 0 ? `/${segments.join('/')}` : '';
+		this.url += `?${new URLSearchParams(params)}`;
+		return (this.url);
+
 	}
 }
