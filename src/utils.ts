@@ -26,7 +26,7 @@ const logger: Logger = pino({
  * @param {string} configFile
  * @returns {*}
  */
-export function readConfigFile (configFile: string): any {
+export function readConfigFile(configFile: string): any {
 	const config = JSON.parse(fs.readFileSync(configFile).toString());
 	return config;
 }
@@ -38,7 +38,7 @@ export function readConfigFile (configFile: string): any {
  * @param {string} path
  * @returns {boolean}
  */
-export function checkIfFileOrPathExists (path: string): boolean {
+export function checkIfFileOrPathExists(path: string): boolean {
 	return fs.existsSync(path);
 }
 
@@ -48,7 +48,7 @@ export function checkIfFileOrPathExists (path: string): boolean {
  *
  * @param {string} path
  */
-export function createFolder (path: string): void {
+export function createFolder(path: string): void {
 	if (!fs.existsSync(path)) {
 		fs.mkdirSync(path);
 	}
@@ -60,13 +60,14 @@ export function createFolder (path: string): void {
  *
  * @returns {*}
  */
-export function askForLoginData (): any {
+export function askForLoginData(): any {
 	console.log("The configuration file is missing. let's set it up \n");
 
 	const prompt = promptSync();
 	const email = prompt('Please enter your email: ');
-	const password = prompt('Please enter your password: ');
-	return { email, password };
+	const password = prompt('Please enter your password: ', { echo: '*' });
+	const baseUrl = prompt('Press enter to set default baseUrl (https://com.sunny-portal.de)\nOr enter your base url: ', { value: 'https://com.sunny-portal.de' });
+	return { email, password, baseUrl };
 }
 
 /**
@@ -76,7 +77,7 @@ export function askForLoginData (): any {
  * @param {string} path
  * @param {*} data
  */
-export function writeJsonFile (path: string, data: any): void {
+export function writeJsonFile(path: string, data: any): void {
 	const jsonData = JSON.stringify(data, null, "\t");
 	fs.writeFile(path, jsonData, 'utf8', err => {
 		if (err) {
