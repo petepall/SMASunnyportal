@@ -1,14 +1,14 @@
 import pino, { Logger } from 'pino';
-import { askForLoginData, checkIfFileOrPathExists, createFolder, readConfigFile, writeJsonFile } from './utils.js';
-
+import {
+	askForLoginData,
+	checkIfFileOrPathExists,
+	createFolder,
+	readConfigFile,
+	writeJsonFile
+} from './utils.js';
 
 // Setup
-/**
- * Description placeholder
- * @date 14/10/2022 - 18:42:49
- *
- * @type {Logger}
- */
+
 const logger: Logger = pino({
 	transport: {
 		target: 'pino-pretty',
@@ -16,23 +16,17 @@ const logger: Logger = pino({
 			colorize: true,
 		},
 	},
-	level: 'info'
+	level: 'info',
 });
 
-/**
- * Description placeholder
- * @date 14/10/2022 - 18:42:49
- *
- * @type {{ Login: { email: string; password: string; }; General: { baseUrl: string; }; }}
- */
 let sunnyConfig = {
 	Login: {
 		email: '',
-		password: ''
+		password: '',
 	},
 	General: {
 		baseUrl: '',
-	}
+	},
 };
 
 // Main logic
