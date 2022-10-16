@@ -31,9 +31,9 @@
     "./plugins/**/*",
     // "./typings/**/*",
     "./dist/**/*",
-    "./eslint.cjs"
   ],
   "include": [
+    "./eslint.cjs",
     "./**/*",
   ]
 }
