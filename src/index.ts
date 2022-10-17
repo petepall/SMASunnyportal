@@ -30,8 +30,8 @@ let sunnyConfig = {
 };
 
 // Main logic
-if (checkIfFileOrPathExists('./dist/config/config.json')) {
-	sunnyConfig = readConfigFile('./dist/config/config.json');
+if (checkIfFileOrPathExists('./config/config.json')) {
+	sunnyConfig = readConfigFile('./config/config.json');
 	logger.info(sunnyConfig);
 } else {
 	const info = askForLoginData();
@@ -39,10 +39,10 @@ if (checkIfFileOrPathExists('./dist/config/config.json')) {
 	sunnyConfig.Login.password = info.password;
 	sunnyConfig.General.baseUrl = info.baseUrl;
 
-	if (!checkIfFileOrPathExists('./dist/config')) {
-		createFolder('./dist/config');
+	if (!checkIfFileOrPathExists('./config')) {
+		createFolder('./config');
 	}
-	writeJsonFile('./dist/config/config.json', sunnyConfig);
+	writeJsonFile('./config/config.json', sunnyConfig);
 }
 // logger.info(
 // 	new RequestBase(

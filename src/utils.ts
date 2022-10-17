@@ -64,10 +64,9 @@ export function askForLoginData(): any {
 	console.log("The configuration file is missing. let's set it up \n");
 
 	const prompt = promptSync();
+	const baseUrl = prompt('Press enter to set default baseUrl (https://com.sunny-portal.de) Or enter your base url: ', { value: 'https://com.sunny-portal.de' });
 	const email = prompt('Please enter your email: ');
 	const password = prompt('Please enter your password: ', { echo: '*' });
-	const baseUrl = prompt('Press enter to set default baseUrl (https://com.sunny-portal.de)\
-		\nOr enter your base url: ', { value: 'https://com.sunny-portal.de' });
 
 	return { email, password, baseUrl };
 }
@@ -85,6 +84,7 @@ export function writeJsonFile(path: string, data: any): void {
 		if (err) {
 			logger.error(`The following error ocurred\n ${err}`);
 		} else {
+			fs.close;
 			logger.info('**************************');
 			logger.info('The config file is created');
 			logger.info('**************************');
