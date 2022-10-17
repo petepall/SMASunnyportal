@@ -66,7 +66,9 @@ export function askForLoginData(): any {
 	const prompt = promptSync();
 	const email = prompt('Please enter your email: ');
 	const password = prompt('Please enter your password: ', { echo: '*' });
-	const baseUrl = prompt('Press enter to set default baseUrl (https://com.sunny-portal.de)\nOr enter your base url: ', { value: 'https://com.sunny-portal.de' });
+	const baseUrl = prompt('Press enter to set default baseUrl (https://com.sunny-portal.de)\
+		\nOr enter your base url: ', { value: 'https://com.sunny-portal.de' });
+
 	return { email, password, baseUrl };
 }
 
