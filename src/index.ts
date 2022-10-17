@@ -37,9 +37,17 @@ if (checkIfFileOrPathExists('./dist/config/config.json')) {
 	const info = askForLoginData();
 	sunnyConfig.Login.email = info.email;
 	sunnyConfig.Login.password = info.password;
+	sunnyConfig.General.baseUrl = info.baseUrl;
 
 	if (!checkIfFileOrPathExists('./dist/config')) {
 		createFolder('./dist/config');
 	}
 	writeJsonFile('./dist/config/config.json', sunnyConfig);
 }
+// logger.info(
+// 	new RequestBase(
+// 		'authorization',
+// 		{ 'secret_key': '12345', 'identifier': '3456' },
+// 		'GET',
+// 		100
+// 	).prepareUrl(["authentication"]));
