@@ -49,31 +49,44 @@ export class RequestBase {
 		this.logger = logger;
 	}
 
+
 	/**
-	 * Method for determining the timestamp for the request.
-	 * @date 15/10/2022 - 14:25:29
+	 * Get the timestamp for the request.
+	 * @date 17/10/2022 - 12:06:19
 	 *
 	 * @param {number} [offset=0]
-	 * @returns {*}
+	 * @returns {string}
 	 */
-	get_timestamp(offset = 0) {
+	get_timestamp(offset = 0): string {
 		const date = new Date();
 		const offsetDate = date.setDate(date.getDate() - offset);
 		return new Date(offsetDate).toISOString().slice(0, 19);
 	}
 
+
 	/**
 	 * Method for generating logging messages for the request.
-	 * @date 15/10/2022 - 14:25:29
+	 * @date 17/10/2022 - 12:07:03
 	 *
 	 * @param {string} method
 	 * @param {string} url
 	 */
-	log_request(method: string, url: string) {
+	log_request(method: string, url: string): void {
 		this.logger.info(`${method} ${url}`);
 	}
 
-	generateSignature(secretKey: string, method: string, service: string, timestamp: string, identifier: string) {
+	/**
+	 * Generate the security signature for the request.
+	 * @date 17/10/2022 - 12:07:18
+	 *
+	 * @param {string} secretKey
+	 * @param {string} method
+	 * @param {string} service
+	 * @param {string} timestamp
+	 * @param {string} identifier
+	 * @returns {string}
+	 */
+	generateSignature(secretKey: string, method: string, service: string, timestamp: string, identifier: string): string {
 		return crypto.createHmac('sha1', secretKey)
 			.update(method.toLowerCase())
 			.update(service.toLowerCase())
@@ -82,6 +95,14 @@ export class RequestBase {
 			.digest('base64');
 	}
 
+	/**
+	 * Prepare the url for the request based on given segments and params.
+	 * @date 17/10/2022 - 12:07:39
+	 *
+	 * @param {string[]} segments
+	 * @param {Record<string, string>} [params={}]
+	 * @returns {string}
+	 */
 	prepareUrl(segments: string[], params: Record<string, string> = {}): string {
 		const timeStamp = this.get_timestamp();
 		params.timestamp = timeStamp;
@@ -94,7 +115,7 @@ export class RequestBase {
 		this.url = `${this.base_path}/${this.service}/${this.version}`;
 		this.url += segments.length > 0 ? `/${segments.join('/')}` : '';
 		this.url += `?${new URLSearchParams(params)}`;
-		return (this.url);
+		return this.url;
 
 	}
 }
