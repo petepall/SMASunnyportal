@@ -87,12 +87,12 @@ export class RequestBase {
 	 * @returns {string}
 	 */
 	generateSignature(secretKey: string, method: string, service: string, timestamp: string, identifier: string): string {
-		return crypto.createHmac('sha1', secretKey)
+		return encodeURIComponent(crypto.createHmac('sha1', secretKey)
 			.update(method.toLowerCase())
 			.update(service.toLowerCase())
 			.update(timestamp)
 			.update(identifier.toLowerCase())
-			.digest('base64');
+			.digest('base64'));
 	}
 
 	/**
