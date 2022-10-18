@@ -51,16 +51,13 @@ export class RequestBase {
 
 
 	/**
-	 * Get the timestamp for the request.
+	 * Get the timestamp for the request based on UTC time.
 	 * @date 17/10/2022 - 12:06:19
 	 *
-	 * @param {number} [offset=0]
 	 * @returns {string}
 	 */
-	get_timestamp(offset = 0): string {
-		const date = new Date();
-		const offsetDate = date.setDate(date.getDate() - offset);
-		return new Date(offsetDate).toISOString().slice(0, 19);
+	get_timestamp(): string {
+		return new Date().toISOString().slice(0, 19);
 	}
 
 
