@@ -84,7 +84,6 @@ export function writeJsonFile(path: string, data: any): void {
 		if (err) {
 			logger.error(`The following error ocurred\n ${err}`);
 		} else {
-			fs.close;
 			logger.info('**************************');
 			logger.info('The config file is created');
 			logger.info('**************************');
