@@ -11,7 +11,7 @@
     ],
     "module": "ES2022",
     "moduleResolution": "Node",
-    // "sourceMap": true,
+    "sourceMap": true,
     "noImplicitAny": true,
     // "typeRoots": [
     //   "./typings"
@@ -22,7 +22,7 @@
     "removeComments": true,
     // "rootDir": "./",
     "strict": true,
-    "target": "ES2022"
+    "target": "ES2022",
   },
   "ts-node": {
     "esm": true
