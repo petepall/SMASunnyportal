@@ -1,5 +1,6 @@
+import axios, { AxiosError } from 'axios';
 import crypto from 'crypto';
-import pino, { Logger } from 'pino';
+import pino from 'pino';
 import { Token } from './interfaces.js';
 
 
@@ -12,43 +13,46 @@ import { Token } from './interfaces.js';
  * @typedef {RequestBase}
  */
 export class RequestBase {
+	baseURL: string;
 	service: string;
-	token: Token;
+	token: Token | undefined;
 	method: string;
 	version: number;
 	base_path: string;
 	url: string;
-	logger: Logger;
 
 	constructor(
+		baseURL: string,
 		service: string,
-		token = {
-			'secret_key': '',
-			'identifier': '',
-		},
+		token: Token | undefined,
 		method = 'GET',
 		version = 100,
 		base_path = '/services',
 		url = '',
-		logger = pino({
-			transport: {
-				target: 'pino-pretty',
-				options: {
-					colorize: true,
-				},
-			},
-			level: 'info',
-		}),
 	) {
+		this.baseURL = baseURL;
 		this.service = service;
 		this.token = token;
 		this.method = method;
 		this.version = version;
 		this.base_path = base_path;
 		this.url = url;
-		this.logger = logger;
 	}
 
+	/**
+	 * Logger setup for the request class.
+	 * @date 19/10/2022 - 17:36:41
+	 *
+	 * @type {*}
+	 */
+	logRequest = pino({
+		transport: {
+			target: 'pino-pretty',
+			options: {
+				colorize: true,
+			},
+		},
+	});
 
 	/**
 	 * Get the timestamp for the request based on UTC time.
@@ -58,18 +62,6 @@ export class RequestBase {
 	 */
 	get_timestamp(): string {
 		return new Date().toISOString().slice(0, 19);
-	}
-
-
-	/**
-	 * Method for generating logging messages for the request.
-	 * @date 17/10/2022 - 12:07:03
-	 *
-	 * @param {string} method
-	 * @param {string} url
-	 */
-	log_request(method: string, url: string): void {
-		this.logger.info(`${method} ${url}`);
 	}
 
 	/**
@@ -101,18 +93,34 @@ export class RequestBase {
 	 * @returns {string}
 	 */
 	prepareUrl(segments: string[], params: Record<string, string> = {}): string {
-		const timeStamp = this.get_timestamp();
-		params.timestamp = timeStamp;
 		if (this.token !== undefined) {
+			const timeStamp = this.get_timestamp();
+			params.timestamp = timeStamp;
 			const sig = this.generateSignature(this.token.secret_key, this.method, this.service, timeStamp, this.token.identifier);
 			params['signature-method'] = 'auth';
 			params['signature-version'] = this.version.toString();
 			params.signature = sig;
 		}
-		this.url = `${this.base_path}/${this.service}/${this.version}`;
+		this.url = `${this.baseURL}/${this.base_path}/${this.service}/${this.version}`;
 		this.url += segments.length > 0 ? `/${segments.join('/')}` : '';
 		this.url += `?${new URLSearchParams(params)}`;
 		return this.url;
 
+	}
+
+	async executeRequest(url: string, method: string) {
+		this.logRequest.info(`${method} request to ${url}`);
+
+		try {
+			const data = await axios({
+				method: method,
+				url: url,
+			});
+			return await data.data;
+		} catch (error) {
+			const err = error as AxiosError;
+			console.log(err);
+			return err.response;
+		}
 	}
 }
