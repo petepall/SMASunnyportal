@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@types/node': ^18.8.5
   '@types/prompt-sync': ^4.2.0
+  '@types/xml2js': ^0.4.11
   '@typescript-eslint/eslint-plugin': ^5.0.0
   '@typescript-eslint/parser': ^5.40.0
   axios: ^1.1.2
@@ -36,6 +37,7 @@ dependencies:
 devDependencies:
   '@types/node': 18.11.0
   '@types/prompt-sync': 4.2.0
+  '@types/xml2js': 0.4.11
   '@typescript-eslint/eslint-plugin': 5.40.0_25sstg4uu2sk4pm7xcyzuov7xq
   '@typescript-eslint/parser': 5.40.0_z4bbprzjrhnsfa24uvmcbu7f5q
   eslint: 8.25.0
@@ -161,6 +163,12 @@ packages:
 
   /@types/prompt-sync/4.2.0:
     resolution: {integrity: sha512-5RPQYDT7MNkt+vq6xp58tSPx4THANyQcBSaw3Ni+KV7MUAgvUUbmCsQmcPVrcc8dwuURSPixz2qTJdJF6ABSKw==}
+    dev: true
+
+  /@types/xml2js/0.4.11:
+    resolution: {integrity: sha512-JdigeAKmCyoJUiQljjr7tQG3if9NkqGUgwEUqBvV0N7LM4HyQk7UXCnusRa1lnvXAEYJ8mw8GtZWioagNztOwA==}
+    dependencies:
+      '@types/node': 18.11.0
     dev: true
 
   /@typescript-eslint/eslint-plugin/5.40.0_25sstg4uu2sk4pm7xcyzuov7xq:

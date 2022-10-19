@@ -16,6 +16,7 @@
   "devDependencies": {
     "@types/node": "^18.8.5",
     "@types/prompt-sync": "^4.2.0",
+    "@types/xml2js": "^0.4.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.40.0",
     "eslint": "^8.0.1",
