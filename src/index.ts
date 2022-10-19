@@ -1,4 +1,6 @@
 import pino, { Logger } from 'pino';
+import { Parser } from 'xml2js';
+import { RequestBase } from './requests.js';
 import {
 	askForLoginData,
 	checkIfFileOrPathExists,
@@ -8,6 +10,9 @@ import {
 } from './utils.js';
 
 // Setup
+const parser = new Parser({
+	explicitArray: false,
+});
 
 const logger: Logger = pino({
 	transport: {
@@ -32,7 +37,7 @@ let sunnyConfig = {
 // Main logic
 if (checkIfFileOrPathExists('./config/config.json')) {
 	sunnyConfig = readConfigFile('./config/config.json');
-	logger.info(sunnyConfig);
+	logger.info("config file successfully read");
 } else {
 	const info = askForLoginData();
 	sunnyConfig.Login.email = info.email;
@@ -44,10 +49,18 @@ if (checkIfFileOrPathExists('./config/config.json')) {
 	}
 	writeJsonFile('./config/config.json', sunnyConfig);
 }
-// logger.info(
-// 	new RequestBase(
-// 		'authorization',
-// 		{ 'secret_key': '12345', 'identifier': '3456' },
-// 		'GET',
-// 		100
-// 	).prepareUrl(["authentication"]));
+
+const request = new RequestBase(
+	sunnyConfig.General.baseUrl,
+	'authentication',
+	undefined,
+	'GET',
+	100,
+	'services',
+);
+
+const url = request.prepareUrl([sunnyConfig.Login.email], { 'password': sunnyConfig.Login.password });
+const data = await request.executeRequest(url, 'GET');
+parser.parseString(data, (err: any, result: any) => {
+	logger.info(result);
+});
