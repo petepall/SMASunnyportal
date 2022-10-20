@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosInstance } from 'axios';
 import crypto from 'crypto';
 import pino from 'pino';
 import { Token } from './interfaces.js';
@@ -13,7 +13,6 @@ import { Token } from './interfaces.js';
  * @typedef {RequestBase}
  */
 export class RequestBase {
-	baseURL: string;
 	service: string;
 	token: Token | undefined;
 	method: string;
@@ -22,7 +21,6 @@ export class RequestBase {
 	url: string;
 
 	constructor(
-		baseURL: string,
 		service: string,
 		token: Token | undefined,
 		method = 'GET',
@@ -30,7 +28,6 @@ export class RequestBase {
 		base_path = '/services',
 		url = '',
 	) {
-		this.baseURL = baseURL;
 		this.service = service;
 		this.token = token;
 		this.method = method;
@@ -101,19 +98,29 @@ export class RequestBase {
 			params['signature-version'] = this.version.toString();
 			params.signature = sig;
 		}
-		this.url = `${this.baseURL}/${this.base_path}/${this.service}/${this.version}`;
+		this.url = `${this.base_path}/${this.service}/${this.version}`;
 		this.url += segments.length > 0 ? `/${segments.join('/')}` : '';
 		this.url += `?${new URLSearchParams(params)}`;
 		return this.url;
 
 	}
 
-	async executeRequest(url: string, method: string) {
-		this.logRequest.info(`${method} request to ${url}`);
+	async createConnection(baseUrl: string) {
+		const instance = await axios.create({
+			baseURL: baseUrl,
+			timeout: 8000,
+			headers: { 'Content-Type': 'application/xlm' }
+		});
+
+		return instance;
+	}
+
+	async executeRequest(conn: AxiosInstance, url: string) {
+		this.logRequest.info(`${this.method} request to ${url}`);
 
 		try {
-			const data = await axios({
-				method: method,
+			const data = await conn({
+				method: this.method,
 				url: url,
 			});
 			return await data.data;
