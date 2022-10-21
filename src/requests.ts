@@ -234,10 +234,39 @@ export class AuthenticationRequest extends RequestBase {
 		this.parser.parseString(loginData, (err: any, result: any) => {
 			token.identifier = result['sma.sunnyportal.services'].service.authentication.$.identifier;
 			token.secret_key = result['sma.sunnyportal.services'].service.authentication.$.key;
+			this.logRequest.info('Login successful');
 			this.logRequest.debug(result);
 		});
 
 		return token;
 	}
+}
 
+export class LogoutRequest extends RequestBase {
+	/**
+	 * Creates an instance of LogoutRequest.
+	 * @date 21/10/2022 - 17:40:26
+	 *
+	 * @constructor
+	 * @param {string} service
+	 * @param {string} method
+	 * @param {*} [token=undefined]
+	 */
+	constructor(
+		service: string,
+		method: string,
+		token: Token,
+	) {
+		super(service, method, token);
+	}
+
+	async logout(conn: AxiosInstance, token: Token): Promise<void> {
+		const url = this.prepareUrl([token.identifier]);
+		const logoutData = await this.executeRequest(conn, url);
+
+		this.parser.parseString(logoutData, (err: any, result: any) => {
+			this.logRequest.info('Logout completed successfully');
+			this.logRequest.debug(result);
+		});
+	}
 }
