@@ -36,7 +36,7 @@ export class RequestBase {
 	 */
 	constructor(
 		service: string,
-		method = 'GET',
+		method: string,
 		token: Token | undefined,
 		version = 100,
 		base_path = '/services',
@@ -63,6 +63,7 @@ export class RequestBase {
 				colorize: true,
 			},
 		},
+		level: 'info',
 	});
 
 	parser = new Parser({
@@ -233,7 +234,7 @@ export class AuthenticationRequest extends RequestBase {
 		this.parser.parseString(loginData, (err: any, result: any) => {
 			token.identifier = result['sma.sunnyportal.services'].service.authentication.$.identifier;
 			token.secret_key = result['sma.sunnyportal.services'].service.authentication.$.key;
-			this.logRequest.info(result);
+			this.logRequest.debug(result);
 		});
 
 		return token;
