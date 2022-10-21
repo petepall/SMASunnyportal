@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosInstance } from 'axios';
 import crypto from 'crypto';
 import pino from 'pino';
 import { Parser } from 'xml2js';
-import { Token } from './interfaces.js';
+import { PlantList, Token } from './interfaces.js';
 
 
 /**
@@ -247,6 +247,15 @@ export class AuthenticationRequest extends RequestBase {
 	}
 }
 
+/**
+ * Class for handling logout from the sunny portal API.
+ * @date 21/10/2022 - 22:06:55
+ *
+ * @export
+ * @class LogoutRequest
+ * @typedef {LogoutRequest}
+ * @extends {RequestBase}
+ */
 export class LogoutRequest extends RequestBase {
 	/**
 	 * Creates an instance of LogoutRequest.
@@ -265,6 +274,15 @@ export class LogoutRequest extends RequestBase {
 		super(service, method, token);
 	}
 
+	/**
+	 * Method to logout from the sunny portal API.
+	 * @date 21/10/2022 - 22:08:58
+	 *
+	 * @async
+	 * @param {AxiosInstance} conn
+	 * @param {Token} token
+	 * @returns {Promise<void>}
+	 */
 	async logout(conn: AxiosInstance, token: Token): Promise<void> {
 		const url = this.prepareUrl([token.identifier]);
 		const logoutData = await this.executeRequest(conn, url);
@@ -273,5 +291,60 @@ export class LogoutRequest extends RequestBase {
 			this.logRequest.info('Logout completed successfully');
 			this.logRequest.debug(result);
 		});
+	}
+}
+
+/**
+ * Class for retrieving the plant list from the sunny portal API.
+ * @date 21/10/2022 - 22:07:40
+ *
+ * @export
+ * @class PlantListRequest
+ * @typedef {PlantListRequest}
+ * @extends {RequestBase}
+ */
+export class PlantListRequest extends RequestBase {
+	/**
+	 * constructor for retrieving the plant list.
+	 * @date 21/10/2022 - 17:40:26
+	 *
+	 * @constructor
+	 * @param {string} service
+	 * @param {string} method
+	 * @param {*} [token=undefined]
+	 */
+	constructor(
+		service: string,
+		method: string,
+		token: Token,
+	) {
+		super(service, method, token);
+	}
+
+	/**
+	 * Get the plant ID for the users regisered plants from the sunny portal API.
+	 * @date 21/10/2022 - 23:39:49
+	 *
+	 * @async
+	 * @param {AxiosInstance} conn
+	 * @param {Token} token
+	 * @returns {Promise<PlantList[]>}
+	 */
+	async getPlantList(conn: AxiosInstance, token: Token): Promise<PlantList[]> {
+
+		const url = this.prepareUrl([token.identifier]);
+		const plantListData = await this.executeRequest(conn, url);
+		const plantList: PlantList[] = [{
+			plantname: '',
+			plantoid: '',
+		}];
+		// const plants: PlantList[] = [];
+		this.parser.parseString(plantListData, (err: any, result: any) => {
+			plantList[0].plantname = result['sma.sunnyportal.services'].service.plantlist.plant.$.name;
+			plantList[0].plantoid = result['sma.sunnyportal.services'].service.plantlist.plant.$.oid;
+			// plants.push(plantList);
+			this.logRequest.debug(result);
+		});
+		return plantList;
 	}
 }
