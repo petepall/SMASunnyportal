@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import pino, { Logger } from 'pino';
 import { Parser } from 'xml2js';
 import { Token } from './interfaces.js';
-import { AuthenticationRequest, RequestBase } from './requests.js';
+import { AuthenticationRequest, LogoutRequest } from './requests.js';
 import {
 	askForLoginData,
 	checkIfFileOrPathExists,
@@ -55,7 +55,7 @@ if (checkIfFileOrPathExists('./config/config.json')) {
 }
 
 // Setup connection to Sunny Portal
-const conn = await axios.create({
+const conn = axios.create({
 	baseURL: sunnyConfig.General.baseUrl,
 	timeout: 8000,
 	headers: { 'Content-Type': 'application/xlm' }
@@ -83,20 +83,24 @@ async function getToken(conn: AxiosInstance, username: string, password: string)
 	return token;
 }
 
+/**
+ * Logout from the Sunny Portal API.
+ * @date 21/10/2022 - 20:17:53
+ *
+ * @async
+ * @param {AxiosInstance} conn
+ * @param {Token} token
+ * @returns {*}
+ */
+async function logout(conn: AxiosInstance, token: Token): Promise<void> {
+	const request = new LogoutRequest(
+		'authentication',
+		'DELETE',
+		token
+	);
+	await request.logout(conn, token);
+}
+
 const token = await getToken(conn, sunnyConfig.Login.email, sunnyConfig.Login.password);
 
-// LOGOUT
-const logoutRequest = new RequestBase(
-	'authentication',
-	'DELETE',
-	token,
-	100,
-	'services',
-);
-
-const url = logoutRequest.prepareUrl([token.identifier]);
-const logoutData = await logoutRequest.executeRequest(conn, url);
-
-parser.parseString(logoutData, (err: any, result: any) => {
-	logger.info(result);
-});
+logout(conn, token);
