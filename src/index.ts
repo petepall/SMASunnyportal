@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import pino, { Logger } from 'pino';
 import { Parser } from 'xml2js';
 import { Token } from './interfaces.js';
-import { AuthenticationRequest, LogoutRequest } from './requests.js';
+import { AuthenticationRequest, LogoutRequest, PlantListRequest } from './requests.js';
 import {
 	askForLoginData,
 	checkIfFileOrPathExists,
@@ -61,8 +61,6 @@ const conn = axios.create({
 	headers: { 'Content-Type': 'application/xlm' }
 });
 
-
-
 /**
  * Authenticate with the sunny portal API and retrieve a token.
  * @date 21/10/2022 - 17:42:11
@@ -101,6 +99,27 @@ async function logout(conn: AxiosInstance, token: Token): Promise<void> {
 	await request.logout(conn, token);
 }
 
-const token = await getToken(conn, sunnyConfig.Login.email, sunnyConfig.Login.password);
+/**
+ * Retrieve the list of plants from the Sunny Portal API.
+ * @date 21/10/2022 - 22:02:48
+ *
+ * @async
+ * @param {AxiosInstance} conn
+ * @param {Token} token
+ * @returns {Promise<any>}
+ */
+async function getPlantList(conn: AxiosInstance, token: Token): Promise<any> {
+	const request = new PlantListRequest(
+		'plantlist',
+		'GET',
+		token
+	);
+	const plantlist = await request.getPlantList(conn, token);
 
+	return plantlist;
+}
+
+const token = await getToken(conn, sunnyConfig.Login.email, sunnyConfig.Login.password);
+const plantlist = await getPlantList(conn, token);
+const plantoid = plantlist[0].plantoid;
 logout(conn, token);
