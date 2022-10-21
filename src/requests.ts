@@ -163,7 +163,12 @@ export class RequestBase {
 	 * @returns {Promise<any>}
 	 */
 	async executeRequest(conn: AxiosInstance, url: string): Promise<any> {
-		this.logRequest.info(`${this.method} request to ${url}`);
+		if (url.includes("password=")) {
+			const passUrl = url.split('password=')[0] + 'password=********';
+			this.logRequest.info(`${this.method} request to ${passUrl}`);
+		} else {
+			this.logRequest.info(`${this.method} request to ${url}`);
+		}
 
 		try {
 			const data = await conn({
