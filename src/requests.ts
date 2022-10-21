@@ -105,6 +105,14 @@ export class RequestBase {
 
 	}
 
+	/**
+	 * Open the axios connection to the Sunny Portal API.
+	 * @date 21/10/2022 - 11:48:07
+	 *
+	 * @async
+	 * @param {string} baseUrl
+	 * @returns {unknown}
+	 */
 	async createConnection(baseUrl: string) {
 		const instance = await axios.create({
 			baseURL: baseUrl,
@@ -115,7 +123,16 @@ export class RequestBase {
 		return instance;
 	}
 
-	async executeRequest(conn: AxiosInstance, url: string) {
+	/**
+	 * Execute the request to the Sunny Portal API.
+	 * @date 21/10/2022 - 11:48:12
+	 *
+	 * @async
+	 * @param {AxiosInstance} conn
+	 * @param {string} url
+	 * @returns {Promise<any>}
+	 */
+	async executeRequest(conn: AxiosInstance, url: string): Promise<any> {
 		this.logRequest.info(`${this.method} request to ${url}`);
 
 		try {
@@ -126,7 +143,7 @@ export class RequestBase {
 			return await data.data;
 		} catch (error) {
 			const err = error as AxiosError;
-			console.log(err);
+			this.logRequest.debug(err.response?.data);
 			return err.response;
 		}
 	}
