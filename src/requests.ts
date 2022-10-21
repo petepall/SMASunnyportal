@@ -28,7 +28,7 @@ export class RequestBase {
 	 *
 	 * @constructor
 	 * @param {string} service
-	 * @param {string} [method='GET']
+	 * @param {string} method
 	 * @param {(Token | undefined)} token
 	 * @param {number} [version=100]
 	 * @param {string} [base_path='/services']
