@@ -20,6 +20,18 @@ export class RequestBase {
 	base_path: string;
 	url: string;
 
+	/**
+	 * Creates an instance of RequestBase.
+	 * @date 21/10/2022 - 11:49:16
+	 *
+	 * @constructor
+	 * @param {string} service
+	 * @param {(Token | undefined)} token
+	 * @param {string} [method='GET']
+	 * @param {number} [version=100]
+	 * @param {string} [base_path='/services']
+	 * @param {string} [url='']
+	 */
 	constructor(
 		service: string,
 		token: Token | undefined,
