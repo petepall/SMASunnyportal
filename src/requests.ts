@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import crypto from 'crypto';
 import pino from 'pino';
+import { Parser } from 'xml2js';
 import { Token } from './interfaces.js';
 
 
@@ -14,35 +15,36 @@ import { Token } from './interfaces.js';
  */
 export class RequestBase {
 	service: string;
-	token: Token | undefined;
 	method: string;
+	token: Token | undefined;
 	version: number;
 	base_path: string;
 	url: string;
 
+
 	/**
 	 * Creates an instance of RequestBase.
-	 * @date 21/10/2022 - 11:49:16
+	 * @date 21/10/2022 - 17:13:43
 	 *
 	 * @constructor
 	 * @param {string} service
-	 * @param {(Token | undefined)} token
 	 * @param {string} [method='GET']
+	 * @param {(Token | undefined)} token
 	 * @param {number} [version=100]
 	 * @param {string} [base_path='/services']
 	 * @param {string} [url='']
 	 */
 	constructor(
 		service: string,
-		token: Token | undefined,
 		method = 'GET',
+		token: Token | undefined,
 		version = 100,
 		base_path = '/services',
 		url = '',
 	) {
 		this.service = service;
-		this.token = token;
 		this.method = method;
+		this.token = token;
 		this.version = version;
 		this.base_path = base_path;
 		this.url = url;
@@ -61,6 +63,10 @@ export class RequestBase {
 				colorize: true,
 			},
 		},
+	});
+
+	parser = new Parser({
+		explicitArray: false,
 	});
 
 	/**
@@ -84,7 +90,13 @@ export class RequestBase {
 	 * @param {string} identifier
 	 * @returns {string}
 	 */
-	generateSignature(secretKey: string, method: string, service: string, timestamp: string, identifier: string): string {
+	generateSignature(
+		secretKey: string,
+		method: string,
+		service: string,
+		timestamp: string,
+		identifier: string
+	): string {
 		return encodeURIComponent(crypto.createHmac('sha1', secretKey)
 			.update(method.toLowerCase())
 			.update(service.toLowerCase())
@@ -105,7 +117,12 @@ export class RequestBase {
 		if (this.token !== undefined) {
 			const timeStamp = this.get_timestamp();
 			params.timestamp = timeStamp;
-			const sig = this.generateSignature(this.token.secret_key, this.method, this.service, timeStamp, this.token.identifier);
+			const sig = this.generateSignature(
+				this.token.secret_key,
+				this.method,
+				this.service,
+				timeStamp, this.token.identifier
+			);
 			params['signature-method'] = 'auth';
 			params['signature-version'] = this.version.toString();
 			params.signature = sig;
@@ -159,4 +176,67 @@ export class RequestBase {
 			return err.response;
 		}
 	}
+}
+
+/**
+ * Authenticate with the sunny portal API and retrieve a token.
+ * @date 21/10/2022 - 17:39:53
+ *
+ * @export
+ * @class AuthenticationRequest
+ * @typedef {AuthenticationRequest}
+ * @extends {RequestBase}
+ */
+export class AuthenticationRequest extends RequestBase {
+	username: string;
+	password: string;
+	/**
+	 * Creates an instance of AuthenticationRequest.
+	 * @date 21/10/2022 - 17:40:26
+	 *
+	 * @constructor
+	 * @param {string} service
+	 * @param {string} method
+	 * @param {string} [username='']
+	 * @param {string} [password='']
+	 * @param {*} [token=undefined]
+	 */
+	constructor(
+		service: string,
+		method: string,
+		username = '',
+		password = '',
+		token = undefined,
+	) {
+		super(service, method, token);
+		this.username = username;
+		this.password = password;
+	}
+
+	/**
+	 * Get the token from the sunny portal API.
+	 * @date 21/10/2022 - 17:40:35
+	 *
+	 * @async
+	 * @param {AxiosInstance} conn
+	 * @param {string} username
+	 * @param {string} password
+	 * @returns {Promise<Token>}
+	 */
+	async getToken(conn: AxiosInstance, username: string, password: string): Promise<Token> {
+		const url = this.prepareUrl([username], { password: password });
+		const loginData = await this.executeRequest(conn, url);
+		const token: Token = {
+			identifier: '',
+			secret_key: '',
+		};
+		this.parser.parseString(loginData, (err: any, result: any) => {
+			token.identifier = result['sma.sunnyportal.services'].service.authentication.$.identifier;
+			token.secret_key = result['sma.sunnyportal.services'].service.authentication.$.key;
+			this.logRequest.info(result);
+		});
+
+		return token;
+	}
+
 }
