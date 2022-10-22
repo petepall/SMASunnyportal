@@ -1,8 +1,8 @@
 import axios, { AxiosInstance } from 'axios';
 import pino, { Logger } from 'pino';
 import { Parser } from 'xml2js';
-import { Token } from './interfaces.js';
-import { AuthenticationRequest, LogoutRequest, PlantListRequest } from './requests.js';
+import { IToken } from './interfaces.js';
+import { AuthenticationRequest, LogoutRequest, PlantListRequest, PlantProfileRequest } from './requests.js';
 import {
 	askForLoginData,
 	checkIfFileOrPathExists,
@@ -11,7 +11,7 @@ import {
 	writeJsonFile
 } from './utils.js';
 
-// Setup the partner for turning XML into JSON.
+// Setup the parser for turning XML into JSON.
 const parser = new Parser({
 	explicitArray: false,
 });
@@ -69,9 +69,9 @@ const conn = axios.create({
  * @param {AxiosInstance} conn
  * @param {string} username
  * @param {string} password
- * @returns {Promise<Token>}
+ * @returns {Promise<IToken>}
  */
-async function getToken(conn: AxiosInstance, username: string, password: string): Promise<Token> {
+async function getToken(conn: AxiosInstance, username: string, password: string): Promise<IToken> {
 	const request = new AuthenticationRequest(
 		'Authentication',
 		'GET'
@@ -87,10 +87,10 @@ async function getToken(conn: AxiosInstance, username: string, password: string)
  *
  * @async
  * @param {AxiosInstance} conn
- * @param {Token} token
+ * @param {IToken} token
  * @returns {*}
  */
-async function logout(conn: AxiosInstance, token: Token): Promise<void> {
+async function logout(conn: AxiosInstance, token: IToken): Promise<void> {
 	const request = new LogoutRequest(
 		'authentication',
 		'DELETE',
@@ -105,10 +105,10 @@ async function logout(conn: AxiosInstance, token: Token): Promise<void> {
  *
  * @async
  * @param {AxiosInstance} conn
- * @param {Token} token
+ * @param {IToken} token
  * @returns {Promise<any>}
  */
-async function getPlantList(conn: AxiosInstance, token: Token): Promise<any> {
+async function getPlantList(conn: AxiosInstance, token: IToken): Promise<any> {
 	const request = new PlantListRequest(
 		'plantlist',
 		'GET',
@@ -119,7 +119,20 @@ async function getPlantList(conn: AxiosInstance, token: Token): Promise<any> {
 	return plantlist;
 }
 
+async function getPlantData(conn: AxiosInstance, token: IToken, plantId: string): Promise<any> {
+	const request = new PlantProfileRequest(
+		'plant',
+		'GET',
+		token
+	);
+	const plantData = await request.getPlantData(conn, token, plantId);
+
+	return plantData;
+}
+
 const token = await getToken(conn, sunnyConfig.Login.email, sunnyConfig.Login.password);
 const plantlist = await getPlantList(conn, token);
 const plantoid = plantlist[0].plantoid;
+const plantData = await getPlantData(conn, token, plantoid);
+console.log(plantData);
 logout(conn, token);
