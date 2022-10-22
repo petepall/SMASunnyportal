@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosInstance } from 'axios';
 import crypto from 'crypto';
 import pino from 'pino';
 import { Parser } from 'xml2js';
-import { PlantList, Token } from './interfaces.js';
+import { IPlantList, IToken } from './interfaces.js';
 
 
 /**
@@ -16,7 +16,7 @@ import { PlantList, Token } from './interfaces.js';
 export class RequestBase {
 	service: string;
 	method: string;
-	token: Token | undefined;
+	token: IToken | undefined;
 	version: number;
 	base_path: string;
 	url: string;
@@ -29,7 +29,7 @@ export class RequestBase {
 	 * @constructor
 	 * @param {string} service
 	 * @param {string} method
-	 * @param {(Token | undefined)} token
+	 * @param {(IToken | undefined)} token
 	 * @param {number} [version=100]
 	 * @param {string} [base_path='/services']
 	 * @param {string} [url='']
@@ -37,7 +37,7 @@ export class RequestBase {
 	constructor(
 		service: string,
 		method: string,
-		token: Token | undefined,
+		token: IToken | undefined,
 		version = 100,
 		base_path = '/services',
 		url = '',
@@ -227,12 +227,12 @@ export class AuthenticationRequest extends RequestBase {
 	 * @param {AxiosInstance} conn
 	 * @param {string} username
 	 * @param {string} password
-	 * @returns {Promise<Token>}
+	 * @returns {Promise<IToken>}
 	 */
-	async getToken(conn: AxiosInstance, username: string, password: string): Promise<Token> {
+	async getToken(conn: AxiosInstance, username: string, password: string): Promise<IToken> {
 		const url = this.prepareUrl([username], { password: password });
 		const loginData = await this.executeRequest(conn, url);
-		const token: Token = {
+		const token: IToken = {
 			identifier: '',
 			secret_key: '',
 		};
@@ -269,7 +269,7 @@ export class LogoutRequest extends RequestBase {
 	constructor(
 		service: string,
 		method: string,
-		token: Token,
+		token: IToken,
 	) {
 		super(service, method, token);
 	}
@@ -280,10 +280,10 @@ export class LogoutRequest extends RequestBase {
 	 *
 	 * @async
 	 * @param {AxiosInstance} conn
-	 * @param {Token} token
+	 * @param {IToken} token
 	 * @returns {Promise<void>}
 	 */
-	async logout(conn: AxiosInstance, token: Token): Promise<void> {
+	async logout(conn: AxiosInstance, token: IToken): Promise<void> {
 		const url = this.prepareUrl([token.identifier]);
 		const logoutData = await this.executeRequest(conn, url);
 
@@ -316,7 +316,7 @@ export class PlantListRequest extends RequestBase {
 	constructor(
 		service: string,
 		method: string,
-		token: Token,
+		token: IToken,
 	) {
 		super(service, method, token);
 	}
@@ -327,14 +327,14 @@ export class PlantListRequest extends RequestBase {
 	 *
 	 * @async
 	 * @param {AxiosInstance} conn
-	 * @param {Token} token
-	 * @returns {Promise<PlantList[]>}
+	 * @param {IToken} token
+	 * @returns {Promise<IPlantList[]>}
 	 */
-	async getPlantList(conn: AxiosInstance, token: Token): Promise<PlantList[]> {
+	async getPlantList(conn: AxiosInstance, token: IToken): Promise<IPlantList[]> {
 
 		const url = this.prepareUrl([token.identifier]);
 		const plantListData = await this.executeRequest(conn, url);
-		const plantList: PlantList[] = [{
+		const plantList: IPlantList[] = [{
 			plantname: '',
 			plantoid: '',
 		}];
@@ -346,5 +346,36 @@ export class PlantListRequest extends RequestBase {
 			this.logRequest.debug(result);
 		});
 		return plantList;
+	}
+}
+
+export class PlantProfileRequest extends RequestBase {
+
+	constructor(
+		service: string,
+		method: string,
+		token: IToken,
+	) {
+		super(service, method, token);
+	}
+
+	async getPlantData(conn: AxiosInstance, token: IToken, plantID: string) {
+		const url = this.prepareUrl(
+			[plantID],
+			{
+				'view': 'profile',
+				"culture": "en-gb",
+				"plant-image-size": "64px",
+				"identifier": token.identifier
+			}
+		);
+		const plantData = await this.executeRequest(conn, url);
+		let data = {};
+		this.parser.parseString(plantData, (err: any, result: any) => {
+			data = result['sma.sunnyportal.services'].service.plant;
+			this.logRequest.debug(data);
+		});
+
+		return data;
 	}
 }
