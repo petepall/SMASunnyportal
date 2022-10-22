@@ -349,8 +349,26 @@ export class PlantListRequest extends RequestBase {
 	}
 }
 
+/**
+ * Class to handle te plant information request from the sunny portal API.
+ * @date 22/10/2022 - 23:29:21
+ *
+ * @export
+ * @class PlantProfileRequest
+ * @typedef {PlantProfileRequest}
+ * @extends {RequestBase}
+ */
 export class PlantProfileRequest extends RequestBase {
 
+	/**
+	 * Creates an instance of PlantProfileRequest.
+	 * @date 22/10/2022 - 23:29:51
+	 *
+	 * @constructor
+	 * @param {string} service
+	 * @param {string} method
+	 * @param {IToken} token
+	 */
 	constructor(
 		service: string,
 		method: string,
@@ -359,6 +377,16 @@ export class PlantProfileRequest extends RequestBase {
 		super(service, method, token);
 	}
 
+	/**
+	 * Methd to get tge plant data from the sunny portal API.
+	 * @date 22/10/2022 - 23:30:00
+	 *
+	 * @async
+	 * @param {AxiosInstance} conn
+	 * @param {IToken} token
+	 * @param {string} plantID
+	 * @returns {unknown}
+	 */
 	async getPlantData(conn: AxiosInstance, token: IToken, plantID: string) {
 		const url = this.prepareUrl(
 			[plantID],
