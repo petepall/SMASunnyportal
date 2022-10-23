@@ -312,22 +312,12 @@ export class PlantListRequest extends RequestBase {
 	 * @param {IToken} token
 	 * @returns {Promise<IPlantList[]>}
 	 */
-	async getPlantListData(conn: AxiosInstance, token: IToken): Promise<IPlantList[]> {
+	async getPlantListData(conn: AxiosInstance, token: IToken) {
 
 		const url = this.prepareUrl([token.identifier]);
 		const plantListData = await this.executeRequest(conn, url);
-		const plantList: IPlantList[] = [{
-			plantname: '',
-			plantoid: '',
-		}];
-		// const plants: PlantList[] = [];
-		this.parser.parseString(plantListData, (err: any, result: any) => {
-			plantList[0].plantname = result['sma.sunnyportal.services'].service.plantlist.plant.$.name;
-			plantList[0].plantoid = result['sma.sunnyportal.services'].service.plantlist.plant.$.oid;
-			// plants.push(plantList);
-			this.logRequest.debug(result);
-		});
-		return plantList;
+
+		return plantListData;
 	}
 }
 
@@ -380,12 +370,7 @@ export class PlantProfileRequest extends RequestBase {
 			}
 		);
 		const plantData = await this.executeRequest(conn, url);
-		let data = {};
-		this.parser.parseString(plantData, (err: any, result: any) => {
-			data = result['sma.sunnyportal.services'].service.plant;
-			this.logRequest.debug(data);
-		});
 
-		return data;
+		return plantData;
 	}
 }
