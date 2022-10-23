@@ -78,6 +78,13 @@ interface IExpectedPlantProduction {
 	expectedCO2ReductionUnit: string;
 }
 
+/**
+ * Interface represeing the plant header information.
+ * @date 23/10/2022 - 16:58:35
+ *
+ * @interface IPlantHeader
+ * @typedef {IPlantHeader}
+ */
 interface IPlantHeader {
 	plantname: string;
 	peakpower: number;
