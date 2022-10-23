@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import pino, { Logger } from 'pino';
 import { Parser } from 'xml2js';
-import { IToken } from './interfaces.js';
+import { IPlantList, IPlantProfile, IToken } from './interfaces.js';
 import { AuthenticationRequest, LogoutRequest, PlantListRequest, PlantProfileRequest } from './requests.js';
 import {
 	askForLoginData,
@@ -108,18 +108,26 @@ async function logout(conn: AxiosInstance, token: IToken): Promise<void> {
  * @param {IToken} token
  * @returns {Promise<any>}
  */
-async function getPlantList(conn: AxiosInstance, token: IToken): Promise<any> {
+async function getJSONPlantList(conn: AxiosInstance, token: IToken): Promise<any> {
 	const request = new PlantListRequest(
 		'plantlist',
 		'GET',
 		token
 	);
-	const plantlist = await request.getPlantListData(conn, token);
-
-	return plantlist;
+	const plantList: IPlantList = {
+		plantname: '',
+		plantoid: '',
+	};
+	const parsePlantListData = await request.getPlantListData(conn, token);
+	parser.parseString(parsePlantListData, (err: any, result: any) => {
+		plantList.plantname = result['sma.sunnyportal.services'].service.plantlist.plant.$.name;
+		plantList.plantoid = result['sma.sunnyportal.services'].service.plantlist.plant.$.oid;
+		logger.debug(plantList);
+	});
+	return plantList;
 }
 
-async function getPlantData(conn: AxiosInstance, token: IToken, plantId: string): Promise<any> {
+async function getJSONPlantData(conn: AxiosInstance, token: IToken, plantId: string): Promise<any> {
 	const request = new PlantProfileRequest(
 		'plant',
 		'GET',
@@ -127,12 +135,46 @@ async function getPlantData(conn: AxiosInstance, token: IToken, plantId: string)
 	);
 	const plantData = await request.getPlantData(conn, token, plantId);
 
-	return plantData;
+	let data = null;
+	parser.parseString(plantData, (err: any, result: any) => {
+		data = result['sma.sunnyportal.services'].service.plant;
+		logger.debug(data);
+	});
+
+	return data;
 }
 
 const token = await getToken(conn, sunnyConfig.Login.email, sunnyConfig.Login.password);
-const plantlist = await getPlantList(conn, token);
-const plantoid = plantlist[0].plantoid;
-const plantData = await getPlantData(conn, token, plantoid);
-console.log(plantData);
+const plantlist = await getJSONPlantList(conn, token);
+const plantoid = plantlist.plantoid;
+const plantData = await getJSONPlantData(conn, token, plantoid);
+
+const plantProfile: IPlantProfile = {
+	plantHeader: {
+	},
+	expectedPlantProduction: {
+	},
+	modules: {
+	},
+	inverters: {
+	},
+	communicationProducts: {
+	},
+};
+
+const inverters = plantData.inverters;
+console.log(inverters.inverter);
+for (const key in inverters.inverter) {
+	const details = [];
+	for (const inverterKey in inverters.inverter[key].$) {
+		details.push(inverters.inverter[key].$[inverterKey]);
+	}
+	plantProfile.inverters[key] = {
+		inverterName: inverters.inverter[key]._,
+		numberOfInverters: details[0],
+		icon: details[1],
+	};
+}
+console.log(plantProfile);
+
 logout(conn, token);
