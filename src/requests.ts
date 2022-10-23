@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosInstance } from 'axios';
+import { AxiosError, AxiosInstance } from 'axios';
 import crypto from 'crypto';
 import pino from 'pino';
 import { Parser } from 'xml2js';
@@ -312,7 +312,7 @@ export class PlantListRequest extends RequestBase {
 	 * @param {IToken} token
 	 * @returns {Promise<IPlantList[]>}
 	 */
-	async getPlantList(conn: AxiosInstance, token: IToken): Promise<IPlantList[]> {
+	async getPlantListData(conn: AxiosInstance, token: IToken): Promise<IPlantList[]> {
 
 		const url = this.prepareUrl([token.identifier]);
 		const plantListData = await this.executeRequest(conn, url);

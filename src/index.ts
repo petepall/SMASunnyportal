@@ -114,7 +114,7 @@ async function getPlantList(conn: AxiosInstance, token: IToken): Promise<any> {
 		'GET',
 		token
 	);
-	const plantlist = await request.getPlantList(conn, token);
+	const plantlist = await request.getPlantListData(conn, token);
 
 	return plantlist;
 }
