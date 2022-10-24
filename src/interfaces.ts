@@ -122,3 +122,13 @@ export interface IPlantProfile {
 		[key: string]: ICommunicationsProducts;
 	};
 }
+
+export interface ISunnyConfig {
+	Login: {
+		email: string;
+		password: string;
+	},
+	General: {
+		baseUrl: string;
+	},
+}
