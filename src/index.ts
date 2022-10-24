@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import pino, { Logger } from 'pino';
 import { Parser } from 'xml2js';
-import { IPlantList, IPlantProfile, IToken } from './interfaces.js';
+import { IPlantList, IPlantProfile, ISunnyConfig, IToken } from './interfaces.js';
 import { AuthenticationRequest, LogoutRequest, PlantListRequest, PlantProfileRequest } from './requests.js';
 import {
 	askForLoginData,
@@ -25,40 +25,6 @@ const logger: Logger = pino({
 		},
 	},
 	level: 'info',
-});
-
-let sunnyConfig = {
-	Login: {
-		email: '',
-		password: '',
-	},
-	General: {
-		baseUrl: '',
-	},
-};
-
-// check if config file exists and read it.
-// If not, ask for login data and create config file.
-if (checkIfFileOrPathExists('./config/config.json')) {
-	sunnyConfig = readConfigFile('./config/config.json');
-	logger.info("config file successfully read");
-} else {
-	const info = askForLoginData();
-	sunnyConfig.Login.email = info.email;
-	sunnyConfig.Login.password = info.password;
-	sunnyConfig.General.baseUrl = info.baseUrl;
-
-	if (!checkIfFileOrPathExists('./config')) {
-		createFolder('./config');
-	}
-	writeJsonFile('./config/config.json', sunnyConfig);
-}
-
-// Setup connection to Sunny Portal
-const conn = axios.create({
-	baseURL: sunnyConfig.General.baseUrl,
-	timeout: 8000,
-	headers: { 'Content-Type': 'application/xlm' }
 });
 
 /**
@@ -100,7 +66,7 @@ async function logout(conn: AxiosInstance, token: IToken): Promise<void> {
 }
 
 /**
- * Retrieve the list of plants from the Sunny Portal API.
+ * Retrieve the list of plants and return the plant id and name as object.
  * @date 21/10/2022 - 22:02:48
  *
  * @async
@@ -108,7 +74,7 @@ async function logout(conn: AxiosInstance, token: IToken): Promise<void> {
  * @param {IToken} token
  * @returns {Promise<any>}
  */
-async function getJSONPlantList(conn: AxiosInstance, token: IToken): Promise<any> {
+async function getJSONPlantList(conn: AxiosInstance, token: IToken): Promise<IPlantList> {
 	const request = new PlantListRequest(
 		'plantlist',
 		'GET',
@@ -127,6 +93,16 @@ async function getJSONPlantList(conn: AxiosInstance, token: IToken): Promise<any
 	return plantList;
 }
 
+/**
+ * Retrieve the plant information based on the plantID and return the data as a JSON object.
+ * @date 23/10/2022 - 17:13:59
+ *
+ * @async
+ * @param {AxiosInstance} conn
+ * @param {IToken} token
+ * @param {string} plantId
+ * @returns {Promise<any>}
+ */
 async function getJSONPlantData(conn: AxiosInstance, token: IToken, plantId: string): Promise<any> {
 	const request = new PlantProfileRequest(
 		'plant',
@@ -143,6 +119,43 @@ async function getJSONPlantData(conn: AxiosInstance, token: IToken, plantId: str
 
 	return data;
 }
+
+/*
+ * Main program execution
+*/
+let sunnyConfig: ISunnyConfig = {
+	Login: {
+		email: '',
+		password: '',
+	},
+	General: {
+		baseUrl: '',
+	},
+};
+
+// check if config file exists and read it.
+// If not, ask for login data and create config file.
+if (checkIfFileOrPathExists('./config/config.json')) {
+	sunnyConfig = readConfigFile('./config/config.json');
+	logger.info("config file successfully read");
+} else {
+	const info = askForLoginData();
+	sunnyConfig.Login.email = info.email;
+	sunnyConfig.Login.password = info.password;
+	sunnyConfig.General.baseUrl = info.baseUrl;
+
+	if (!checkIfFileOrPathExists('./config')) {
+		createFolder('./config');
+	}
+	writeJsonFile('./config/config.json', sunnyConfig);
+}
+
+// Setup connection to Sunny Portal
+const conn = axios.create({
+	baseURL: sunnyConfig.General.baseUrl,
+	timeout: 8000,
+	headers: { 'Content-Type': 'application/xlm' }
+});
 
 const token = await getToken(conn, sunnyConfig.Login.email, sunnyConfig.Login.password);
 const plantlist = await getJSONPlantList(conn, token);
@@ -163,7 +176,6 @@ const plantProfile: IPlantProfile = {
 };
 
 const inverters = plantData.inverters;
-console.log(inverters.inverter);
 for (const key in inverters.inverter) {
 	const details = [];
 	for (const inverterKey in inverters.inverter[key].$) {
