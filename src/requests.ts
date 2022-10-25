@@ -378,8 +378,26 @@ export class PlantProfileRequest extends RequestBase {
 	}
 }
 
+/**
+ * Class to handle requests for the plant device list from the sunny portal API.
+ * @date 25/10/2022 - 14:00:08
+ *
+ * @export
+ * @class PlantDeviceListRequest
+ * @typedef {PlantDeviceListRequest}
+ * @extends {RequestBase}
+ */
 export class PlantDeviceListRequest extends RequestBase {
 
+	/**
+	 * Creates an instance of PlantDeviceListRequest.
+	 * @date 25/10/2022 - 14:00:36
+	 *
+	 * @constructor
+	 * @param {string} service
+	 * @param {string} method
+	 * @param {IToken} token
+	 */
 	constructor(
 		service: string,
 		method: string,
