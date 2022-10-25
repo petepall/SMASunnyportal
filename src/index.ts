@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import pino, { Logger } from 'pino';
 import { Parser } from 'xml2js';
 import { IPlantList, IPlantProfile, ISunnyConfig, IToken } from './interfaces.js';
-import { AuthenticationRequest, LogoutRequest, PlantDeviceListRequest, PlantListRequest, PlantProfileRequest } from './requests.js';
+import { AuthenticationRequest, LogoutRequest, PlantDeviceListRequest, PlantDeviceParametersRequest, PlantListRequest, PlantProfileRequest } from './requests.js';
 import {
 	askForLoginData,
 	checkIfFileOrPathExists,
@@ -120,7 +120,17 @@ async function getJSONPlantData(conn: AxiosInstance, token: IToken, plantId: str
 	return data;
 }
 
-async function getJSONPlantDeviceList(conn: AxiosInstance, token: IToken, plantId: string): Promise<any> {
+/**
+ * Retrieve the list of devices for a plant and return the device list as a JSON object.
+ * @date 25/10/2022 - 14:40:38
+ *
+ * @async
+ * @param {AxiosInstance} conn
+ * @param {IToken} token
+ * @param {string} plantId
+ * @returns {Promise<any>}
+ */
+async function getJSONPlantDeviceListData(conn: AxiosInstance, token: IToken, plantId: string): Promise<any> {
 	const request = new PlantDeviceListRequest(
 		'device',
 		'GET',
@@ -130,7 +140,35 @@ async function getJSONPlantDeviceList(conn: AxiosInstance, token: IToken, plantI
 
 	let data = null;
 	parser.parseString(plantDeviceListData, (err: any, result: any) => {
-		data = result['sma.sunnyportal.services'].service.devicelist.device;
+		data = result['sma.sunnyportal.services'].service.devicelist;
+		logger.debug(data);
+	});
+
+	return data;
+}
+
+/**
+ * Retrieve the device parameters for a given deviceID and return the device parameters as a JSON object.
+ * @date 25/10/2022 - 14:41:50
+ *
+ * @async
+ * @param {AxiosInstance} conn
+ * @param {IToken} token
+ * @param {string} plantId
+ * @param {string} deviceId
+ * @returns {Promise<any>}
+ */
+async function getJSONPlantDeviceParameterData(conn: AxiosInstance, token: IToken, plantId: string, deviceId: string): Promise<any> {
+	const request = new PlantDeviceParametersRequest(
+		'device',
+		'GET',
+		token
+	);
+	const plantDeviceParameterData = await request.getPlantDeviceParametersData(conn, token, plantId, deviceId);
+
+	let data = null;
+	parser.parseString(plantDeviceParameterData, (err: any, result: any) => {
+		data = result['sma.sunnyportal.services'];
 		logger.debug(data);
 	});
 
@@ -243,9 +281,15 @@ for (const key in communicationProducts.communicationProduct) {
 		};
 	}
 }
-console.log(plantProfile);
+// console.log(plantProfile);
 
-const plantDeviceListData = await getJSONPlantDeviceList(conn, token, plantoid);
+const plantDeviceListData = await getJSONPlantDeviceListData(conn, token, plantoid);
+// console.log(plantDeviceListData);
+
+const plantDeviceParameterData = await getJSONPlantDeviceParameterData(conn, token, plantoid, plantDeviceListData.device[0].$.oid);
+// for (const key in plantDeviceParameterData.service.parameterlist.parameter) {
+// 	console.log(plantDeviceParameterData.service.parameterlist.parameter[key]);
+// }
 
 
 logout(conn, token);
