@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import pino, { Logger } from 'pino';
 import { Parser } from 'xml2js';
 import { IPlantList, IPlantProfile, ISunnyConfig, IToken } from './interfaces.js';
-import { AuthenticationRequest, LogoutRequest, PlantListRequest, PlantProfileRequest } from './requests.js';
+import { AuthenticationRequest, LogoutRequest, PlantDeviceListRequest, PlantListRequest, PlantProfileRequest } from './requests.js';
 import {
 	askForLoginData,
 	checkIfFileOrPathExists,
@@ -120,6 +120,23 @@ async function getJSONPlantData(conn: AxiosInstance, token: IToken, plantId: str
 	return data;
 }
 
+async function getJSONPlantDeviceList(conn: AxiosInstance, token: IToken, plantId: string): Promise<any> {
+	const request = new PlantDeviceListRequest(
+		'device',
+		'GET',
+		token
+	);
+	const plantDeviceListData = await request.getPlantDeviceListData(conn, token, plantId);
+
+	let data = null;
+	parser.parseString(plantDeviceListData, (err: any, result: any) => {
+		data = result['sma.sunnyportal.services'].service.devicelist.device;
+		logger.debug(data);
+	});
+
+	return data;
+}
+
 /*
  * Main program execution
 */
@@ -178,15 +195,57 @@ const plantProfile: IPlantProfile = {
 const inverters = plantData.inverters;
 for (const key in inverters.inverter) {
 	const details = [];
-	for (const inverterKey in inverters.inverter[key].$) {
-		details.push(inverters.inverter[key].$[inverterKey]);
+	if (inverters.inverter.length === undefined) {
+		if (key === '$') {
+			for (const inverterKey in inverters.inverter[key]) {
+				details.push(inverters.inverter[key][inverterKey]);
+			}
+			plantProfile.inverters[key] = {
+				inverterName: inverters.inverter._,
+				numberOfInverters: details[0],
+				icon: details[1],
+			};
+		}
+	} else {
+		for (const inverterKey in inverters.inverter[key].$) {
+			details.push(inverters.inverter[key].$[inverterKey]);
+		}
+		plantProfile.inverters[key] = {
+			inverterName: inverters.inverter[key]._,
+			numberOfInverters: details[0],
+			icon: details[1],
+		};
 	}
-	plantProfile.inverters[key] = {
-		inverterName: inverters.inverter[key]._,
-		numberOfInverters: details[0],
-		icon: details[1],
-	};
+}
+
+const communicationProducts = plantData.communicationProducts;
+for (const key in communicationProducts.communicationProduct) {
+	const details = [];
+	if (communicationProducts.communicationProduct.length === undefined) {
+		if (key === '$') {
+			for (const communicationsKey in communicationProducts.communicationProduct[key]) {
+				details.push(communicationProducts.communicationProduct[key][communicationsKey]);
+			}
+			plantProfile.communicationProducts[key] = {
+				communicationProductName: communicationProducts.communicationProduct._,
+				numberOfCommunicationProducts: details[0],
+				icon: details[1],
+			};
+		}
+	} else {
+		for (const communicationsKey in communicationProducts.communicationProduct[key].$) {
+			details.push(communicationProducts.communicationProduct[key].$[communicationsKey]);
+		}
+		plantProfile.communicationProducts[key] = {
+			communicationProductName: communicationProducts.communicationProduct[key]._,
+			numberOfCommunicationProducts: details[0],
+			icon: details[1],
+		};
+	}
 }
 console.log(plantProfile);
+
+const plantDeviceListData = await getJSONPlantDeviceList(conn, token, plantoid);
+
 
 logout(conn, token);
