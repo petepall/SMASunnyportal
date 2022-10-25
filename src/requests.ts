@@ -303,16 +303,17 @@ export class PlantListRequest extends RequestBase {
 		super(service, method, token);
 	}
 
+
 	/**
 	 * Get the plant ID for the users regisered plants from the sunny portal API.
-	 * @date 21/10/2022 - 23:39:49
+	 * @date 25/10/2022 - 14:31:39
 	 *
 	 * @async
 	 * @param {AxiosInstance} conn
 	 * @param {IToken} token
-	 * @returns {Promise<IPlantList[]>}
+	 * @returns {Promise<any>}
 	 */
-	async getPlantListData(conn: AxiosInstance, token: IToken) {
+	async getPlantListData(conn: AxiosInstance, token: IToken): Promise<any> {
 
 		const url = this.prepareUrl([token.identifier]);
 		const plantListData = await this.executeRequest(conn, url);
@@ -360,9 +361,9 @@ export class PlantProfileRequest extends RequestBase {
 	 * @param {AxiosInstance} conn
 	 * @param {IToken} token
 	 * @param {string} plantID
-	 * @returns {unknown}
+	 * @returns {Promise<any>}
 	 */
-	async getPlantData(conn: AxiosInstance, token: IToken, plantID: string) {
+	async getPlantData(conn: AxiosInstance, token: IToken, plantID: string): Promise<any> {
 		const url = this.prepareUrl(
 			[plantID],
 			{
@@ -406,7 +407,17 @@ export class PlantDeviceListRequest extends RequestBase {
 		super(service, method, token);
 	}
 
-	async getPlantDeviceListData(conn: AxiosInstance, token: IToken, plantID: string) {
+	/**
+	 * Method for retrieving the plant device list data from the sunny portal API.
+	 * @date 25/10/2022 - 14:00:46
+	 *
+	 * @async
+	 * @param {AxiosInstance} conn
+	 * @param {IToken} token
+	 * @param {string} plantID
+	 * @returns {Promise<any>}
+	 */
+	async getPlantDeviceListData(conn: AxiosInstance, token: IToken, plantID: string): Promise<any> {
 		const url = this.prepareUrl(
 			[plantID],
 			{
@@ -416,5 +427,58 @@ export class PlantDeviceListRequest extends RequestBase {
 		const plantDeviceListData = await this.executeRequest(conn, url);
 
 		return plantDeviceListData;
+	}
+}
+
+/**
+ * Class to handle the device parameter data request to the sunny portal API.
+ * @date 25/10/2022 - 14:28:20
+ *
+ * @export
+ * @class PlantDeviceParametersRequest
+ * @typedef {PlantDeviceParametersRequest}
+ * @extends {RequestBase}
+ */
+export class PlantDeviceParametersRequest extends RequestBase {
+
+	/**
+	 * Creates an instance of PlantDeviceParametersRequest.
+	 * @date 25/10/2022 - 14:28:52
+	 *
+	 * @constructor
+	 * @param {string} service
+	 * @param {string} method
+	 * @param {IToken} token
+	 */
+	constructor(
+		service: string,
+		method: string,
+		token: IToken,
+	) {
+		super(service, method, token);
+	}
+
+	/**
+	 * Method to retrieve the device parameter data from the sunny portal API.
+	 * @date 25/10/2022 - 14:30:00
+	 *
+	 * @async
+	 * @param {AxiosInstance} conn
+	 * @param {IToken} token
+	 * @param {string} plantID
+	 * @param {string} deviceID
+	 * @returns {Promise<any>}
+	 */
+	async getPlantDeviceParametersData(conn: AxiosInstance, token: IToken, plantID: string, deviceID: string): Promise<any> {
+		const url = this.prepareUrl(
+			[plantID, deviceID],
+			{
+				"view": 'parameter',
+				"identifier": token.identifier
+			}
+		);
+		const plantDeviceParametersData = await this.executeRequest(conn, url);
+
+		return plantDeviceParametersData;
 	}
 }
