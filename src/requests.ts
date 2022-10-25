@@ -331,6 +331,9 @@ export class PlantListRequest extends RequestBase {
  * @extends {RequestBase}
  */
 export class PlantProfileRequest extends RequestBase {
+	getPlantDeviceListData(conn: AxiosInstance, token: IToken, plantId: string) {
+		throw new Error('Method not implemented.');
+	}
 
 	/**
 	 * Creates an instance of PlantProfileRequest.
@@ -372,5 +375,28 @@ export class PlantProfileRequest extends RequestBase {
 		const plantData = await this.executeRequest(conn, url);
 
 		return plantData;
+	}
+}
+
+export class PlantDeviceListRequest extends RequestBase {
+
+	constructor(
+		service: string,
+		method: string,
+		token: IToken,
+	) {
+		super(service, method, token);
+	}
+
+	async getPlantDeviceListData(conn: AxiosInstance, token: IToken, plantID: string) {
+		const url = this.prepareUrl(
+			[plantID],
+			{
+				"identifier": token.identifier
+			}
+		);
+		const plantDeviceListData = await this.executeRequest(conn, url);
+
+		return plantDeviceListData;
 	}
 }
