@@ -2,7 +2,7 @@ import { AxiosError, AxiosInstance } from 'axios';
 import crypto from 'crypto';
 import pino from 'pino';
 import { Parser } from 'xml2js';
-import { IPlantList, IToken } from './interfaces.js';
+import { IToken } from './interfaces.js';
 
 
 /**
