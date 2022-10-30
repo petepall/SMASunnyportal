@@ -176,7 +176,7 @@ async function getJSONPlantDeviceParameterData(conn: AxiosInstance, token: IToke
 }
 
 /*
- * Main program execution
+ * Main program execution.
 */
 let sunnyConfig: ISunnyConfig = {
 	Login: {
