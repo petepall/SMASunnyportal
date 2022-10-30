@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import pino, { Logger } from 'pino';
 import { Parser } from 'xml2js';
 import { IPlantList, IPlantProfile, ISunnyConfig, IToken } from './interfaces.js';
-import { AuthenticationRequest, LogoutRequest, PlantDeviceListRequest, PlantDeviceParametersRequest, PlantListRequest, PlantProfileRequest } from './requests.js';
+import { AuthenticationRequest, LastDataExactRequest, LogoutRequest, PlantDeviceListRequest, PlantDeviceParametersRequest, PlantListRequest, PlantProfileRequest } from './requests.js';
 import {
 	askForLoginData,
 	checkIfFileOrPathExists,
@@ -175,6 +175,23 @@ async function getJSONPlantDeviceParameterData(conn: AxiosInstance, token: IToke
 	return data;
 }
 
+async function getJSONLastDataExactData(conn: AxiosInstance, token: IToken, plantID: string, date: string): Promise<any> {
+	const request = new LastDataExactRequest(
+		'data',
+		'GET',
+		token
+	);
+	const lastDataExactData = await request.getLastDataExactData(conn, token, plantID, date);
+
+	let data = null;
+	parser.parseString(lastDataExactData, (err: any, result: any) => {
+		data = result['sma.sunnyportal.services'];
+		logger.debug(data);
+	});
+
+	return data;
+}
+
 /*
  * Main program execution.
 */
@@ -289,6 +306,11 @@ const plantDeviceListData = await getJSONPlantDeviceListData(conn, token, planto
 const plantDeviceParameterData = await getJSONPlantDeviceParameterData(conn, token, plantoid, plantDeviceListData.device[0].$.oid);
 // for (const key in plantDeviceParameterData.service.parameterlist.parameter) {
 // 	console.log(plantDeviceParameterData.service.parameterlist.parameter[key]);
+// }
+
+const lastDataExactData = await getJSONLastDataExactData(conn, token, plantoid, '2022-10-30');
+// for (const key in lastDataExactData.service.data.Energy) {
+// 	console.log(lastDataExactData.service.data.Energy[key]);
 // }
 
 logout(conn, token);
