@@ -483,7 +483,25 @@ export class PlantDeviceParametersRequest extends RequestBase {
 	}
 }
 
+/**
+ * Class to handle the retrieval of the last yield data from the sunny portal API.
+ * @date 30/10/2022 - 16:48:49
+ *
+ * @export
+ * @class LastDataExactRequest
+ * @typedef {LastDataExactRequest}
+ * @extends {RequestBase}
+ */
 export class LastDataExactRequest extends RequestBase {
+	/**
+	 * Creates an instance of LastDataExactRequest.
+	 * @date 30/10/2022 - 16:49:43
+	 *
+	 * @constructor
+	 * @param {string} service
+	 * @param {string} method
+	 * @param {IToken} token
+	 */
 	constructor(
 		service: string,
 		method: string,
@@ -492,6 +510,17 @@ export class LastDataExactRequest extends RequestBase {
 		super(service, method, token);
 	}
 
+	/**
+	 * Method to retrieve the last yield data from the sunny portal API.
+	 * @date 30/10/2022 - 16:49:52
+	 *
+	 * @async
+	 * @param {AxiosInstance} conn
+	 * @param {IToken} token
+	 * @param {string} plantID
+	 * @param {string} date
+	 * @returns {Promise<any>}
+	 */
 	async getLastDataExactData(conn: AxiosInstance, token: IToken, plantID: string, date: string): Promise<any> {
 		const url = this.prepareUrl(
 			[plantID, "Energy", date],
