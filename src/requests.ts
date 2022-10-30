@@ -13,7 +13,7 @@ import { IToken } from './interfaces.js';
  * @class RequestBase
  * @typedef {RequestBase}
  */
-export class RequestBase {
+class RequestBase {
 	service: string;
 	method: string;
 	token: IToken | undefined;
@@ -480,5 +480,30 @@ export class PlantDeviceParametersRequest extends RequestBase {
 		const plantDeviceParametersData = await this.executeRequest(conn, url);
 
 		return plantDeviceParametersData;
+	}
+}
+
+export class LastDataExactRequest extends RequestBase {
+	constructor(
+		service: string,
+		method: string,
+		token: IToken,
+	) {
+		super(service, method, token);
+	}
+
+	async getLastDataExactData(conn: AxiosInstance, token: IToken, plantID: string, date: string): Promise<any> {
+		const url = this.prepareUrl(
+			[plantID, "Energy", date],
+			{
+				"culture": "en-gb",
+				"identifier": token.identifier,
+				"unit": "kWh",
+				"view": "Lastdataexact"
+			}
+		);
+		const lastDataExactData = await this.executeRequest(conn, url);
+
+		return lastDataExactData;
 	}
 }
