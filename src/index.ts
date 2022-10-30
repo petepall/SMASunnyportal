@@ -291,5 +291,4 @@ const plantDeviceParameterData = await getJSONPlantDeviceParameterData(conn, tok
 // 	console.log(plantDeviceParameterData.service.parameterlist.parameter[key]);
 // }
 
-
 logout(conn, token);
