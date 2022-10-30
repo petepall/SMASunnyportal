@@ -74,7 +74,7 @@ async function logout(conn: AxiosInstance, token: IToken): Promise<void> {
  * @param {IToken} token
  * @returns {Promise<any>}
  */
-async function getJSONPlantList(conn: AxiosInstance, token: IToken): Promise<IPlantList> {
+async function parseJSONPlantList(conn: AxiosInstance, token: IToken): Promise<IPlantList> {
 	const request = new PlantListRequest(
 		'plantlist',
 		'GET',
@@ -103,7 +103,7 @@ async function getJSONPlantList(conn: AxiosInstance, token: IToken): Promise<IPl
  * @param {string} plantId
  * @returns {Promise<any>}
  */
-async function getJSONPlantData(conn: AxiosInstance, token: IToken, plantId: string): Promise<any> {
+async function parseJSONPlantData(conn: AxiosInstance, token: IToken, plantId: string): Promise<any> {
 	const request = new PlantProfileRequest(
 		'plant',
 		'GET',
@@ -130,7 +130,7 @@ async function getJSONPlantData(conn: AxiosInstance, token: IToken, plantId: str
  * @param {string} plantId
  * @returns {Promise<any>}
  */
-async function getJSONPlantDeviceListData(conn: AxiosInstance, token: IToken, plantId: string): Promise<any> {
+async function parseJSONPlantDeviceListData(conn: AxiosInstance, token: IToken, plantId: string): Promise<any> {
 	const request = new PlantDeviceListRequest(
 		'device',
 		'GET',
@@ -158,7 +158,7 @@ async function getJSONPlantDeviceListData(conn: AxiosInstance, token: IToken, pl
  * @param {string} deviceId
  * @returns {Promise<any>}
  */
-async function getJSONPlantDeviceParameterData(conn: AxiosInstance, token: IToken, plantId: string, deviceId: string): Promise<any> {
+async function parseJSONPlantDeviceParameterData(conn: AxiosInstance, token: IToken, plantId: string, deviceId: string): Promise<any> {
 	const request = new PlantDeviceParametersRequest(
 		'device',
 		'GET',
@@ -175,7 +175,7 @@ async function getJSONPlantDeviceParameterData(conn: AxiosInstance, token: IToke
 	return data;
 }
 
-async function getJSONLastDataExactData(conn: AxiosInstance, token: IToken, plantID: string, date: string): Promise<any> {
+async function parseJSONLastDataExactData(conn: AxiosInstance, token: IToken, plantID: string, date: string): Promise<any> {
 	const request = new LastDataExactRequest(
 		'data',
 		'GET',
@@ -230,9 +230,9 @@ const conn = axios.create({
 });
 
 const token = await getToken(conn, sunnyConfig.Login.email, sunnyConfig.Login.password);
-const plantlist = await getJSONPlantList(conn, token);
+const plantlist = await parseJSONPlantList(conn, token);
 const plantoid = plantlist.plantoid;
-const plantData = await getJSONPlantData(conn, token, plantoid);
+const plantData = await parseJSONPlantData(conn, token, plantoid);
 
 const plantProfile: IPlantProfile = {
 	plantHeader: {
@@ -300,15 +300,15 @@ for (const key in communicationProducts.communicationProduct) {
 }
 // console.log(plantProfile);
 
-const plantDeviceListData = await getJSONPlantDeviceListData(conn, token, plantoid);
+const plantDeviceListData = await parseJSONPlantDeviceListData(conn, token, plantoid);
 // console.log(plantDeviceListData);
 
-const plantDeviceParameterData = await getJSONPlantDeviceParameterData(conn, token, plantoid, plantDeviceListData.device[0].$.oid);
+const plantDeviceParameterData = await parseJSONPlantDeviceParameterData(conn, token, plantoid, plantDeviceListData.device[0].$.oid);
 // for (const key in plantDeviceParameterData.service.parameterlist.parameter) {
 // 	console.log(plantDeviceParameterData.service.parameterlist.parameter[key]);
 // }
 
-const lastDataExactData = await getJSONLastDataExactData(conn, token, plantoid, '2022-10-30');
+const lastDataExactData = await parseJSONLastDataExactData(conn, token, plantoid, '2022-10-30');
 // for (const key in lastDataExactData.service.data.Energy) {
 // 	console.log(lastDataExactData.service.data.Energy[key]);
 // }
