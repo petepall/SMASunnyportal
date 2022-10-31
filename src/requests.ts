@@ -489,10 +489,10 @@ export class PlantDeviceParametersRequest extends RequestBase {
  *
  * @export
  * @class LastDataExactRequest
- * @typedef {LastDataExactRequest}
+ * @typedef {DataRequest}
  * @extends {RequestBase}
  */
-export class LastDataExactRequest extends RequestBase {
+export class DataRequest extends RequestBase {
 	/**
 	 * Creates an instance of LastDataExactRequest.
 	 * @date 30/10/2022 - 16:49:43
@@ -534,5 +534,21 @@ export class LastDataExactRequest extends RequestBase {
 		const lastDataExactData = await this.executeRequest(conn, url);
 
 		return lastDataExactData;
+	}
+
+	async getAllDataRequestData(conn: AxiosInstance, token: IToken, plantID: string, date: string, interval: string): Promise<any> {
+		const url = this.prepareUrl(
+			[plantID, "Energy", date],
+			{
+				"culture": "en-gb",
+				"identifier": token.identifier,
+				"period": "infinite",
+				"interval": interval,
+				"unit": "kWh",
+			}
+		);
+		const allDataRequestData = await this.executeRequest(conn, url);
+
+		return allDataRequestData;
 	}
 }
