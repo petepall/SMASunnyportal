@@ -551,4 +551,19 @@ export class DataRequest extends RequestBase {
 
 		return allDataRequestData;
 	}
+
+	async getDayOverviewRequestData(conn: AxiosInstance, token: IToken, plantID: string, date: string, quarter = true, include_all = false): Promise<any> {
+		const datatype = quarter ? "day-fifteen" : "day";
+		const url = this.prepareUrl(
+			[plantID, `overview-${datatype}-total`, date],
+			{
+				"culture": "en-gb",
+				"identifier": token.identifier,
+			}
+		);
+		const dayOverviewRequestData = await this.executeRequest(conn, url);
+
+		return dayOverviewRequestData;
+
+	}
 }

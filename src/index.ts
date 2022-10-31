@@ -209,6 +209,23 @@ async function parseJSONAllDataRequestData(conn: AxiosInstance, token: IToken, p
 	return data;
 }
 
+async function parseJSONDayOverviewRequestData(conn: AxiosInstance, token: IToken, plantID: string, date: string, quarter: boolean, include_all: boolean): Promise<any> {
+	const request = new DataRequest(
+		'data',
+		'GET',
+		token
+	);
+	const allDataRequestData = await request.getDayOverviewRequestData(conn, token, plantID, date, quarter, include_all);
+
+	let data = null;
+	parser.parseString(allDataRequestData, (err: any, result: any) => {
+		data = result['sma.sunnyportal.services'];
+		logger.debug(data);
+	});
+
+	return data;
+}
+
 /*
  * Main program execution.
 */
@@ -325,15 +342,20 @@ const plantDeviceParameterData = await parseJSONPlantDeviceParameterData(conn, t
 // 	console.log(plantDeviceParameterData.service.parameterlist.parameter[key]);
 // }
 
-const lastDataExactData = await parseJSONLastDataExactData(conn, token, plantoid, '2022-10-30');
+const lastDataExactData = await parseJSONLastDataExactData(conn, token, plantoid, (new Date()).toISOString().slice(0, 10));
 // for (const key in lastDataExactData.service.data.Energy) {
 // 	console.log(lastDataExactData.service.data.Energy[key]);
 // }
 
-const allDataRequestData = await parseJSONAllDataRequestData(conn, token, plantoid, '2022-10-30', 'month');
+const allDataRequestData = await parseJSONAllDataRequestData(conn, token, plantoid, (new Date()).toISOString().slice(0, 10), 'month');
 // for (const key in allDataRequestData.service.data.Energy.channel) {
 // 	console.log(allDataRequestData.service.data.Energy.channel[key].month);
 // }
 
+const dayOverviewRequestData = await parseJSONDayOverviewRequestData(conn, token, plantoid, (new Date()).toISOString().slice(0, 10), true, true);
+// console.log(dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel);
+// for (const key in dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel) {
+// 	console.log(dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel[key].day.fiveteen);
+// }
 
 logout(conn, token);
