@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import pino, { Logger } from 'pino';
 import { Parser } from 'xml2js';
 import { IPlantList, IPlantProfile, ISunnyConfig, IToken } from './interfaces.js';
-import { AuthenticationRequest, LastDataExactRequest, LogoutRequest, PlantDeviceListRequest, PlantDeviceParametersRequest, PlantListRequest, PlantProfileRequest } from './requests.js';
+import { AuthenticationRequest, DataRequest, LogoutRequest, PlantDeviceListRequest, PlantDeviceParametersRequest, PlantListRequest, PlantProfileRequest } from './requests.js';
 import {
 	askForLoginData,
 	checkIfFileOrPathExists,
@@ -176,7 +176,7 @@ async function parseJSONPlantDeviceParameterData(conn: AxiosInstance, token: ITo
 }
 
 async function parseJSONLastDataExactData(conn: AxiosInstance, token: IToken, plantID: string, date: string): Promise<any> {
-	const request = new LastDataExactRequest(
+	const request = new DataRequest(
 		'data',
 		'GET',
 		token
@@ -185,6 +185,23 @@ async function parseJSONLastDataExactData(conn: AxiosInstance, token: IToken, pl
 
 	let data = null;
 	parser.parseString(lastDataExactData, (err: any, result: any) => {
+		data = result['sma.sunnyportal.services'];
+		logger.debug(data);
+	});
+
+	return data;
+}
+
+async function parseJSONAllDataRequestData(conn: AxiosInstance, token: IToken, plantID: string, date: string, interval: string): Promise<any> {
+	const request = new DataRequest(
+		'data',
+		'GET',
+		token
+	);
+	const allDataRequestData = await request.getAllDataRequestData(conn, token, plantID, date, interval);
+
+	let data = null;
+	parser.parseString(allDataRequestData, (err: any, result: any) => {
 		data = result['sma.sunnyportal.services'];
 		logger.debug(data);
 	});
@@ -312,5 +329,11 @@ const lastDataExactData = await parseJSONLastDataExactData(conn, token, plantoid
 // for (const key in lastDataExactData.service.data.Energy) {
 // 	console.log(lastDataExactData.service.data.Energy[key]);
 // }
+
+const allDataRequestData = await parseJSONAllDataRequestData(conn, token, plantoid, '2022-10-30', 'month');
+// for (const key in allDataRequestData.service.data.Energy.channel) {
+// 	console.log(allDataRequestData.service.data.Energy.channel[key].month);
+// }
+
 
 logout(conn, token);
