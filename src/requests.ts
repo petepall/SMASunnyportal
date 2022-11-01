@@ -178,13 +178,16 @@ class RequestBase {
 export class AuthenticationRequest extends RequestBase {
 	username: string;
 	password: string;
+	conn: AxiosInstance;
+
 	/**
 	 * Creates an instance of AuthenticationRequest.
-	 * @date 21/10/2022 - 17:40:26
+	 * @date 01/11/2022 - 12:17:07
 	 *
 	 * @constructor
 	 * @param {string} service
 	 * @param {string} method
+	 * @param {AxiosInstance} conn
 	 * @param {string} [username='']
 	 * @param {string} [password='']
 	 * @param {*} [token=undefined]
@@ -192,11 +195,13 @@ export class AuthenticationRequest extends RequestBase {
 	constructor(
 		service: string,
 		method: string,
+		conn: AxiosInstance,
 		username = '',
 		password = '',
 		token = undefined,
 	) {
 		super(service, method, token);
+		this.conn = conn;
 		this.username = username;
 		this.password = password;
 	}
@@ -211,9 +216,9 @@ export class AuthenticationRequest extends RequestBase {
 	 * @param {string} password
 	 * @returns {Promise<IToken>}
 	 */
-	async getToken(conn: AxiosInstance, username: string, password: string): Promise<IToken> {
+	async getToken(username: string, password: string): Promise<IToken> {
 		const url = this.prepareUrl([username], { password: password });
-		const loginData = await this.executeRequest(conn, url);
+		const loginData = await this.executeRequest(this.conn, url);
 		const token: IToken = {
 			identifier: '',
 			secret_key: '',

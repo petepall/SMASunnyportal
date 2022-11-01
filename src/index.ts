@@ -37,12 +37,13 @@ const logger: Logger = pino({
  * @param {string} password
  * @returns {Promise<IToken>}
  */
-async function getToken(conn: AxiosInstance, username: string, password: string): Promise<IToken> {
+async function getToken(username: string, password: string): Promise<IToken> {
 	const request = new AuthenticationRequest(
 		'Authentication',
-		'GET'
+		'GET',
+		conn
 	);
-	const token = await request.getToken(conn, username, password);
+	const token = await request.getToken(username, password);
 
 	return token;
 }
@@ -263,7 +264,7 @@ const conn = axios.create({
 	headers: { 'Content-Type': 'application/xlm' }
 });
 
-const token = await getToken(conn, sunnyConfig.Login.email, sunnyConfig.Login.password);
+const token = await getToken(sunnyConfig.Login.email, sunnyConfig.Login.password);
 const plantlist = await parseJSONPlantList(conn, token);
 const plantoid = plantlist.plantoid;
 const plantData = await parseJSONPlantData(conn, token, plantoid);
