@@ -628,4 +628,17 @@ export class DataRequest extends RequestBase {
 
 		return monthOverviewRequestData;
 	}
+
+	async getYearOverviewRequestData(date: string): Promise<any> {
+		const url = this.prepareUrl(
+			[this.plantID, `overview-year-total`, date],
+			{
+				"culture": "en-gb",
+				"identifier": this.token.identifier,
+			}
+		);
+		const yearOverviewRequestData = await this.executeRequest(url);
+
+		return yearOverviewRequestData;
+	}
 }

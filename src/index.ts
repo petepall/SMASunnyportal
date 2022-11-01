@@ -258,6 +258,14 @@ async function parseJSONDayOverviewRequestData(date: string, quarter: boolean, i
 	return data;
 }
 
+/**
+ * Function to retrieve the monthly overview from the Sunny Portal API.
+ * @date 01/11/2022 - 16:25:05
+ *
+ * @async
+ * @param {string} date
+ * @returns {Promise<any>}
+ */
 async function parseJSONMonthOverviewRequestData(date: string): Promise<any> {
 	const request = new DataRequest(
 		'data',
@@ -267,6 +275,25 @@ async function parseJSONMonthOverviewRequestData(date: string): Promise<any> {
 		plantoid
 	);
 	const allDataRequestData = await request.getMonthOverviewRequestData(date);
+
+	let data = null;
+	parser.parseString(allDataRequestData, (err: any, result: any) => {
+		data = result['sma.sunnyportal.services'];
+		logger.debug(data);
+	});
+
+	return data;
+}
+
+async function parseJSONYearlyOverviewRequestData(date: string): Promise<any> {
+	const request = new DataRequest(
+		'data',
+		'GET',
+		conn,
+		token,
+		plantoid
+	);
+	const allDataRequestData = await request.getYearOverviewRequestData(date);
 
 	let data = null;
 	parser.parseString(allDataRequestData, (err: any, result: any) => {
@@ -414,8 +441,14 @@ const datePreviousMonth = today.setDate(0);
 
 const monthOverviewRequestData = await parseJSONMonthOverviewRequestData(getFirstDayOfTheMonth(new Date(datePreviousMonth)));
 // console.dir(monthOverviewRequestData.service.data);
-for (const key in monthOverviewRequestData.service.data['overview-month-total'].channel) {
-	console.dir(monthOverviewRequestData.service.data['overview-month-total'].channel[key].month.day);
-}
+// for (const key in monthOverviewRequestData.service.data['overview-month-total'].channel) {
+// 	console.dir(monthOverviewRequestData.service.data['overview-month-total'].channel[key].month.day);
+// }
+
+const yearlyOverviewRequestData = await parseJSONYearlyOverviewRequestData(getFirstDayOfTheMonth(new Date(datePreviousMonth)));
+// console.dir(yearlyOverviewRequestData.service.data['overview-year-total'].channel);
+// for (const key in yearlyOverviewRequestData.service.data['overview-year-total'].channel) {
+// 	console.dir(yearlyOverviewRequestData.service.data['overview-year-total'].channel[key].year.month);
+// }
 
 logout();
