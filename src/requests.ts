@@ -637,6 +637,14 @@ export class DataRequest extends RequestBase {
 		return monthOverviewRequestData;
 	}
 
+	/**
+	 * Method to retrieve the solar generation data for a given year per month from the sunny portal API.
+	 * @date 01/11/2022 - 16:41:19
+	 *
+	 * @async
+	 * @param {string} date
+	 * @returns {Promise<any>}
+	 */
 	async getYearOverviewRequestData(date: string): Promise<any> {
 		const url = this.prepareUrl(
 			[this.plantID, `overview-year-total`, date],
@@ -648,5 +656,30 @@ export class DataRequest extends RequestBase {
 		const yearOverviewRequestData = await this.executeRequest(url);
 
 		return yearOverviewRequestData;
+	}
+
+	async getEnergeyBalanceRequestData(date: string, period: string, interval: string, total = false): Promise<any> {
+		/**
+		* Valid intervals for a given period:
+		*		- infinite: year, month
+		*		- year: year, month, day
+		*		- month: month, day, hour, fifteen
+		*		- day: day, hour, fifteen
+		*/
+		const datatype = total ? "energybalancetotal" : "energybalance";
+
+		const url = this.prepareUrl(
+			[this.plantID, "sets", datatype, date],
+			{
+				"culture": "en-gb",
+				"identifier": this.token.identifier,
+				"period": period,
+				"interval": interval,
+				"unit": "kWh",
+			}
+		);
+		const energyBalanceRequestData = await this.executeRequest(url);
+
+		return energyBalanceRequestData;
 	}
 }

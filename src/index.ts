@@ -304,6 +304,25 @@ async function parseJSONYearlyOverviewRequestData(date: string): Promise<any> {
 	return data;
 }
 
+async function parseJSONEnergyBalanceRequestData(date: string, period: string, interval: string, total?: boolean): Promise<any> {
+	const request = new DataRequest(
+		'data',
+		'GET',
+		conn,
+		token,
+		plantoid
+	);
+	const allDataRequestData = await request.getEnergeyBalanceRequestData(date, period, interval, total);
+
+	let data = null;
+	parser.parseString(allDataRequestData, (err: any, result: any) => {
+		data = result['sma.sunnyportal.services'];
+		logger.debug(data);
+	});
+
+	return data;
+}
+
 /*
  * Main program execution.
 */
@@ -450,5 +469,11 @@ const yearlyOverviewRequestData = await parseJSONYearlyOverviewRequestData(getFi
 // for (const key in yearlyOverviewRequestData.service.data['overview-year-total'].channel) {
 // 	console.dir(yearlyOverviewRequestData.service.data['overview-year-total'].channel[key].year.month);
 // }
+
+const energyBalanceRequestData = await parseJSONEnergyBalanceRequestData("2022-10-01", "month", "day", false);
+// console.dir(energyBalanceRequestData.service.data.energybalance.month);
+for (const key in energyBalanceRequestData.service.data.energybalance.month.day) {
+	console.dir(energyBalanceRequestData.service.data.energybalance.month.day[key]);
+}
 
 logout();
