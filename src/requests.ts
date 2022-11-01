@@ -16,19 +16,20 @@ import { IToken } from './interfaces.js';
 class RequestBase {
 	service: string;
 	method: string;
+	conn: AxiosInstance;
 	token: IToken | undefined;
 	version: number;
 	base_path: string;
 	url: string;
 
-
 	/**
 	 * Creates an instance of RequestBase.
-	 * @date 21/10/2022 - 17:13:43
+	 * @date 01/11/2022 - 13:13:37
 	 *
 	 * @constructor
 	 * @param {string} service
 	 * @param {string} method
+	 * @param {AxiosInstance} conn
 	 * @param {(IToken | undefined)} token
 	 * @param {number} [version=100]
 	 * @param {string} [base_path='/services']
@@ -37,6 +38,7 @@ class RequestBase {
 	constructor(
 		service: string,
 		method: string,
+		conn: AxiosInstance,
 		token: IToken | undefined,
 		version = 100,
 		base_path = '/services',
@@ -44,6 +46,7 @@ class RequestBase {
 	) {
 		this.service = service;
 		this.method = method;
+		this.conn = conn;
 		this.token = token;
 		this.version = version;
 		this.base_path = base_path;
@@ -144,7 +147,7 @@ class RequestBase {
 	 * @param {string} url
 	 * @returns {Promise<any>}
 	 */
-	async executeRequest(conn: AxiosInstance, url: string): Promise<any> {
+	async executeRequest(url: string): Promise<any> {
 		if (url.includes("password=")) {
 			const passUrl = url.split('password=')[0] + 'password=********';
 			this.logRequest.info(`${this.method} request to ${passUrl}`);
@@ -153,7 +156,7 @@ class RequestBase {
 		}
 
 		try {
-			const data = await conn({
+			const data = await this.conn({
 				method: this.method,
 				url: url,
 			});
@@ -178,11 +181,10 @@ class RequestBase {
 export class AuthenticationRequest extends RequestBase {
 	username: string;
 	password: string;
-	conn: AxiosInstance;
 
 	/**
 	 * Creates an instance of AuthenticationRequest.
-	 * @date 01/11/2022 - 12:17:07
+	 * @date 01/11/2022 - 13:15:31
 	 *
 	 * @constructor
 	 * @param {string} service
@@ -200,8 +202,7 @@ export class AuthenticationRequest extends RequestBase {
 		password = '',
 		token = undefined,
 	) {
-		super(service, method, token);
-		this.conn = conn;
+		super(service, method, conn, token);
 		this.username = username;
 		this.password = password;
 	}
@@ -211,14 +212,13 @@ export class AuthenticationRequest extends RequestBase {
 	 * @date 21/10/2022 - 17:40:35
 	 *
 	 * @async
-	 * @param {AxiosInstance} conn
 	 * @param {string} username
 	 * @param {string} password
 	 * @returns {Promise<IToken>}
 	 */
 	async getToken(username: string, password: string): Promise<IToken> {
 		const url = this.prepareUrl([username], { password: password });
-		const loginData = await this.executeRequest(this.conn, url);
+		const loginData = await this.executeRequest(url);
 		const token: IToken = {
 			identifier: '',
 			secret_key: '',
@@ -244,12 +244,11 @@ export class AuthenticationRequest extends RequestBase {
  * @extends {RequestBase}
  */
 export class LogoutRequest extends RequestBase {
-	conn: AxiosInstance;
 	token: IToken;
 
 	/**
 	 * Creates an instance of LogoutRequest.
-	 * @date 01/11/2022 - 12:31:04
+	 * @date 01/11/2022 - 13:18:04
 	 *
 	 * @constructor
 	 * @param {string} service
@@ -263,25 +262,22 @@ export class LogoutRequest extends RequestBase {
 		conn: AxiosInstance,
 		token: IToken,
 	) {
-		super(service, method, token);
+		super(service, method, conn, token);
 		{
-			this.conn = conn;
 			this.token = token;
 		}
 	}
 
 	/**
-	 * Method to logout from the sunny portal API.
-	 * @date 21/10/2022 - 22:08:58
+	 * Description placeholder
+	 * @date 01/11/2022 - 13:22:22
 	 *
 	 * @async
-	 * @param {AxiosInstance} conn
-	 * @param {IToken} token
 	 * @returns {Promise<void>}
 	 */
 	async logout(): Promise<void> {
 		const url = this.prepareUrl([this.token.identifier]);
-		const logoutData = await this.executeRequest(this.conn, url);
+		const logoutData = await this.executeRequest(url);
 
 		this.parser.parseString(logoutData, (err: any, result: any) => {
 			this.logRequest.info('Logout completed successfully');
@@ -300,12 +296,11 @@ export class LogoutRequest extends RequestBase {
  * @extends {RequestBase}
  */
 export class PlantListRequest extends RequestBase {
-	conn: AxiosInstance;
 	token: IToken;
 
 	/**
 	 * Creates an instance of PlantListRequest.
-	 * @date 01/11/2022 - 12:40:02
+	 * @date 01/11/2022 - 13:19:42
 	 *
 	 * @constructor
 	 * @param {string} service
@@ -319,9 +314,8 @@ export class PlantListRequest extends RequestBase {
 		conn: AxiosInstance,
 		token: IToken,
 	) {
-		super(service, method, token);
+		super(service, method, conn, token);
 		{
-			this.conn = conn;
 			this.token = token;
 		}
 	}
@@ -337,7 +331,7 @@ export class PlantListRequest extends RequestBase {
 	async getPlantListData(): Promise<any> {
 
 		const url = this.prepareUrl([this.token.identifier]);
-		const plantListData = await this.executeRequest(this.conn, url);
+		const plantListData = await this.executeRequest(url);
 
 		return plantListData;
 	}
@@ -353,44 +347,48 @@ export class PlantListRequest extends RequestBase {
  * @extends {RequestBase}
  */
 export class PlantProfileRequest extends RequestBase {
+	token: IToken;
 	/**
 	 * Creates an instance of PlantProfileRequest.
-	 * @date 22/10/2022 - 23:29:51
+	 * @date 01/11/2022 - 13:21:51
 	 *
 	 * @constructor
 	 * @param {string} service
 	 * @param {string} method
+	 * @param {AxiosInstance} conn
 	 * @param {IToken} token
 	 */
 	constructor(
 		service: string,
 		method: string,
+		conn: AxiosInstance,
 		token: IToken,
 	) {
-		super(service, method, token);
+		super(service, method, conn, token);
+		{
+			this.token = token;
+		}
 	}
 
 	/**
-	 * Methd to get tge plant data from the sunny portal API.
-	 * @date 22/10/2022 - 23:30:00
+	 * Method to get the plant data from the sunny portal API.
+	 * @date 01/11/2022 - 13:23:23
 	 *
 	 * @async
-	 * @param {AxiosInstance} conn
-	 * @param {IToken} token
 	 * @param {string} plantID
 	 * @returns {Promise<any>}
 	 */
-	async getPlantData(conn: AxiosInstance, token: IToken, plantID: string): Promise<any> {
+	async getPlantData(plantID: string): Promise<any> {
 		const url = this.prepareUrl(
 			[plantID],
 			{
 				'view': 'profile',
 				"culture": "en-gb",
 				"plant-image-size": "64px",
-				"identifier": token.identifier
+				"identifier": this.token.identifier
 			}
 		);
-		const plantData = await this.executeRequest(conn, url);
+		const plantData = await this.executeRequest(url);
 
 		return plantData;
 	}
@@ -406,6 +404,7 @@ export class PlantProfileRequest extends RequestBase {
  * @extends {RequestBase}
  */
 export class PlantDeviceListRequest extends RequestBase {
+	token: IToken;
 
 	/**
 	 * Creates an instance of PlantDeviceListRequest.
@@ -414,14 +413,19 @@ export class PlantDeviceListRequest extends RequestBase {
 	 * @constructor
 	 * @param {string} service
 	 * @param {string} method
+	 * @param {AxiosInstance} conn
 	 * @param {IToken} token
 	 */
 	constructor(
 		service: string,
 		method: string,
+		conn: AxiosInstance,
 		token: IToken,
 	) {
-		super(service, method, token);
+		super(service, method, conn, token);
+		{
+			this.token = token;
+		}
 	}
 
 	/**
@@ -429,19 +433,17 @@ export class PlantDeviceListRequest extends RequestBase {
 	 * @date 25/10/2022 - 14:00:46
 	 *
 	 * @async
-	 * @param {AxiosInstance} conn
-	 * @param {IToken} token
 	 * @param {string} plantID
 	 * @returns {Promise<any>}
 	 */
-	async getPlantDeviceListData(conn: AxiosInstance, token: IToken, plantID: string): Promise<any> {
+	async getPlantDeviceListData(plantID: string): Promise<any> {
 		const url = this.prepareUrl(
 			[plantID],
 			{
-				"identifier": token.identifier
+				"identifier": this.token.identifier
 			}
 		);
-		const plantDeviceListData = await this.executeRequest(conn, url);
+		const plantDeviceListData = await this.executeRequest(url);
 
 		return plantDeviceListData;
 	}
@@ -457,7 +459,7 @@ export class PlantDeviceListRequest extends RequestBase {
  * @extends {RequestBase}
  */
 export class PlantDeviceParametersRequest extends RequestBase {
-
+	token: IToken;
 	/**
 	 * Creates an instance of PlantDeviceParametersRequest.
 	 * @date 25/10/2022 - 14:28:52
@@ -465,14 +467,19 @@ export class PlantDeviceParametersRequest extends RequestBase {
 	 * @constructor
 	 * @param {string} service
 	 * @param {string} method
+	 * @param {AxiosInstance} conn
 	 * @param {IToken} token
 	 */
 	constructor(
 		service: string,
 		method: string,
+		conn: AxiosInstance,
 		token: IToken,
 	) {
-		super(service, method, token);
+		super(service, method, conn, token);
+		{
+			this.token = token;
+		}
 	}
 
 	/**
@@ -480,21 +487,19 @@ export class PlantDeviceParametersRequest extends RequestBase {
 	 * @date 25/10/2022 - 14:30:00
 	 *
 	 * @async
-	 * @param {AxiosInstance} conn
-	 * @param {IToken} token
 	 * @param {string} plantID
 	 * @param {string} deviceID
 	 * @returns {Promise<any>}
 	 */
-	async getPlantDeviceParametersData(conn: AxiosInstance, token: IToken, plantID: string, deviceID: string): Promise<any> {
+	async getPlantDeviceParametersData(plantID: string, deviceID: string): Promise<any> {
 		const url = this.prepareUrl(
 			[plantID, deviceID],
 			{
 				"view": 'parameter',
-				"identifier": token.identifier
+				"identifier": this.token.identifier
 			}
 		);
-		const plantDeviceParametersData = await this.executeRequest(conn, url);
+		const plantDeviceParametersData = await this.executeRequest(url);
 
 		return plantDeviceParametersData;
 	}
@@ -510,21 +515,32 @@ export class PlantDeviceParametersRequest extends RequestBase {
  * @extends {RequestBase}
  */
 export class DataRequest extends RequestBase {
+	token: IToken;
+	plantID: string;
+
 	/**
-	 * Creates an instance of LastDataExactRequest.
-	 * @date 30/10/2022 - 16:49:43
+	 * Creates an instance of DataRequest.
+	 * @date 01/11/2022 - 13:29:16
 	 *
 	 * @constructor
 	 * @param {string} service
 	 * @param {string} method
+	 * @param {AxiosInstance} conn
 	 * @param {IToken} token
+	 * @param {string} plantID
 	 */
 	constructor(
 		service: string,
 		method: string,
+		conn: AxiosInstance,
 		token: IToken,
+		plantID: string,
 	) {
-		super(service, method, token);
+		super(service, method, conn, token);
+		{
+			this.token = token;
+			this.plantID = plantID;
+		}
 	}
 
 	/**
@@ -532,53 +548,50 @@ export class DataRequest extends RequestBase {
 	 * @date 30/10/2022 - 16:49:52
 	 *
 	 * @async
-	 * @param {AxiosInstance} conn
-	 * @param {IToken} token
-	 * @param {string} plantID
 	 * @param {string} date
 	 * @returns {Promise<any>}
 	 */
-	async getLastDataExactData(conn: AxiosInstance, token: IToken, plantID: string, date: string): Promise<any> {
+	async getLastDataExactData(date: string): Promise<any> {
 		const url = this.prepareUrl(
-			[plantID, "Energy", date],
+			[this.plantID, "Energy", date],
 			{
 				"culture": "en-gb",
-				"identifier": token.identifier,
+				"identifier": this.token.identifier,
 				"unit": "kWh",
 				"view": "Lastdataexact"
 			}
 		);
-		const lastDataExactData = await this.executeRequest(conn, url);
+		const lastDataExactData = await this.executeRequest(url);
 
 		return lastDataExactData;
 	}
 
-	async getAllDataRequestData(conn: AxiosInstance, token: IToken, plantID: string, date: string, interval: string): Promise<any> {
+	async getAllDataRequestData(date: string, interval: string): Promise<any> {
 		const url = this.prepareUrl(
-			[plantID, "Energy", date],
+			[this.plantID, "Energy", date],
 			{
 				"culture": "en-gb",
-				"identifier": token.identifier,
+				"identifier": this.token.identifier,
 				"period": "infinite",
 				"interval": interval,
 				"unit": "kWh",
 			}
 		);
-		const allDataRequestData = await this.executeRequest(conn, url);
+		const allDataRequestData = await this.executeRequest(url);
 
 		return allDataRequestData;
 	}
 
-	async getDayOverviewRequestData(conn: AxiosInstance, token: IToken, plantID: string, date: string, quarter = true, include_all = false): Promise<any> {
+	async getDayOverviewRequestData(date: string, quarter = true, include_all = false): Promise<any> {
 		const datatype = quarter ? "day-fifteen" : "day";
 		const url = this.prepareUrl(
-			[plantID, `overview-${datatype}-total`, date],
+			[this.plantID, `overview-${datatype}-total`, date],
 			{
 				"culture": "en-gb",
-				"identifier": token.identifier,
+				"identifier": this.token.identifier,
 			}
 		);
-		const dayOverviewRequestData = await this.executeRequest(conn, url);
+		const dayOverviewRequestData = await this.executeRequest(url);
 
 		return dayOverviewRequestData;
 
