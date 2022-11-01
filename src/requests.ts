@@ -300,21 +300,30 @@ export class LogoutRequest extends RequestBase {
  * @extends {RequestBase}
  */
 export class PlantListRequest extends RequestBase {
+	conn: AxiosInstance;
+	token: IToken;
+
 	/**
-	 * constructor for retrieving the plant list.
-	 * @date 21/10/2022 - 17:40:26
+	 * Creates an instance of PlantListRequest.
+	 * @date 01/11/2022 - 12:40:02
 	 *
 	 * @constructor
 	 * @param {string} service
 	 * @param {string} method
-	 * @param {*} [token=undefined]
+	 * @param {AxiosInstance} conn
+	 * @param {IToken} token
 	 */
 	constructor(
 		service: string,
 		method: string,
+		conn: AxiosInstance,
 		token: IToken,
 	) {
 		super(service, method, token);
+		{
+			this.conn = conn;
+			this.token = token;
+		}
 	}
 
 
@@ -323,14 +332,12 @@ export class PlantListRequest extends RequestBase {
 	 * @date 25/10/2022 - 14:31:39
 	 *
 	 * @async
-	 * @param {AxiosInstance} conn
-	 * @param {IToken} token
 	 * @returns {Promise<any>}
 	 */
-	async getPlantListData(conn: AxiosInstance, token: IToken): Promise<any> {
+	async getPlantListData(): Promise<any> {
 
-		const url = this.prepareUrl([token.identifier]);
-		const plantListData = await this.executeRequest(conn, url);
+		const url = this.prepareUrl([this.token.identifier]);
+		const plantListData = await this.executeRequest(this.conn, url);
 
 		return plantListData;
 	}
@@ -346,10 +353,6 @@ export class PlantListRequest extends RequestBase {
  * @extends {RequestBase}
  */
 export class PlantProfileRequest extends RequestBase {
-	getPlantDeviceListData(conn: AxiosInstance, token: IToken, plantId: string) {
-		throw new Error('Method not implemented.');
-	}
-
 	/**
 	 * Creates an instance of PlantProfileRequest.
 	 * @date 22/10/2022 - 23:29:51

@@ -72,21 +72,20 @@ async function logout(): Promise<void> {
  * @date 21/10/2022 - 22:02:48
  *
  * @async
- * @param {AxiosInstance} conn
- * @param {IToken} token
  * @returns {Promise<any>}
  */
-async function parseJSONPlantList(conn: AxiosInstance, token: IToken): Promise<IPlantList> {
+async function parseJSONPlantList(): Promise<IPlantList> {
 	const request = new PlantListRequest(
 		'plantlist',
 		'GET',
+		conn,
 		token
 	);
 	const plantList: IPlantList = {
 		plantname: '',
 		plantoid: '',
 	};
-	const parsePlantListData = await request.getPlantListData(conn, token);
+	const parsePlantListData = await request.getPlantListData();
 	parser.parseString(parsePlantListData, (err: any, result: any) => {
 		plantList.plantname = result['sma.sunnyportal.services'].service.plantlist.plant.$.name;
 		plantList.plantoid = result['sma.sunnyportal.services'].service.plantlist.plant.$.oid;
@@ -266,7 +265,7 @@ const conn = axios.create({
 });
 
 const token = await getToken(sunnyConfig.Login.email, sunnyConfig.Login.password);
-const plantlist = await parseJSONPlantList(conn, token);
+const plantlist = await parseJSONPlantList();
 const plantoid = plantlist.plantoid;
 const plantData = await parseJSONPlantData(conn, token, plantoid);
 
