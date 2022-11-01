@@ -332,30 +332,30 @@ for (const key in communicationProducts.communicationProduct) {
 		};
 	}
 }
-// console.log(plantProfile);
+// console.dir(plantProfile);
 
 const plantDeviceListData = await parseJSONPlantDeviceListData(conn, token, plantoid);
-// console.log(plantDeviceListData);
+// console.dir(plantDeviceListData);
 
 const plantDeviceParameterData = await parseJSONPlantDeviceParameterData(conn, token, plantoid, plantDeviceListData.device[0].$.oid);
 // for (const key in plantDeviceParameterData.service.parameterlist.parameter) {
-// 	console.log(plantDeviceParameterData.service.parameterlist.parameter[key]);
+// 	console.dir(plantDeviceParameterData.service.parameterlist.parameter[key]);
 // }
 
 const lastDataExactData = await parseJSONLastDataExactData(conn, token, plantoid, (new Date()).toISOString().slice(0, 10));
 // for (const key in lastDataExactData.service.data.Energy) {
-// 	console.log(lastDataExactData.service.data.Energy[key]);
+// 	console.dir(lastDataExactData.service.data.Energy[key]);
 // }
 
 const allDataRequestData = await parseJSONAllDataRequestData(conn, token, plantoid, (new Date()).toISOString().slice(0, 10), 'month');
 // for (const key in allDataRequestData.service.data.Energy.channel) {
-// 	console.log(allDataRequestData.service.data.Energy.channel[key].month);
+// 	console.dir(allDataRequestData.service.data.Energy.channel[key].month);
 // }
 
 const dayOverviewRequestData = await parseJSONDayOverviewRequestData(conn, token, plantoid, (new Date()).toISOString().slice(0, 10), true, true);
-// console.log(dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel);
+// console.dir(dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel);
 // for (const key in dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel) {
-// 	console.log(dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel[key].day.fiveteen);
+// 	console.dir(dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel[key].day.fiveteen);
 // }
 
 logout(conn, token);
