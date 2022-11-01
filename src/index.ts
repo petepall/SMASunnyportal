@@ -57,13 +57,14 @@ async function getToken(username: string, password: string): Promise<IToken> {
  * @param {IToken} token
  * @returns {*}
  */
-async function logout(conn: AxiosInstance, token: IToken): Promise<void> {
+async function logout(): Promise<void> {
 	const request = new LogoutRequest(
 		'authentication',
 		'DELETE',
+		conn,
 		token
 	);
-	await request.logout(conn, token);
+	await request.logout();
 }
 
 /**
@@ -359,4 +360,4 @@ const dayOverviewRequestData = await parseJSONDayOverviewRequestData(conn, token
 // 	console.dir(dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel[key].day.fiveteen);
 // }
 
-logout(conn, token);
+logout();

@@ -236,7 +236,7 @@ export class AuthenticationRequest extends RequestBase {
 
 /**
  * Class for handling logout from the sunny portal API.
- * @date 21/10/2022 - 22:06:55
+ * @date 01/11/2022 - 12:31:20
  *
  * @export
  * @class LogoutRequest
@@ -244,21 +244,30 @@ export class AuthenticationRequest extends RequestBase {
  * @extends {RequestBase}
  */
 export class LogoutRequest extends RequestBase {
+	conn: AxiosInstance;
+	token: IToken;
+
 	/**
 	 * Creates an instance of LogoutRequest.
-	 * @date 21/10/2022 - 17:40:26
+	 * @date 01/11/2022 - 12:31:04
 	 *
 	 * @constructor
 	 * @param {string} service
 	 * @param {string} method
-	 * @param {*} [token=undefined]
+	 * @param {AxiosInstance} conn
+	 * @param {IToken} token
 	 */
 	constructor(
 		service: string,
 		method: string,
+		conn: AxiosInstance,
 		token: IToken,
 	) {
 		super(service, method, token);
+		{
+			this.conn = conn;
+			this.token = token;
+		}
 	}
 
 	/**
@@ -270,9 +279,9 @@ export class LogoutRequest extends RequestBase {
 	 * @param {IToken} token
 	 * @returns {Promise<void>}
 	 */
-	async logout(conn: AxiosInstance, token: IToken): Promise<void> {
-		const url = this.prepareUrl([token.identifier]);
-		const logoutData = await this.executeRequest(conn, url);
+	async logout(): Promise<void> {
+		const url = this.prepareUrl([this.token.identifier]);
+		const logoutData = await this.executeRequest(this.conn, url);
 
 		this.parser.parseString(logoutData, (err: any, result: any) => {
 			this.logRequest.info('Logout completed successfully');
