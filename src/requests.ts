@@ -616,6 +616,14 @@ export class DataRequest extends RequestBase {
 
 	}
 
+	/**
+	 * Method to retrieve the solar generation data for a given month per day from the sunny portal API.
+	 * @date 01/11/2022 - 16:40:40
+	 *
+	 * @async
+	 * @param {string} date
+	 * @returns {Promise<any>}
+	 */
 	async getMonthOverviewRequestData(date: string): Promise<any> {
 		const url = this.prepareUrl(
 			[this.plantID, `overview-month-total`, date],
