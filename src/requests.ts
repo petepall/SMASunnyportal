@@ -566,6 +566,15 @@ export class DataRequest extends RequestBase {
 		return lastDataExactData;
 	}
 
+	/**
+	 * Method to get all the solar generation data for a given date from the sunny portal API.
+	 * @date 01/11/2022 - 13:49:28
+	 *
+	 * @async
+	 * @param {string} date
+	 * @param {string} interval
+	 * @returns {Promise<any>}
+	 */
 	async getAllDataRequestData(date: string, interval: string): Promise<any> {
 		const url = this.prepareUrl(
 			[this.plantID, "Energy", date],
@@ -582,6 +591,16 @@ export class DataRequest extends RequestBase {
 		return allDataRequestData;
 	}
 
+	/**
+	 * Method to retrieve the solar generation data for a given date per day or quarter hour from the sunny portal API.
+	 * @date 01/11/2022 - 13:50:05
+	 *
+	 * @async
+	 * @param {string} date
+	 * @param {boolean} [quarter=true]
+	 * @param {boolean} [include_all=false]
+	 * @returns {Promise<any>}
+	 */
 	async getDayOverviewRequestData(date: string, quarter = true, include_all = false): Promise<any> {
 		const datatype = quarter ? "day-fifteen" : "day";
 		const url = this.prepareUrl(
@@ -595,5 +614,18 @@ export class DataRequest extends RequestBase {
 
 		return dayOverviewRequestData;
 
+	}
+
+	async getMonthOverviewRequestData(date: string): Promise<any> {
+		const url = this.prepareUrl(
+			[this.plantID, `overview-month-total`, date],
+			{
+				"culture": "en-gb",
+				"identifier": this.token.identifier,
+			}
+		);
+		const monthOverviewRequestData = await this.executeRequest(url);
+
+		return monthOverviewRequestData;
 	}
 }

@@ -7,6 +7,7 @@ import {
 	askForLoginData,
 	checkIfFileOrPathExists,
 	createFolder,
+	getFirstDayOfTheMonth,
 	readConfigFile,
 	writeJsonFile
 } from './utils.js';
@@ -28,7 +29,7 @@ const logger: Logger = pino({
 });
 
 /**
- * Authenticate with the sunny portal API and retrieve a token.
+ * Function to authenticate with the sunny portal API and retrieve a token.
  * @date 21/10/2022 - 17:42:11
  *
  * @async
@@ -49,7 +50,7 @@ async function getToken(username: string, password: string): Promise<IToken> {
 }
 
 /**
- * Logout from the Sunny Portal API.
+ * Function to logout from the Sunny Portal API.
  * @date 21/10/2022 - 20:17:53
  *
  * @async
@@ -68,7 +69,7 @@ async function logout(): Promise<void> {
 }
 
 /**
- * Retrieve the list of plants and return the plant id and name as object.
+ * Function to retrieve the list of plants and return the plant id and name as object.
  * @date 01/11/2022 - 13:38:26
  *
  * @async
@@ -95,7 +96,7 @@ async function parseJSONPlantList(): Promise<IPlantList> {
 }
 
 /**
- * Retrieve the plant information based on the plantID and return the data as a JSON object.
+ * Function to retrieve the plant information based on the plantID and return the data as a JSON object.
  * @date 01/11/2022 - 13:38:50
  *
  * @async
@@ -121,7 +122,7 @@ async function parseJSONPlantData(plantId: string): Promise<any> {
 }
 
 /**
- * Retrieve the list of devices for a plant and return the device list as a JSON object.
+ * Function to retrieve the list of devices for a plant and return the device list as a JSON object.
  * @date 01/11/2022 - 13:39:08
  *
  * @async
@@ -147,7 +148,7 @@ async function parseJSONPlantDeviceListData(plantId: string): Promise<any> {
 }
 
 /**
- * Retrieve the device parameters for a given deviceID and return the device parameters as a JSON object.
+ * Function to retrieve the device parameters for a given deviceID and return the device parameters as a JSON object.
  * @date 01/11/2022 - 13:39:29
  *
  * @async
@@ -174,7 +175,7 @@ async function parseJSONPlantDeviceParameterData(plantId: string, deviceId: stri
 }
 
 /**
- * Method to retrieve the last exact data from the Sunny Portal API.
+ * Function to retrieve the last exact data from the Sunny Portal API.
  * @date 01/11/2022 - 13:41:35
  *
  * @async
@@ -201,7 +202,7 @@ async function parseJSONLastDataExactData(date: string): Promise<any> {
 }
 
 /**
- * Method to retrieve all the generation data on a specific date from the Sunny Portal API.
+ * Function to retrieve all the generation data on a specific date from the Sunny Portal API.
  * @date 01/11/2022 - 13:42:37
  *
  * @async
@@ -229,7 +230,7 @@ async function parseJSONAllDataRequestData(date: string, interval: string): Prom
 }
 
 /**
- * Method to retrieve the day overview by day or quarter hour from the Sunny Portal API.
+ * Function to retrieve the day overview by day or quarter hour from the Sunny Portal API.
  * @date 01/11/2022 - 13:43:39
  *
  * @async
@@ -247,6 +248,25 @@ async function parseJSONDayOverviewRequestData(date: string, quarter: boolean, i
 		plantoid
 	);
 	const allDataRequestData = await request.getDayOverviewRequestData(date, quarter, include_all);
+
+	let data = null;
+	parser.parseString(allDataRequestData, (err: any, result: any) => {
+		data = result['sma.sunnyportal.services'];
+		logger.debug(data);
+	});
+
+	return data;
+}
+
+async function parseJSONMonthOverviewRequestData(date: string): Promise<any> {
+	const request = new DataRequest(
+		'data',
+		'GET',
+		conn,
+		token,
+		plantoid
+	);
+	const allDataRequestData = await request.getMonthOverviewRequestData(date);
 
 	let data = null;
 	parser.parseString(allDataRequestData, (err: any, result: any) => {
@@ -388,5 +408,14 @@ const dayOverviewRequestData = await parseJSONDayOverviewRequestData((new Date()
 // for (const key in dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel) {
 // 	console.dir(dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel[key].day.fiveteen);
 // }
+
+const today = new Date();
+const datePreviousMonth = today.setDate(0);
+
+const monthOverviewRequestData = await parseJSONMonthOverviewRequestData(getFirstDayOfTheMonth(new Date(datePreviousMonth)));
+// console.dir(monthOverviewRequestData.service.data);
+for (const key in monthOverviewRequestData.service.data['overview-month-total'].channel) {
+	console.dir(monthOverviewRequestData.service.data['overview-month-total'].channel[key].month.day);
+}
 
 logout();
