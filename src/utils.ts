@@ -90,3 +90,20 @@ export function writeJsonFile(path: string, data: any): void {
 		}
 	});
 }
+
+/**
+ * Function to determine the first day of the month based on a given date
+ * @date 01/11/2022 - 14:03:33
+ *
+ * @export
+ * @param {Date} date
+ * @returns {string} - date in the format YYYY-MM-DD
+ */
+export function getFirstDayOfTheMonth(date: Date): string {
+	console.log(date);
+
+	date.setDate(1);
+	console.log(date);
+
+	return date.toISOString().slice(0, 10);
+}
