@@ -1,7 +1,7 @@
-import axios, { AxiosInstance } from 'axios';
-import pino, { Logger } from 'pino';
+import axios from 'axios';
 import { Parser } from 'xml2js';
 import { IPlantList, IPlantProfile, ISunnyConfig, IToken } from './interfaces.js';
+import logger from './logger/index.js';
 import { AuthenticationRequest, DataRequest, LogoutRequest, PlantDeviceListRequest, PlantDeviceParametersRequest, PlantListRequest, PlantProfileRequest } from './requests.js';
 import {
 	askForLoginData,
@@ -15,17 +15,6 @@ import {
 // Setup the parser for turning XML into JSON.
 const parser = new Parser({
 	explicitArray: false,
-});
-
-// setup the logger
-const logger: Logger = pino({
-	transport: {
-		target: 'pino-pretty',
-		options: {
-			colorize: true,
-		},
-	},
-	level: 'info',
 });
 
 /**

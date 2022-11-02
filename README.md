@@ -44,5 +44,11 @@ Provide a **typescript based interface** for retrieving SMA Solar plant informat
 The current index.ts file contains testing code for each of the requests that can be made.
 
 ## Tasks
-- [ ] Build clean response handling for each of the requests.
+- [ ] Switch the logger from Pino to Winston
+	- [x] Move Pino logger into it's own file
+	- [x] Update the logger entries in requests and index
+	- [ ] Add Winston logger to the project
+	- [ ] Replace Pino logger by Winston
+	- [ ] Enable development (DEBUG) and test/production (INFO) levels for Winston.
+- [ ] Setup proper response handling and parsing.
 - [ ] Refactor the code to remove further duplication.

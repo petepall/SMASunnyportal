@@ -1,9 +1,8 @@
 import { AxiosError, AxiosInstance } from 'axios';
 import crypto from 'crypto';
-import pino from 'pino';
 import { Parser } from 'xml2js';
 import { IToken } from './interfaces.js';
-
+import logger from './logger/index.js';
 
 /**
  * Class for handling requests to the Sunny Portal API.
@@ -52,22 +51,6 @@ class RequestBase {
 		this.base_path = base_path;
 		this.url = url;
 	}
-
-	/**
-	 * Logger setup for the request class.
-	 * @date 19/10/2022 - 17:36:41
-	 *
-	 * @type {*}
-	 */
-	logRequest = pino({
-		transport: {
-			target: 'pino-pretty',
-			options: {
-				colorize: true,
-			},
-		},
-		level: 'info',
-	});
 
 	parser = new Parser({
 		explicitArray: false,
@@ -150,9 +133,9 @@ class RequestBase {
 	async executeRequest(url: string): Promise<any> {
 		if (url.includes("password=")) {
 			const passUrl = url.split('password=')[0] + 'password=********';
-			this.logRequest.info(`${this.method} request to ${passUrl}`);
+			logger.info(`${this.method} request to ${passUrl}`);
 		} else {
-			this.logRequest.info(`${this.method} request to ${url}`);
+			logger.info(`${this.method} request to ${url}`);
 		}
 
 		try {
@@ -163,7 +146,7 @@ class RequestBase {
 			return await data.data;
 		} catch (error) {
 			const err = error as AxiosError;
-			this.logRequest.debug(err.response?.data);
+			logger.debug(err.response?.data);
 			return err.response;
 		}
 	}
@@ -226,8 +209,8 @@ export class AuthenticationRequest extends RequestBase {
 		this.parser.parseString(loginData, (err: any, result: any) => {
 			token.identifier = result['sma.sunnyportal.services'].service.authentication.$.identifier;
 			token.secret_key = result['sma.sunnyportal.services'].service.authentication.$.key;
-			this.logRequest.info('Login successful');
-			this.logRequest.debug(result);
+			logger.info('Login successful');
+			logger.debug(result);
 		});
 
 		return token;
@@ -280,8 +263,8 @@ export class LogoutRequest extends RequestBase {
 		const logoutData = await this.executeRequest(url);
 
 		this.parser.parseString(logoutData, (err: any, result: any) => {
-			this.logRequest.info('Logout completed successfully');
-			this.logRequest.debug(result);
+			logger.info('Logout completed successfully');
+			logger.debug(result);
 		});
 	}
 }
