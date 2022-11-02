@@ -7,8 +7,9 @@
   "scripts": {
     "build": "rimraf ./dist && tsc",
     "dev": "nodemon",
-    "start": "pnpm run build && node dist/index.js",
-    "start:dev": "tsc && node dist/index.js"
+    "start:prod": "pnpm run build && node dist/index.js",
+    "start:test": "export NODE_ENV=test && tsc && node dist/index.js",
+    "start:dev": "export NODE_ENV=development && tsc && node dist/index.js"
   },
   "keywords": [],
   "author": "Peter Pallen",

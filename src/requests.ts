@@ -4,6 +4,7 @@ import { Parser } from 'xml2js';
 import { IToken } from './interfaces.js';
 import logger from './logger/index.js';
 
+
 /**
  * Class for handling requests to the Sunny Portal API.
  * @date 15/10/2022 - 14:26:15

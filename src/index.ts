@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Parser } from 'xml2js';
-import { IPlantList, IPlantProfile, ISunnyConfig, IToken } from './interfaces.js';
+import { IPlantList, IPlantProfile, ISunnyConfig, IToken } from './interfaces';
 import logger from './logger/index.js';
 import { AuthenticationRequest, DataRequest, LogoutRequest, PlantDeviceListRequest, PlantDeviceParametersRequest, PlantListRequest, PlantProfileRequest } from './requests.js';
 import {
@@ -315,6 +315,13 @@ async function parseJSONEnergyBalanceRequestData(date: string, period: string, i
 /*
  * Main program execution.
 */
+
+if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+	console.log('-------');
+	console.log(`ENVIRONMENT: ${process.env.NODE_ENV}`);
+	console.log('-------');
+}
+
 let sunnyConfig: ISunnyConfig = {
 	Login: {
 		email: '',
@@ -461,8 +468,8 @@ const yearlyOverviewRequestData = await parseJSONYearlyOverviewRequestData(getFi
 
 const energyBalanceRequestData = await parseJSONEnergyBalanceRequestData("2022-10-01", "month", "day", false);
 // console.dir(energyBalanceRequestData.service.data.energybalance.month);
-for (const key in energyBalanceRequestData.service.data.energybalance.month.day) {
-	console.dir(energyBalanceRequestData.service.data.energybalance.month.day[key]);
-}
+// for (const key in energyBalanceRequestData.service.data.energybalance.month.day) {
+// 	console.dir(energyBalanceRequestData.service.data.energybalance.month.day[key]);
+// }
 
 logout();

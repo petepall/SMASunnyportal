@@ -1,13 +1,14 @@
-import pino from 'pino';
+import { Logger } from 'winston';
+import devLogger from './devLogger.js';
+import prodLogger from './prodLogger.js';
 
-const logger = pino({
-	transport: {
-		target: 'pino-pretty',
-		options: {
-			colorize: true,
-		},
-	},
-	level: 'info',
-});
+
+let logger: Logger;
+
+if (process.env.NODE_ENV === 'development') {
+	logger = devLogger();
+} else {
+	logger = prodLogger();
+}
 
 export default logger;
