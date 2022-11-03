@@ -360,6 +360,7 @@ const token = await getToken(sunnyConfig.Login.email, sunnyConfig.Login.password
 const plantlist = await parseJSONPlantList();
 const plantoid = plantlist.plantoid;
 const plantData = await parseJSONPlantData(plantoid);
+logger.info(plantData);
 
 const plantProfile: IPlantProfile = {
 	plantHeader: {

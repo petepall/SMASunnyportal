@@ -1,13 +1,18 @@
 import { createLogger, format, Logger, transports } from 'winston';
 
-function prodLogger(): Logger {
+function testLogger(): Logger {
+
+	const logFormat = format.printf(({ level, message, timestamp, stack }) => {
+		return `${timestamp} ${level}: ${message || stack}`;
+	});
+
 	return createLogger({
 		level: 'info',
 		format: format.combine(
-			format.timestamp(),
-			format.splat(),
+			format.colorize(),
+			format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
 			format.errors({ stack: true }),
-			format.json(),
+			logFormat,
 		),
 		defaultMeta: { service: 'SMA_General' },
 		transports: [
@@ -22,4 +27,4 @@ function prodLogger(): Logger {
 	});
 }
 
-export default prodLogger;
+export default testLogger;

@@ -1,19 +1,14 @@
 import { createLogger, format, Logger, transports } from 'winston';
 
 function devLogger(): Logger {
-	const logFormat = format.printf(({ level, message, timestamp, stack }) => {
-		return `${timestamp} ${level}: ${message || stack}`;
-	});
-
 	return createLogger({
 		level: 'info',
 		format: format.combine(
-			format.colorize(),
 			format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
 			format.splat(),
-			format.prettyPrint(),
+			format.json(),
 			format.errors({ stack: true }),
-			logFormat,
+			format.prettyPrint(),
 		),
 		defaultMeta: { service: 'SMA_General' },
 		transports: [
