@@ -109,7 +109,8 @@ class RequestBase {
 				this.token.secret_key,
 				this.method,
 				this.service,
-				timeStamp, this.token.identifier
+				timeStamp,
+				this.token.identifier
 			);
 			params['signature-method'] = 'auth';
 			params['signature-version'] = this.version.toString();

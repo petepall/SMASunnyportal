@@ -104,3 +104,51 @@ export function getFirstDayOfTheMonth(date: Date): string {
 
 	return date.toISOString().slice(0, 10);
 }
+
+/**
+ * Function to check if a key exists in an object
+ * @date 03/11/2022 - 16:51:00
+ *
+ * @param {*} obj
+ * @param {string} key
+ * @returns {*}
+ */
+export const keyExists = (obj: any, key: string): any => {
+	if (!obj || (typeof obj !== "object" && !Array.isArray(obj))) {
+		return false;
+	}
+
+	// eslint-disable-next-line no-prototype-builtins
+	else if (obj.hasOwnProperty(key)) {
+		return true;
+	}
+	else if (Array.isArray(obj)) {
+		for (let i = 0; i < obj.length; i++) {
+			const result1 = keyExists(obj[i], key);
+			if (result1) {
+				return result1;
+			}
+		}
+	}
+	else {
+		for (const k in obj) {
+			const result1 = keyExists(obj[k], key);
+			if (result1) {
+				return result1;
+			}
+		}
+	}
+
+	return false;
+};
+
+/**
+ * Function to convert kilowattpiek to wattpiek
+ * @date 03/11/2022 - 16:51:19
+ *
+ * @param {number} kwp
+ * @returns {number}
+ */
+export const kwpTOwp = (kwp: number): number => {
+	return kwp * 1000;
+};

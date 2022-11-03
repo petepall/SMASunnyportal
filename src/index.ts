@@ -2,12 +2,21 @@ import axios from 'axios';
 import { Parser } from 'xml2js';
 import { IPlantList, IPlantProfile, ISunnyConfig, IToken } from './interfaces';
 import logger from './logger/index.js';
-import { AuthenticationRequest, DataRequest, LogoutRequest, PlantDeviceListRequest, PlantDeviceParametersRequest, PlantListRequest, PlantProfileRequest } from './requests.js';
+import {
+	AuthenticationRequest,
+	DataRequest,
+	LogoutRequest,
+	PlantDeviceListRequest,
+	PlantDeviceParametersRequest,
+	PlantListRequest,
+	PlantProfileRequest
+} from './requests.js';
 import {
 	askForLoginData,
 	checkIfFileOrPathExists,
 	createFolder,
 	getFirstDayOfTheMonth,
+	keyExists,
 	readConfigFile,
 	writeJsonFile
 } from './utils.js';
@@ -103,7 +112,7 @@ async function parseJSONPlantData(plantId: string): Promise<any> {
 
 	let data = null;
 	parser.parseString(plantData, (err: any, result: any) => {
-		data = result['sma.sunnyportal.services'].service.plant;
+		data = result;
 		logger.debug(data);
 	});
 
@@ -293,7 +302,12 @@ async function parseJSONYearlyOverviewRequestData(date: string): Promise<any> {
 	return data;
 }
 
-async function parseJSONEnergyBalanceRequestData(date: string, period: string, interval: string, total?: boolean): Promise<any> {
+async function parseJSONEnergyBalanceRequestData(
+	date: string,
+	period: string,
+	interval: string,
+	total?: boolean
+): Promise<any> {
 	const request = new DataRequest(
 		'data',
 		'GET',
@@ -360,7 +374,14 @@ const token = await getToken(sunnyConfig.Login.email, sunnyConfig.Login.password
 const plantlist = await parseJSONPlantList();
 const plantoid = plantlist.plantoid;
 const plantData = await parseJSONPlantData(plantoid);
-logger.info(plantData);
+
+
+// eslint-disable-next-line no-prototype-builtins
+if (keyExists(plantData, 'error')) {
+	console.log(`Error has been found in respone`);
+} else {
+	logger.info(plantData);
+}
 
 const plantProfile: IPlantProfile = {
 	plantHeader: {
@@ -375,7 +396,48 @@ const plantProfile: IPlantProfile = {
 	},
 };
 
-const inverters = plantData.inverters;
+const plantHeader = plantData['sma.sunnyportal.services'].service.plant;
+plantProfile.plantHeader = {
+	plantname: plantHeader.name._,
+	peakpower: plantHeader['peak-power']._,
+	powerunit: plantHeader['peak-power'].$.unit,
+	location: plantHeader['city-country']._,
+	startData: plantHeader['start-date']._,
+	description: plantHeader.description._,
+	plantImage: plantHeader['plant-image']._,
+	plantImageHight: plantHeader['plant-image'].$.height,
+	plantImageWidth: plantHeader['plant-image'].$.width,
+};
+
+const modules = plantData['sma.sunnyportal.services'].service.plant.modules;
+for (const key in modules.module) {
+	const details = [];
+	if (modules.module.length === undefined) {
+		if (key === '$') {
+			for (const moduleKey in modules.module[key]) {
+				details.push(modules.module[key][moduleKey]);
+			}
+			plantProfile.modules[key] = {
+				moduleName: modules.module._,
+				numberOfModules: details[0],
+				alignment: modules.alignment._,
+				gradient: modules.gradient._,
+			};
+		}
+	} else {
+		for (const moduleKey in modules.module[key].$) {
+			details.push(modules.module[key].$[moduleKey]);
+		}
+		plantProfile.modules[key] = {
+			moduleName: modules.module[key]._,
+			numberOfModules: details[0],
+			alignment: modules.alignment[key]._,
+			gradient: modules.gradient[key]._,
+		};
+	}
+}
+
+const inverters = plantData['sma.sunnyportal.services'].service.plant.inverters;
 for (const key in inverters.inverter) {
 	const details = [];
 	if (inverters.inverter.length === undefined) {
@@ -401,7 +463,7 @@ for (const key in inverters.inverter) {
 	}
 }
 
-const communicationProducts = plantData.communicationProducts;
+const communicationProducts = plantData['sma.sunnyportal.services'].service.plant.communicationProducts;
 for (const key in communicationProducts.communicationProduct) {
 	const details = [];
 	if (communicationProducts.communicationProduct.length === undefined) {
@@ -426,12 +488,15 @@ for (const key in communicationProducts.communicationProduct) {
 		};
 	}
 }
-// console.dir(plantProfile);
+console.dir(plantProfile);
 
 const plantDeviceListData = await parseJSONPlantDeviceListData(plantoid);
 // console.dir(plantDeviceListData);
 
-const plantDeviceParameterData = await parseJSONPlantDeviceParameterData(plantoid, plantDeviceListData.device[0].$.oid);
+const plantDeviceParameterData = await parseJSONPlantDeviceParameterData(
+	plantoid,
+	plantDeviceListData.device[0].$.oid
+);
 // for (const key in plantDeviceParameterData.service.parameterlist.parameter) {
 // 	console.dir(plantDeviceParameterData.service.parameterlist.parameter[key]);
 // }
@@ -441,12 +506,19 @@ const lastDataExactData = await parseJSONLastDataExactData((new Date()).toISOStr
 // 	console.dir(lastDataExactData.service.data.Energy[key]);
 // }
 
-const allDataRequestData = await parseJSONAllDataRequestData((new Date()).toISOString().slice(0, 10), 'month');
+const allDataRequestData = await parseJSONAllDataRequestData(
+	(new Date()).toISOString().slice(0, 10),
+	'month'
+);
 // for (const key in allDataRequestData.service.data.Energy.channel) {
 // 	console.dir(allDataRequestData.service.data.Energy.channel[key].month);
 // }
 
-const dayOverviewRequestData = await parseJSONDayOverviewRequestData((new Date()).toISOString().slice(0, 10), true, true);
+const dayOverviewRequestData = await parseJSONDayOverviewRequestData(
+	(new Date()).toISOString().slice(0, 10),
+	true,
+	true
+);
 // console.dir(dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel);
 // for (const key in dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel) {
 // 	console.dir(dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel[key].day.fiveteen);
@@ -455,19 +527,30 @@ const dayOverviewRequestData = await parseJSONDayOverviewRequestData((new Date()
 const today = new Date();
 const datePreviousMonth = today.setDate(0);
 
-const monthOverviewRequestData = await parseJSONMonthOverviewRequestData(getFirstDayOfTheMonth(new Date(datePreviousMonth)));
+const monthOverviewRequestData = await parseJSONMonthOverviewRequestData(
+	getFirstDayOfTheMonth(
+		new Date(datePreviousMonth))
+);
 // console.dir(monthOverviewRequestData.service.data);
 // for (const key in monthOverviewRequestData.service.data['overview-month-total'].channel) {
 // 	console.dir(monthOverviewRequestData.service.data['overview-month-total'].channel[key].month.day);
 // }
 
-const yearlyOverviewRequestData = await parseJSONYearlyOverviewRequestData(getFirstDayOfTheMonth(new Date(datePreviousMonth)));
+const yearlyOverviewRequestData = await parseJSONYearlyOverviewRequestData(
+	getFirstDayOfTheMonth(
+		new Date(datePreviousMonth))
+);
 // console.dir(yearlyOverviewRequestData.service.data['overview-year-total'].channel);
 // for (const key in yearlyOverviewRequestData.service.data['overview-year-total'].channel) {
 // 	console.dir(yearlyOverviewRequestData.service.data['overview-year-total'].channel[key].year.month);
 // }
 
-const energyBalanceRequestData = await parseJSONEnergyBalanceRequestData("2022-10-01", "month", "day", false);
+const energyBalanceRequestData = await parseJSONEnergyBalanceRequestData(
+	"2022-10-01",
+	"month",
+	"day",
+	false
+);
 // console.dir(energyBalanceRequestData.service.data.energybalance.month);
 // for (const key in energyBalanceRequestData.service.data.energybalance.month.day) {
 // 	console.dir(energyBalanceRequestData.service.data.energybalance.month.day[key]);

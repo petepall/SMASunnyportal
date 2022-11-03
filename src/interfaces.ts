@@ -33,7 +33,7 @@ export interface IPlantList {
  */
 interface IInverters {
 	inverterName: string;
-	numberOfInverters: number;
+	numberOfInverters: string;
 	icon: string;
 }
 
@@ -46,7 +46,7 @@ interface IInverters {
  */
 interface ICommunicationsProducts {
 	communicationProductName: string;
-	numberOfCommunicationProducts: number;
+	numberOfCommunicationProducts: string;
 	icon: string;
 }
 
@@ -59,9 +59,9 @@ interface ICommunicationsProducts {
  */
 interface IModules {
 	moduleName: string;
-	numerOfModules: number;
-	alignment: number;
-	gradient: number;
+	numberOfModules: string;
+	alignment: string;
+	gradient: string;
 }
 
 /**
@@ -87,14 +87,14 @@ interface IExpectedPlantProduction {
  */
 interface IPlantHeader {
 	plantname: string;
-	peakpower: number;
+	peakpower: string;
 	powerunit: string;
 	location: string;
 	startData: string;
 	description: string;
 	plantImage: string;
-	plantImageHight: number;
-	plantImageWidth: number;
+	plantImageHight: string;
+	plantImageWidth: string;
 }
 
 /**
