@@ -1,6 +1,6 @@
 import fs from 'fs';
-import pino, { Logger } from 'pino';
 import promptSync from 'prompt-sync';
+import logger from './logger/index.js';
 
 /**
  * Create a logger instance
@@ -8,15 +8,6 @@ import promptSync from 'prompt-sync';
  *
  * @type {Logger}
  */
-const logger: Logger = pino({
-	transport: {
-		target: 'pino-pretty',
-		options: {
-			colorize: true,
-		},
-	},
-	level: 'info'
-});
 
 // Functions
 /**

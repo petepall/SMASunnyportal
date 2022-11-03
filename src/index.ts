@@ -1,16 +1,16 @@
 import axios from 'axios';
 import { Parser } from 'xml2js';
-import { IPlantList, IPlantProfile, ISunnyConfig, IToken } from './interfaces';
-import logger from './logger/index.js';
 import {
 	AuthenticationRequest,
-	DataRequest,
 	LogoutRequest,
 	PlantDeviceListRequest,
 	PlantDeviceParametersRequest,
 	PlantListRequest,
 	PlantProfileRequest
-} from './requests.js';
+} from './BaseRequests.js';
+import { DataRequest } from './DataRequest.js';
+import { IPlantList, IPlantProfile, ISunnyConfig, IToken } from './interfaces';
+import logger from './logger/index.js';
 import {
 	askForLoginData,
 	checkIfFileOrPathExists,
