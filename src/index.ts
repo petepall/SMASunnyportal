@@ -1,4 +1,5 @@
 import axios from 'axios';
+import fs from 'fs';
 import { Parser } from 'xml2js';
 import {
 	AuthenticationRequest,
@@ -349,14 +350,15 @@ let sunnyConfig: ISunnyConfig = {
 // check if config file exists and read it.
 // If not, ask for login data and create config file.
 if (checkIfFileOrPathExists('./config/config.json')) {
-	sunnyConfig = readConfigFile('./config/config.json');
-	logger.info("config file successfully read");
-} else {
-	const info = askForLoginData();
-	sunnyConfig.Login.email = info.email;
-	sunnyConfig.Login.password = info.password;
-	sunnyConfig.General.baseUrl = info.baseUrl;
-
+	if (fs.statSync('./config/config.json').size > 0) {
+		sunnyConfig = readConfigFile('./config/config.json');
+		logger.info("config file successfully read");
+	} else {
+		const info = askForLoginData();
+		sunnyConfig.Login.email = info.email;
+		sunnyConfig.Login.password = info.password;
+		sunnyConfig.General.baseUrl = info.baseUrl;
+	}
 	if (!checkIfFileOrPathExists('./config')) {
 		createFolder('./config');
 	}
