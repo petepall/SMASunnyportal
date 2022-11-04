@@ -1,32 +1,31 @@
-import { Parser } from 'xml2js';
+
 import { appConnection, getConfig } from './appConfig.js';
-import {
-	AuthenticationRequest,
-	LogoutRequest,
-	PlantDeviceListRequest,
-	PlantDeviceParametersRequest,
-	PlantListRequest,
-	PlantProfileRequest
-} from './requests/BaseRequests.js';
-import { DataRequest } from './requests/DataRequest.js';
-import { IPlantList, IPlantProfile, IToken } from './intefaces/interfaces';
-import logger from './logger/index.js';
+import { parseJSONAllDataRequestData } from './controllers/allDataRequest.controller.js';
+import { parseJSONDayOverviewRequestData } from './controllers/dayOverviewRequest.controller.js';
+import { parseJSONEnergyBalanceRequestData } from './controllers/energyBalanceRequest.controller.js';
+import { parseJSONLastDataExactData } from './controllers/lastDataExact.controller.js';
+import { logout } from './controllers/logout.controller.js';
+import { parseJSONMonthOverviewRequestData } from './controllers/monthOverviewRequest.controller.js';
+import { parseJSONPlantData } from './controllers/plantData.controller.js';
+import { parseJSONPlantDeviceListData } from './controllers/plantDeviceList.controller.js';
+import { parseJSONPlantDeviceParameterData } from './controllers/plantDeviceParameter.controller.js';
+import { parseJSONPlantList } from './controllers/plantList.controller.js';
+import { parseJSONYearlyOverviewRequestData } from './controllers/yearlyOverviewRequestData.controller.js';
+import { IPlantProfile, IToken } from './intefaces/interfaces.js';
 import {
 	getFirstDayOfTheMonth,
 	keyExists
 } from './lib/utils.js';
-
-// Setup the parser for turning XML into JSON.
-const parser = new Parser({
-	explicitArray: false,
-});
+import logger from './logger/index.js';
+import {
+	AuthenticationRequest
+} from './requests/BaseRequests.js';
 
 /**
- * Function to authenticate with the sunny portal API and retrieve a token.
- * @date 21/10/2022 - 17:42:11
+ * function to get the login token
+ * @date 04/11/2022 - 16:12:06
  *
  * @async
- * @param {AxiosInstance} conn
  * @param {string} username
  * @param {string} password
  * @returns {Promise<IToken>}
@@ -42,285 +41,6 @@ async function getToken(username: string, password: string): Promise<IToken> {
 	return token;
 }
 
-/**
- * Function to logout from the Sunny Portal API.
- * @date 21/10/2022 - 20:17:53
- *
- * @async
- * @param {AxiosInstance} conn
- * @param {IToken} token
- * @returns {*}
- */
-async function logout(): Promise<void> {
-	const request = new LogoutRequest(
-		'authentication',
-		'DELETE',
-		conn,
-		token
-	);
-	await request.logout();
-}
-
-/**
- * Function to retrieve the list of plants and return the plant id and name as object.
- * @date 01/11/2022 - 13:38:26
- *
- * @async
- * @returns {Promise<IPlantList>}
- */
-async function parseJSONPlantList(): Promise<IPlantList> {
-	const request = new PlantListRequest(
-		'plantlist',
-		'GET',
-		conn,
-		token
-	);
-	const plantList: IPlantList = {
-		plantname: '',
-		plantoid: '',
-	};
-	const parsePlantListData = await request.getPlantListData();
-	parser.parseString(parsePlantListData, (err: any, result: any) => {
-		plantList.plantname = result['sma.sunnyportal.services'].service.plantlist.plant.$.name;
-		plantList.plantoid = result['sma.sunnyportal.services'].service.plantlist.plant.$.oid;
-		logger.debug(plantList);
-	});
-	return plantList;
-}
-
-/**
- * Function to retrieve the plant information based on the plantID and return the data as a JSON object.
- * @date 01/11/2022 - 13:38:50
- *
- * @async
- * @param {string} plantId
- * @returns {Promise<any>}
- */
-async function parseJSONPlantData(plantId: string): Promise<any> {
-	const request = new PlantProfileRequest(
-		'plant',
-		'GET',
-		conn,
-		token
-	);
-	const plantData = await request.getPlantData(plantId);
-
-	let data = null;
-	parser.parseString(plantData, (err: any, result: any) => {
-		data = result;
-		logger.debug(data);
-	});
-
-	return data;
-}
-
-/**
- * Function to retrieve the list of devices for a plant and return the device list as a JSON object.
- * @date 01/11/2022 - 13:39:08
- *
- * @async
- * @param {string} plantId
- * @returns {Promise<any>}
- */
-async function parseJSONPlantDeviceListData(plantId: string): Promise<any> {
-	const request = new PlantDeviceListRequest(
-		'device',
-		'GET',
-		conn,
-		token
-	);
-	const plantDeviceListData = await request.getPlantDeviceListData(plantId);
-
-	let data = null;
-	parser.parseString(plantDeviceListData, (err: any, result: any) => {
-		data = result['sma.sunnyportal.services'].service.devicelist;
-		logger.debug(data);
-	});
-
-	return data;
-}
-
-/**
- * Function to retrieve the device parameters for a given deviceID and return the device parameters as a JSON object.
- * @date 01/11/2022 - 13:39:29
- *
- * @async
- * @param {string} plantId
- * @param {string} deviceId
- * @returns {Promise<any>}
- */
-async function parseJSONPlantDeviceParameterData(plantId: string, deviceId: string): Promise<any> {
-	const request = new PlantDeviceParametersRequest(
-		'device',
-		'GET',
-		conn,
-		token
-	);
-	const plantDeviceParameterData = await request.getPlantDeviceParametersData(plantId, deviceId);
-
-	let data = null;
-	parser.parseString(plantDeviceParameterData, (err: any, result: any) => {
-		data = result['sma.sunnyportal.services'];
-		logger.debug(data);
-	});
-
-	return data;
-}
-
-/**
- * Function to retrieve the last exact data from the Sunny Portal API.
- * @date 01/11/2022 - 13:41:35
- *
- * @async
- * @param {string} date
- * @returns {Promise<any>}
- */
-async function parseJSONLastDataExactData(date: string): Promise<any> {
-	const request = new DataRequest(
-		'data',
-		'GET',
-		conn,
-		token,
-		plantoid,
-	);
-	const lastDataExactData = await request.getLastDataExactData(date);
-
-	let data = null;
-	parser.parseString(lastDataExactData, (err: any, result: any) => {
-		data = result['sma.sunnyportal.services'];
-		logger.debug(data);
-	});
-
-	return data;
-}
-
-/**
- * Function to retrieve all the generation data on a specific date from the Sunny Portal API.
- * @date 01/11/2022 - 13:42:37
- *
- * @async
- * @param {string} date
- * @param {string} interval
- * @returns {Promise<any>}
- */
-async function parseJSONAllDataRequestData(date: string, interval: string): Promise<any> {
-	const request = new DataRequest(
-		'data',
-		'GET',
-		conn,
-		token,
-		plantoid
-	);
-	const allDataRequestData = await request.getAllDataRequestData(date, interval);
-
-	let data = null;
-	parser.parseString(allDataRequestData, (err: any, result: any) => {
-		data = result['sma.sunnyportal.services'];
-		logger.debug(data);
-	});
-
-	return data;
-}
-
-/**
- * Function to retrieve the day overview by day or quarter hour from the Sunny Portal API.
- * @date 01/11/2022 - 13:43:39
- *
- * @async
- * @param {string} date
- * @param {boolean} quarter
- * @param {boolean} include_all
- * @returns {Promise<any>}
- */
-async function parseJSONDayOverviewRequestData(date: string, quarter: boolean, include_all: boolean): Promise<any> {
-	const request = new DataRequest(
-		'data',
-		'GET',
-		conn,
-		token,
-		plantoid
-	);
-	const allDataRequestData = await request.getDayOverviewRequestData(date, quarter, include_all);
-
-	let data = null;
-	parser.parseString(allDataRequestData, (err: any, result: any) => {
-		data = result['sma.sunnyportal.services'];
-		logger.debug(data);
-	});
-
-	return data;
-}
-
-/**
- * Function to retrieve the monthly overview from the Sunny Portal API.
- * @date 01/11/2022 - 16:25:05
- *
- * @async
- * @param {string} date
- * @returns {Promise<any>}
- */
-async function parseJSONMonthOverviewRequestData(date: string): Promise<any> {
-	const request = new DataRequest(
-		'data',
-		'GET',
-		conn,
-		token,
-		plantoid
-	);
-	const allDataRequestData = await request.getMonthOverviewRequestData(date);
-
-	let data = null;
-	parser.parseString(allDataRequestData, (err: any, result: any) => {
-		data = result['sma.sunnyportal.services'];
-		logger.debug(data);
-	});
-
-	return data;
-}
-
-async function parseJSONYearlyOverviewRequestData(date: string): Promise<any> {
-	const request = new DataRequest(
-		'data',
-		'GET',
-		conn,
-		token,
-		plantoid
-	);
-	const allDataRequestData = await request.getYearOverviewRequestData(date);
-
-	let data = null;
-	parser.parseString(allDataRequestData, (err: any, result: any) => {
-		data = result['sma.sunnyportal.services'];
-		logger.debug(data);
-	});
-
-	return data;
-}
-
-async function parseJSONEnergyBalanceRequestData(
-	date: string,
-	period: string,
-	interval: string,
-	total?: boolean
-): Promise<any> {
-	const request = new DataRequest(
-		'data',
-		'GET',
-		conn,
-		token,
-		plantoid
-	);
-	const allDataRequestData = await request.getEnergeyBalanceRequestData(date, period, interval, total);
-
-	let data = null;
-	parser.parseString(allDataRequestData, (err: any, result: any) => {
-		data = result['sma.sunnyportal.services'];
-		logger.debug(data);
-	});
-
-	return data;
-}
-
 /*
  * Main program execution.
 */
@@ -332,200 +52,78 @@ if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
 }
 
 const sunnyConfig = getConfig();
-const conn = appConnection(sunnyConfig);
+export const conn = appConnection(sunnyConfig);
 
-const token = await getToken(sunnyConfig.Login.email, sunnyConfig.Login.password);
+export const token = await getToken(sunnyConfig.Login.email, sunnyConfig.Login.password);
 const plantlist = await parseJSONPlantList();
-const plantoid = plantlist.plantoid;
-const plantData = await parseJSONPlantData(plantoid);
-
-
-// eslint-disable-next-line no-prototype-builtins
-if (keyExists(plantData, 'error')) {
-	console.log(`Error has been found in respone`);
-} else {
-	logger.info(plantData);
-}
-
-const plantProfile: IPlantProfile = {
-	plantHeader: {
-	},
-	expectedPlantProduction: {
-	},
-	modules: {
-	},
-	inverters: {
-	},
-	communicationProducts: {
-	},
-};
-
-const plantHeader = plantData['sma.sunnyportal.services'].service.plant;
-plantProfile.plantHeader = {
-	plantname: plantHeader.name._,
-	peakpower: plantHeader['peak-power']._,
-	powerunit: plantHeader['peak-power'].$.unit,
-	location: plantHeader['city-country']._,
-	startData: plantHeader['start-date']._,
-	description: plantHeader.description._,
-	plantImage: plantHeader['plant-image']._,
-	plantImageHight: plantHeader['plant-image'].$.height,
-	plantImageWidth: plantHeader['plant-image'].$.width,
-};
-
-const expectedPlantProduction = plantData['sma.sunnyportal.services'].service.plant['production-data'].channel;
-plantProfile.expectedPlantProduction = {
-	expectedYield: expectedPlantProduction[0]._,
-	expectedYieldUnit: expectedPlantProduction[0].$.unit,
-	expectedCO2Reduction: expectedPlantProduction[1]._,
-	expectedCO2ReductionUnit: expectedPlantProduction[1].$.unit,
-};
-
-const modules = plantData['sma.sunnyportal.services'].service.plant.modules;
-for (const key in modules.module) {
-	const details = [];
-	if (modules.module.length === undefined) {
-		if (key === '$') {
-			for (const moduleKey in modules.module[key]) {
-				details.push(modules.module[key][moduleKey]);
-			}
-			plantProfile.modules[key] = {
-				moduleName: modules.module._,
-				numberOfModules: parseInt(details[0]),
-				alignment: modules.alignment._,
-				gradient: modules.gradient._,
-			};
-		}
-	} else {
-		for (const moduleKey in modules.module[key].$) {
-			details.push(modules.module[key].$[moduleKey]);
-		}
-		plantProfile.modules[key] = {
-			moduleName: modules.module[key]._,
-			numberOfModules: parseInt(details[0]),
-			alignment: modules.alignment[key]._,
-			gradient: modules.gradient[key]._,
-		};
-	}
-}
-
-const inverters = plantData['sma.sunnyportal.services'].service.plant.inverters;
-for (const key in inverters.inverter) {
-	const details = [];
-	if (inverters.inverter.length === undefined) {
-		if (key === '$') {
-			for (const inverterKey in inverters.inverter[key]) {
-				details.push(inverters.inverter[key][inverterKey]);
-			}
-			plantProfile.inverters[key] = {
-				inverterName: inverters.inverter._,
-				numberOfInverters: parseInt(details[0]),
-				icon: details[1],
-			};
-		}
-	} else {
-		for (const inverterKey in inverters.inverter[key].$) {
-			details.push(inverters.inverter[key].$[inverterKey]);
-		}
-		plantProfile.inverters[key] = {
-			inverterName: inverters.inverter[key]._,
-			numberOfInverters: parseInt(details[0]),
-			icon: details[1],
-		};
-	}
-}
-
-const communicationProducts = plantData['sma.sunnyportal.services'].service.plant.communicationProducts;
-for (const key in communicationProducts.communicationProduct) {
-	const details = [];
-	if (communicationProducts.communicationProduct.length === undefined) {
-		if (key === '$') {
-			for (const communicationsKey in communicationProducts.communicationProduct[key]) {
-				details.push(communicationProducts.communicationProduct[key][communicationsKey]);
-			}
-			plantProfile.communicationProducts[key] = {
-				communicationProductName: communicationProducts.communicationProduct._,
-				numberOfCommunicationProducts: parseInt(details[0]),
-				icon: details[1],
-			};
-		}
-	} else {
-		for (const communicationsKey in communicationProducts.communicationProduct[key].$) {
-			details.push(communicationProducts.communicationProduct[key].$[communicationsKey]);
-		}
-		plantProfile.communicationProducts[key] = {
-			communicationProductName: communicationProducts.communicationProduct[key]._,
-			numberOfCommunicationProducts: parseInt(details[0]),
-			icon: details[1],
-		};
-	}
-}
-console.dir(plantProfile);
+export const plantoid = plantlist.plantoid;
+const plantProfile = await parseJSONPlantData(plantoid);
+logger.debug(plantProfile);
 
 const plantDeviceListData = await parseJSONPlantDeviceListData(plantoid);
-// console.dir(plantDeviceListData);
+logger.debug(plantDeviceListData);
 
-const plantDeviceParameterData = await parseJSONPlantDeviceParameterData(
-	plantoid,
-	plantDeviceListData.device[0].$.oid
-);
-// for (const key in plantDeviceParameterData.service.parameterlist.parameter) {
-// 	console.dir(plantDeviceParameterData.service.parameterlist.parameter[key]);
-// }
+// const plantDeviceParameterData = await parseJSONPlantDeviceParameterData(
+// 	plantoid,
+// 	plantDeviceListData.device[0].$.oid
+// );
+// // for (const key in plantDeviceParameterData.service.parameterlist.parameter) {
+// // 	console.dir(plantDeviceParameterData.service.parameterlist.parameter[key]);
+// // }
 
-const lastDataExactData = await parseJSONLastDataExactData((new Date()).toISOString().slice(0, 10));
-// for (const key in lastDataExactData.service.data.Energy) {
-// 	console.dir(lastDataExactData.service.data.Energy[key]);
-// }
+// const lastDataExactData = await parseJSONLastDataExactData((new Date()).toISOString().slice(0, 10));
+// // for (const key in lastDataExactData.service.data.Energy) {
+// // 	console.dir(lastDataExactData.service.data.Energy[key]);
+// // }
 
-const allDataRequestData = await parseJSONAllDataRequestData(
-	(new Date()).toISOString().slice(0, 10),
-	'month'
-);
-// for (const key in allDataRequestData.service.data.Energy.channel) {
-// 	console.dir(allDataRequestData.service.data.Energy.channel[key].month);
-// }
+// const allDataRequestData = await parseJSONAllDataRequestData(
+// 	(new Date()).toISOString().slice(0, 10),
+// 	'month'
+// );
+// // for (const key in allDataRequestData.service.data.Energy.channel) {
+// // 	console.dir(allDataRequestData.service.data.Energy.channel[key].month);
+// // }
 
-const dayOverviewRequestData = await parseJSONDayOverviewRequestData(
-	(new Date()).toISOString().slice(0, 10),
-	true,
-	true
-);
-// console.dir(dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel);
-// for (const key in dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel) {
-// 	console.dir(dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel[key].day.fiveteen);
-// }
+// const dayOverviewRequestData = await parseJSONDayOverviewRequestData(
+// 	(new Date()).toISOString().slice(0, 10),
+// 	true,
+// 	true
+// );
+// // console.dir(dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel);
+// // for (const key in dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel) {
+// // 	console.dir(dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel[key].day.fiveteen);
+// // }
 
-const today = new Date();
-const datePreviousMonth = today.setDate(0);
+// const today = new Date();
+// const datePreviousMonth = today.setDate(0);
 
-const monthOverviewRequestData = await parseJSONMonthOverviewRequestData(
-	getFirstDayOfTheMonth(
-		new Date(datePreviousMonth))
-);
-// console.dir(monthOverviewRequestData.service.data);
-// for (const key in monthOverviewRequestData.service.data['overview-month-total'].channel) {
-// 	console.dir(monthOverviewRequestData.service.data['overview-month-total'].channel[key].month.day);
-// }
+// const monthOverviewRequestData = await parseJSONMonthOverviewRequestData(
+// 	getFirstDayOfTheMonth(
+// 		new Date(datePreviousMonth))
+// );
+// // console.dir(monthOverviewRequestData.service.data);
+// // for (const key in monthOverviewRequestData.service.data['overview-month-total'].channel) {
+// // 	console.dir(monthOverviewRequestData.service.data['overview-month-total'].channel[key].month.day);
+// // }
 
-const yearlyOverviewRequestData = await parseJSONYearlyOverviewRequestData(
-	getFirstDayOfTheMonth(
-		new Date(datePreviousMonth))
-);
-// console.dir(yearlyOverviewRequestData.service.data['overview-year-total'].channel);
-// for (const key in yearlyOverviewRequestData.service.data['overview-year-total'].channel) {
-// 	console.dir(yearlyOverviewRequestData.service.data['overview-year-total'].channel[key].year.month);
-// }
+// const yearlyOverviewRequestData = await parseJSONYearlyOverviewRequestData(
+// 	getFirstDayOfTheMonth(
+// 		new Date(datePreviousMonth))
+// );
+// // console.dir(yearlyOverviewRequestData.service.data['overview-year-total'].channel);
+// // for (const key in yearlyOverviewRequestData.service.data['overview-year-total'].channel) {
+// // 	console.dir(yearlyOverviewRequestData.service.data['overview-year-total'].channel[key].year.month);
+// // }
 
-const energyBalanceRequestData = await parseJSONEnergyBalanceRequestData(
-	"2022-10-01",
-	"month",
-	"day",
-	false
-);
-// console.dir(energyBalanceRequestData.service.data.energybalance.month);
-// for (const key in energyBalanceRequestData.service.data.energybalance.month.day) {
-// 	console.dir(energyBalanceRequestData.service.data.energybalance.month.day[key]);
-// }
+// const energyBalanceRequestData = await parseJSONEnergyBalanceRequestData(
+// 	"2022-10-01",
+// 	"month",
+// 	"day",
+// 	false
+// );
+// // console.dir(energyBalanceRequestData.service.data.energybalance.month);
+// // for (const key in energyBalanceRequestData.service.data.energybalance.month.day) {
+// // 	console.dir(energyBalanceRequestData.service.data.energybalance.month.day[key]);
+// // }
 
 logout();

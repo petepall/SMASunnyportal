@@ -140,3 +140,12 @@ export interface ISunnyConfig {
 		baseUrl: string;
 	},
 }
+
+export interface IDeviceList {
+	deviceID: string;
+	deviceName: string;
+	deviceClass: string;
+	deviceSerial: string;
+	deviceType: string;
+	deviceStartDate: string;
+}

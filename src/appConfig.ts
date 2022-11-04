@@ -1,8 +1,9 @@
 import axios from 'axios';
 import fs from 'fs';
+import { Parser } from 'xml2js';
 import { ISunnyConfig } from './intefaces/interfaces.js';
-import logger from './logger/index.js';
 import { askForLoginData, checkIfFileOrPathExists, createFolder, readConfigFile, writeJsonFile } from './lib/utils.js';
+import logger from './logger/index.js';
 
 
 export function getConfig(): ISunnyConfig {
@@ -45,3 +46,8 @@ export function appConnection(sunnyConfig: ISunnyConfig) {
 
 	return conn;
 }
+
+// Setup the parser for turning XML into JSON.
+export const parser = new Parser({
+	explicitArray: false,
+});
