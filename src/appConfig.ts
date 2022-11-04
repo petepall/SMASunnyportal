@@ -1,8 +1,8 @@
 import axios from 'axios';
 import fs from 'fs';
-import { ISunnyConfig } from './interfaces.js';
+import { ISunnyConfig } from './intefaces/interfaces.js';
 import logger from './logger/index.js';
-import { askForLoginData, checkIfFileOrPathExists, createFolder, readConfigFile, writeJsonFile } from './utils.js';
+import { askForLoginData, checkIfFileOrPathExists, createFolder, readConfigFile, writeJsonFile } from './lib/utils.js';
 
 
 export function getConfig(): ISunnyConfig {

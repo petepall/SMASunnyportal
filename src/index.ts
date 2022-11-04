@@ -7,14 +7,14 @@ import {
 	PlantDeviceParametersRequest,
 	PlantListRequest,
 	PlantProfileRequest
-} from './BaseRequests.js';
-import { DataRequest } from './DataRequest.js';
-import { IPlantList, IPlantProfile, IToken } from './interfaces';
+} from './requests/BaseRequests.js';
+import { DataRequest } from './requests/DataRequest.js';
+import { IPlantList, IPlantProfile, IToken } from './intefaces/interfaces';
 import logger from './logger/index.js';
 import {
 	getFirstDayOfTheMonth,
 	keyExists
-} from './utils.js';
+} from './lib/utils.js';
 
 // Setup the parser for turning XML into JSON.
 const parser = new Parser({
@@ -332,7 +332,6 @@ if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
 }
 
 const sunnyConfig = getConfig();
-console.log(sunnyConfig);
 const conn = appConnection(sunnyConfig);
 
 const token = await getToken(sunnyConfig.Login.email, sunnyConfig.Login.password);

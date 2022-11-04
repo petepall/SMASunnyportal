@@ -1,6 +1,6 @@
 import fs from 'fs';
 import promptSync from 'prompt-sync';
-import logger from './logger/index.js';
+import logger from '../logger/index.js';
 
 /**
  * Create a logger instance

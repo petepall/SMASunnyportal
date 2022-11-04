@@ -1,6 +1,6 @@
 import { AxiosInstance } from 'axios';
+import { IToken } from '../intefaces/interfaces.js';
 import { RequestBase } from './BaseRequests.js';
-import { IToken } from './interfaces.js';
 
 /**
  * Class to handle the retrieval of the last yield data from the sunny portal API.
