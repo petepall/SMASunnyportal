@@ -409,6 +409,14 @@ plantProfile.plantHeader = {
 	plantImageWidth: plantHeader['plant-image'].$.width,
 };
 
+const expectedPlantProduction = plantData['sma.sunnyportal.services'].service.plant['production-data'].channel;
+plantProfile.expectedPlantProduction = {
+	expectedYield: expectedPlantProduction[0]._,
+	expectedYieldUnit: expectedPlantProduction[0].$.unit,
+	expectedCO2Reduction: expectedPlantProduction[1]._,
+	expectedCO2ReductionUnit: expectedPlantProduction[1].$.unit,
+};
+
 const modules = plantData['sma.sunnyportal.services'].service.plant.modules;
 for (const key in modules.module) {
 	const details = [];
@@ -419,7 +427,7 @@ for (const key in modules.module) {
 			}
 			plantProfile.modules[key] = {
 				moduleName: modules.module._,
-				numberOfModules: details[0],
+				numberOfModules: parseInt(details[0]),
 				alignment: modules.alignment._,
 				gradient: modules.gradient._,
 			};
@@ -430,7 +438,7 @@ for (const key in modules.module) {
 		}
 		plantProfile.modules[key] = {
 			moduleName: modules.module[key]._,
-			numberOfModules: details[0],
+			numberOfModules: parseInt(details[0]),
 			alignment: modules.alignment[key]._,
 			gradient: modules.gradient[key]._,
 		};
@@ -447,7 +455,7 @@ for (const key in inverters.inverter) {
 			}
 			plantProfile.inverters[key] = {
 				inverterName: inverters.inverter._,
-				numberOfInverters: details[0],
+				numberOfInverters: parseInt(details[0]),
 				icon: details[1],
 			};
 		}
@@ -457,7 +465,7 @@ for (const key in inverters.inverter) {
 		}
 		plantProfile.inverters[key] = {
 			inverterName: inverters.inverter[key]._,
-			numberOfInverters: details[0],
+			numberOfInverters: parseInt(details[0]),
 			icon: details[1],
 		};
 	}
@@ -473,7 +481,7 @@ for (const key in communicationProducts.communicationProduct) {
 			}
 			plantProfile.communicationProducts[key] = {
 				communicationProductName: communicationProducts.communicationProduct._,
-				numberOfCommunicationProducts: details[0],
+				numberOfCommunicationProducts: parseInt(details[0]),
 				icon: details[1],
 			};
 		}
@@ -483,7 +491,7 @@ for (const key in communicationProducts.communicationProduct) {
 		}
 		plantProfile.communicationProducts[key] = {
 			communicationProductName: communicationProducts.communicationProduct[key]._,
-			numberOfCommunicationProducts: details[0],
+			numberOfCommunicationProducts: parseInt(details[0]),
 			icon: details[1],
 		};
 	}

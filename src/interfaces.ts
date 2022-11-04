@@ -33,7 +33,7 @@ export interface IPlantList {
  */
 interface IInverters {
 	inverterName: string;
-	numberOfInverters: string;
+	numberOfInverters: number;
 	icon: string;
 }
 
@@ -46,7 +46,7 @@ interface IInverters {
  */
 interface ICommunicationsProducts {
 	communicationProductName: string;
-	numberOfCommunicationProducts: string;
+	numberOfCommunicationProducts: number;
 	icon: string;
 }
 
@@ -59,7 +59,7 @@ interface ICommunicationsProducts {
  */
 interface IModules {
 	moduleName: string;
-	numberOfModules: string;
+	numberOfModules: number;
 	alignment: string;
 	gradient: string;
 }
