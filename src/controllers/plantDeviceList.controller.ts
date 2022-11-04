@@ -27,14 +27,7 @@ export async function parseJSONPlantDeviceListData(plantId: string): Promise<IDe
 	//TODO: clean up return
 	// return data;
 
-	const devicelist: IDeviceList[] = [{
-		deviceID: '',
-		deviceName: '',
-		deviceClass: '',
-		deviceSerial: '',
-		deviceType: '',
-		deviceStartDate: '',
-	}];
+	const devicelist: IDeviceList[] = [];
 
 	const devices = data['sma.sunnyportal.services'].service.devicelist.device;
 	logger.debug(devices);
