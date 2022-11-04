@@ -1,6 +1,5 @@
-import axios from 'axios';
-import fs from 'fs';
 import { Parser } from 'xml2js';
+import { appConnection, getConfig } from './appConfig.js';
 import {
 	AuthenticationRequest,
 	LogoutRequest,
@@ -10,16 +9,11 @@ import {
 	PlantProfileRequest
 } from './BaseRequests.js';
 import { DataRequest } from './DataRequest.js';
-import { IPlantList, IPlantProfile, ISunnyConfig, IToken } from './interfaces';
+import { IPlantList, IPlantProfile, IToken } from './interfaces';
 import logger from './logger/index.js';
 import {
-	askForLoginData,
-	checkIfFileOrPathExists,
-	createFolder,
 	getFirstDayOfTheMonth,
-	keyExists,
-	readConfigFile,
-	writeJsonFile
+	keyExists
 } from './utils.js';
 
 // Setup the parser for turning XML into JSON.
@@ -337,40 +331,9 @@ if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
 	console.log('-------');
 }
 
-let sunnyConfig: ISunnyConfig = {
-	Login: {
-		email: '',
-		password: '',
-	},
-	General: {
-		baseUrl: '',
-	},
-};
-
-// check if config file exists and read it.
-// If not, ask for login data and create config file.
-if (checkIfFileOrPathExists('./config/config.json')) {
-	if (fs.statSync('./config/config.json').size > 0) {
-		sunnyConfig = readConfigFile('./config/config.json');
-		logger.info("config file successfully read");
-	} else {
-		const info = askForLoginData();
-		sunnyConfig.Login.email = info.email;
-		sunnyConfig.Login.password = info.password;
-		sunnyConfig.General.baseUrl = info.baseUrl;
-	}
-	if (!checkIfFileOrPathExists('./config')) {
-		createFolder('./config');
-	}
-	writeJsonFile('./config/config.json', sunnyConfig);
-}
-
-// Setup connection to Sunny Portal
-const conn = axios.create({
-	baseURL: sunnyConfig.General.baseUrl,
-	timeout: 8000,
-	headers: { 'Content-Type': 'application/xlm' }
-});
+const sunnyConfig = getConfig();
+console.log(sunnyConfig);
+const conn = appConnection(sunnyConfig);
 
 const token = await getToken(sunnyConfig.Login.email, sunnyConfig.Login.password);
 const plantlist = await parseJSONPlantList();
