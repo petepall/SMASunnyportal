@@ -1,17 +1,19 @@
 import { parser } from '../appConfig.js';
 import { conn, plantoid, token } from '../index.js';
+import { ILastDataExact } from '../intefaces/interfaces.js';
 import logger from '../logger/index.js';
 import { DataRequest } from '../requests/DataRequest.js';
 
 /**
  * Function to retrieve the last exact data from the Sunny Portal API.
- * @date 01/11/2022 - 13:41:35
+ * @date 05/11/2022 - 13:36:50
  *
+ * @export
  * @async
  * @param {string} date
- * @returns {Promise<any>}
+ * @returns {Promise<ILastDataExact>}
  */
-export async function parseJSONLastDataExactData(date: string): Promise<any> {
+export async function parseJSONLastDataExactData(date: string): Promise<ILastDataExact> {
 	const request = new DataRequest(
 		'data',
 		'GET',
@@ -21,11 +23,37 @@ export async function parseJSONLastDataExactData(date: string): Promise<any> {
 	);
 	const lastDataExactData = await request.getLastDataExactData(date);
 
-	let data = null;
-	parser.parseString(lastDataExactData, (err: any, result: any) => {
-		data = result['sma.sunnyportal.services'];
-		logger.debug(data);
-	});
+	const data = await parser.parseStringPromise(lastDataExactData);
+	logger.debug(data);
 
-	return data;
+	const lastDataExact: ILastDataExact = {
+		name: '',
+		metaName: '',
+		energyUnit: '',
+		day: {
+			timestamp: '',
+			absolute: 0,
+			difference: 0,
+		},
+		hour: {
+			timestamp: '',
+			absolute: 0,
+			difference: 0,
+		}
+	};
+
+	const lastData = data['sma.sunnyportal.services'].service.data.Energy.channel;
+	lastDataExact.name = lastData.$.name;
+	lastDataExact.metaName = lastData.$['meta-name'];
+	lastDataExact.energyUnit = lastData.$.unit;
+	lastDataExact.day.timestamp = lastData.day.$.timestamp;
+	lastDataExact.day.absolute = lastData.day.$.absolute;
+	lastDataExact.day.difference = lastData.day.$.difference;
+	lastDataExact.hour.timestamp = lastData.hour.$.timestamp;
+	lastDataExact.hour.absolute = lastData.hour.$.absolute;
+	lastDataExact.hour.difference = lastData.hour.$.difference;
+
+	logger.debug(lastDataExact);
+
+	return lastDataExact;
 }

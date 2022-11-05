@@ -23,7 +23,7 @@ export async function parseJSONPlantList(): Promise<IPlantList> {
 		plantoid: '',
 	};
 	const parsePlantListData = await request.getPlantListData();
-	parser.parseString(parsePlantListData, (err: any, result: any) => {
+	parser.parseString(parsePlantListData, (err: Error | null, result: any) => {
 		plantList.plantname = result['sma.sunnyportal.services'].service.plantlist.plant.$.name;
 		plantList.plantoid = result['sma.sunnyportal.services'].service.plantlist.plant.$.oid;
 		logger.debug(plantList);

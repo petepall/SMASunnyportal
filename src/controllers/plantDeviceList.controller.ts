@@ -6,11 +6,12 @@ import { PlantDeviceListRequest } from '../requests/BaseRequests.js';
 
 /**
  * Function to retrieve the list of devices for a plant and return the device list as a JSON object.
- * @date 01/11/2022 - 13:39:08
+ * @date 05/11/2022 - 13:37:40
  *
+ * @export
  * @async
  * @param {string} plantId
- * @returns {Promise<any>}
+ * @returns {Promise<IDeviceList[]>}
  */
 export async function parseJSONPlantDeviceListData(plantId: string): Promise<IDeviceList[]> {
 	const request = new PlantDeviceListRequest(

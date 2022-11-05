@@ -1,21 +1,12 @@
 
 import { appConnection, getConfig } from './appConfig.js';
-import { parseJSONAllDataRequestData } from './controllers/allDataRequest.controller.js';
-import { parseJSONDayOverviewRequestData } from './controllers/dayOverviewRequest.controller.js';
-import { parseJSONEnergyBalanceRequestData } from './controllers/energyBalanceRequest.controller.js';
 import { parseJSONLastDataExactData } from './controllers/lastDataExact.controller.js';
 import { logout } from './controllers/logout.controller.js';
-import { parseJSONMonthOverviewRequestData } from './controllers/monthOverviewRequest.controller.js';
 import { parseJSONPlantData } from './controllers/plantData.controller.js';
 import { parseJSONPlantDeviceListData } from './controllers/plantDeviceList.controller.js';
 import { parseJSONPlantDeviceParameterData } from './controllers/plantDeviceParameter.controller.js';
 import { parseJSONPlantList } from './controllers/plantList.controller.js';
-import { parseJSONYearlyOverviewRequestData } from './controllers/yearlyOverviewRequestData.controller.js';
-import { IPlantProfile, IToken } from './intefaces/interfaces.js';
-import {
-	getFirstDayOfTheMonth,
-	keyExists
-} from './lib/utils.js';
+import { IToken } from './intefaces/interfaces.js';
 import logger from './logger/index.js';
 import {
 	AuthenticationRequest
@@ -63,18 +54,18 @@ logger.debug(plantProfile);
 const plantDeviceListData = await parseJSONPlantDeviceListData(plantoid);
 logger.debug(plantDeviceListData);
 
-// const plantDeviceParameterData = await parseJSONPlantDeviceParameterData(
-// 	plantoid,
-// 	plantDeviceListData.device[0].$.oid
-// );
-// // for (const key in plantDeviceParameterData.service.parameterlist.parameter) {
-// // 	console.dir(plantDeviceParameterData.service.parameterlist.parameter[key]);
-// // }
+for (const device of plantDeviceListData) {
+	const plantDeviceParameterData = await parseJSONPlantDeviceParameterData(
+		plantoid,
+		device.deviceID // provide the deviceID of the device you want to get the parameters for
+	);
+	for (const key in plantDeviceParameterData.service.parameterlist.parameter) {
+		logger.debug(plantDeviceParameterData.service.parameterlist.parameter[key]);
+	}
+}
 
-// const lastDataExactData = await parseJSONLastDataExactData((new Date()).toISOString().slice(0, 10));
-// // for (const key in lastDataExactData.service.data.Energy) {
-// // 	console.dir(lastDataExactData.service.data.Energy[key]);
-// // }
+const lastDataExactData = await parseJSONLastDataExactData((new Date()).toISOString().slice(0, 10));
+logger.info(lastDataExactData);
 
 // const allDataRequestData = await parseJSONAllDataRequestData(
 // 	(new Date()).toISOString().slice(0, 10),

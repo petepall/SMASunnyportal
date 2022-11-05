@@ -149,3 +149,19 @@ export interface IDeviceList {
 	deviceType: string;
 	deviceStartDate: string;
 }
+
+export interface ILastDataExact {
+	name: string,
+	metaName: string,
+	energyUnit: string,
+	day: {
+		timestamp: string,
+		absolute: number,
+		difference: number,
+	},
+	hour: {
+		timestamp: string,
+		absolute: number,
+		difference: number,
+	};
+}

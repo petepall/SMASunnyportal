@@ -5,8 +5,9 @@ import { PlantDeviceParametersRequest } from '../requests/BaseRequests.js';
 
 /**
  * Function to retrieve the device parameters for a given deviceID and return the device parameters as a JSON object.
- * @date 01/11/2022 - 13:39:29
+ * @date 05/11/2022 - 13:37:18
  *
+ * @export
  * @async
  * @param {string} plantId
  * @param {string} deviceId
