@@ -47,11 +47,11 @@ export async function parseJSONLastDataExactData(date: string): Promise<ILastDat
 	lastDataExact.metaName = lastData.$['meta-name'];
 	lastDataExact.energyUnit = lastData.$.unit;
 	lastDataExact.day.timestamp = lastData.day.$.timestamp;
-	lastDataExact.day.absolute = lastData.day.$.absolute;
-	lastDataExact.day.difference = lastData.day.$.difference;
+	lastDataExact.day.absolute = parseInt(lastData.day.$.absolute);
+	lastDataExact.day.difference = parseInt(lastData.day.$.difference);
 	lastDataExact.hour.timestamp = lastData.hour.$.timestamp;
-	lastDataExact.hour.absolute = lastData.hour.$.absolute;
-	lastDataExact.hour.difference = lastData.hour.$.difference;
+	lastDataExact.hour.absolute = parseInt(lastData.hour.$.absolute);
+	lastDataExact.hour.difference = parseInt(lastData.hour.$.difference);
 
 	logger.debug(lastDataExact);
 
