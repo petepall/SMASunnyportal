@@ -13,7 +13,7 @@ import { DataRequest } from '../requests/DataRequest.js';
  * @param {string} interval
  * @returns {Promise<any>}
  */
-export async function parseJSONAllDataRequestData(date: string, interval: string): Promise<any> {
+export async function parseJSONAllDataRequestData(date: string, interval: string): Promise<IAllData> {
 	const request = new DataRequest(
 		'data',
 		'GET',
