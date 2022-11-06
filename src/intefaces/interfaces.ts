@@ -165,3 +165,29 @@ export interface ILastDataExact {
 		difference: number,
 	};
 }
+
+export interface IAllDataMonth {
+	timestamp: string;
+	Energy?: {
+		absolute?: number;
+		difference?: number;
+	};
+}
+
+export interface IAllDataHeader {
+	name: string;
+	metaName: string;
+	energyUnit: string;
+}
+
+export interface IAllDataYear {
+	timestamp: string;
+	absolute: number;
+	difference: number;
+}
+
+export interface IAllData {
+	header: IAllDataHeader;
+	month?: IAllDataMonth[];
+	year?: IAllDataYear[];
+}

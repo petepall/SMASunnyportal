@@ -1,5 +1,6 @@
 
 import { appConnection, getConfig } from './appConfig.js';
+import { parseJSONAllDataRequestData } from './controllers/allDataRequest.controller.js';
 import { parseJSONLastDataExactData } from './controllers/lastDataExact.controller.js';
 import { logout } from './controllers/logout.controller.js';
 import { parseJSONPlantData } from './controllers/plantData.controller.js';
@@ -65,15 +66,13 @@ for (const device of plantDeviceListData) {
 }
 
 const lastDataExactData = await parseJSONLastDataExactData((new Date()).toISOString().slice(0, 10));
-logger.info(lastDataExactData);
+logger.debug(lastDataExactData);
 
-// const allDataRequestData = await parseJSONAllDataRequestData(
-// 	(new Date()).toISOString().slice(0, 10),
-// 	'month'
-// );
-// // for (const key in allDataRequestData.service.data.Energy.channel) {
-// // 	console.dir(allDataRequestData.service.data.Energy.channel[key].month);
-// // }
+const allDataRequestData = await parseJSONAllDataRequestData(
+	(new Date()).toISOString().slice(0, 10),
+	'year'
+);
+logger.debug(allDataRequestData);
 
 // const dayOverviewRequestData = await parseJSONDayOverviewRequestData(
 // 	(new Date()).toISOString().slice(0, 10),

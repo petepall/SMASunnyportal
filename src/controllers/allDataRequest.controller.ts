@@ -1,5 +1,6 @@
 import { parser } from '../appConfig.js';
 import { conn, plantoid, token } from '../index.js';
+import { IAllData, IAllDataHeader, IAllDataMonth, IAllDataYear } from '../intefaces/interfaces.js';
 import logger from '../logger/index.js';
 import { DataRequest } from '../requests/DataRequest.js';
 
@@ -22,11 +23,49 @@ export async function parseJSONAllDataRequestData(date: string, interval: string
 	);
 	const allDataRequestData = await request.getAllDataRequestData(date, interval);
 
-	let data = null;
-	parser.parseString(allDataRequestData, (err: any, result: any) => {
-		data = result['sma.sunnyportal.services'];
-		logger.debug(data);
-	});
+	const data = await parser.parseStringPromise(allDataRequestData);
+	logger.debug(data);
 
-	return data;
+	const allDataHeader: IAllDataHeader = {
+		name: data['sma.sunnyportal.services'].service.data.Energy.channel.$.name,
+		metaName: data['sma.sunnyportal.services'].service.data.Energy.channel.$['meta-name'],
+		energyUnit: data['sma.sunnyportal.services'].service.data.Energy.channel.$.unit,
+	};
+	logger.debug(allDataHeader);
+
+	const allDataMonth: IAllDataMonth[] = [];
+
+	if (interval === 'month') {
+		for (const key of data['sma.sunnyportal.services'].service.data.Energy.channel.infinite.month) {
+			allDataMonth.push({
+				timestamp: key.$.timestamp,
+				Energy: {
+					absolute: parseFloat(key.$.absolute),
+					difference: parseFloat(key.$.difference),
+				}
+			});
+		}
+	}
+	logger.debug(allDataMonth);
+
+	const allDataYear: IAllDataYear[] = [];
+	if (interval === 'year') {
+		const key = data['sma.sunnyportal.services'].service.data.Energy.channel.infinite.year;
+		allDataYear.push({
+			timestamp: key.$.timestamp,
+			absolute: parseFloat(key.$.absolute),
+			difference: parseFloat(key.$.difference),
+		});
+	}
+	logger.debug(allDataYear);
+
+	const allData: IAllData = {
+		header: allDataHeader,
+		month: allDataMonth,
+		year: allDataYear,
+	};
+
+	logger.debug(allData);
+
+	return allData;
 }
