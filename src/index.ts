@@ -1,6 +1,8 @@
 
 import { appConnection, getConfig } from './appConfig.js';
 import { parseJSONAllDataRequestData } from './controllers/allDataRequest.controller.js';
+import { parseJSONDayOverviewRequestData } from './controllers/dayOverviewRequest.controller.js';
+import { parseJSONEnergyBalanceRequestData } from './controllers/energyBalanceRequest.controller.js';
 import { parseJSONLastDataExactData } from './controllers/lastDataExact.controller.js';
 import { logout } from './controllers/logout.controller.js';
 import { parseJSONPlantData } from './controllers/plantData.controller.js';
@@ -74,15 +76,15 @@ const allDataRequestData = await parseJSONAllDataRequestData(
 );
 logger.debug(allDataRequestData);
 
-// const dayOverviewRequestData = await parseJSONDayOverviewRequestData(
-// 	(new Date()).toISOString().slice(0, 10),
-// 	true,
-// 	true
-// );
-// // console.dir(dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel);
-// // for (const key in dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel) {
-// // 	console.dir(dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel[key].day.fiveteen);
-// // }
+const dayOverviewRequestData = await parseJSONDayOverviewRequestData(
+	(new Date()).toISOString().slice(0, 10),
+	false,
+	true
+);
+logger.debug(dayOverviewRequestData.service.data);
+// for (const key in dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel) {
+// 	logger.info(dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel[key].day.fiveteen);
+// }
 
 // const today = new Date();
 // const datePreviousMonth = today.setDate(0);
@@ -105,15 +107,16 @@ logger.debug(allDataRequestData);
 // // 	console.dir(yearlyOverviewRequestData.service.data['overview-year-total'].channel[key].year.month);
 // // }
 
-// const energyBalanceRequestData = await parseJSONEnergyBalanceRequestData(
-// 	"2022-10-01",
-// 	"month",
-// 	"day",
-// 	false
-// );
-// // console.dir(energyBalanceRequestData.service.data.energybalance.month);
-// // for (const key in energyBalanceRequestData.service.data.energybalance.month.day) {
-// // 	console.dir(energyBalanceRequestData.service.data.energybalance.month.day[key]);
-// // }
+const energyBalanceRequestData = await parseJSONEnergyBalanceRequestData(
+	"2022-11-05",
+	"month",
+	"hour",
+	false,
+	'W'
+);
+logger.info(energyBalanceRequestData.service);
+// for (const key in energyBalanceRequestData.service.data.energybalance.month.day) {
+// 	console.dir(energyBalanceRequestData.service.data.energybalance.month.day[key]);
+// }
 
 logout();

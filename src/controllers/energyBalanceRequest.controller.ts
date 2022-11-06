@@ -5,6 +5,23 @@ import { DataRequest } from '../requests/DataRequest.js';
 
 /**
  * function to retrieve the energy balance based on given period and interval from the sunny portal API.
+ * Valid intervals for a given period:
+ *   Period     | Interval     | Unit
+ *   =====================================
+ *  infinite   | year         | kWh
+ *  infinite   | month        | kWh
+ *  infinite   | day          | kWh
+ *  Year       | year         | kWh
+ *  Year       | month        | kWh
+ *  Year       | day          | kWh
+ *  Month      | month        | kWh
+ *  Month      | day          | kWh
+ *  Month      | hour         | W
+ *  Month      | fifteen      | W
+ *  Day        | day          | kWh
+ *  Day        | hour         | W
+ *  Day        | fifteen      | W
+ *
  * @date 04/11/2022 - 16:08:59
  *
  * @async
@@ -18,7 +35,9 @@ export async function parseJSONEnergyBalanceRequestData(
 	date: string,
 	period: string,
 	interval: string,
-	total?: boolean): Promise<any> {
+	total?: boolean,
+	unit?: string
+): Promise<any> {
 	const request = new DataRequest(
 		'data',
 		'GET',
@@ -26,7 +45,7 @@ export async function parseJSONEnergyBalanceRequestData(
 		token,
 		plantoid
 	);
-	const allDataRequestData = await request.getEnergeyBalanceRequestData(date, period, interval, total);
+	const allDataRequestData = await request.getEnergeyBalanceRequestData(date, period, interval, total, unit);
 
 	let data = null;
 	parser.parseString(allDataRequestData, (err: any, result: any) => {

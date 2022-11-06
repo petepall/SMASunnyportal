@@ -156,7 +156,7 @@ export class DataRequest extends RequestBase {
 		return yearOverviewRequestData;
 	}
 
-	async getEnergeyBalanceRequestData(date: string, period: string, interval: string, total = false): Promise<any> {
+	async getEnergeyBalanceRequestData(date: string, period: string, interval: string, total = false, unit = 'kWh'): Promise<any> {
 		/**
 		* Valid intervals for a given period:
 		*		- infinite: year, month
@@ -173,7 +173,7 @@ export class DataRequest extends RequestBase {
 				"identifier": this.token.identifier,
 				"period": period,
 				"interval": interval,
-				"unit": "kWh",
+				"unit": unit,
 			}
 		);
 		const energyBalanceRequestData = await this.executeRequest(url);
