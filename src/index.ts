@@ -50,7 +50,7 @@ export const token = await getToken(sunnyConfig.Login.email, sunnyConfig.Login.p
 const plantlist = await parseJSONPlantList();
 export const plantoid = plantlist.plantoid;
 const plantProfile = await parseJSONPlantData(plantoid);
-logger.debug(plantProfile);
+logger.info(plantProfile);
 
 const plantDeviceListData = await parseJSONPlantDeviceListData(plantoid);
 logger.debug(plantDeviceListData);

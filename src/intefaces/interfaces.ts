@@ -31,7 +31,7 @@ export interface IPlantList {
  * @interface IInverters
  * @typedef {IInverters}
  */
-interface IInverters {
+export interface IInverters {
 	inverterName: string;
 	numberOfInverters: number;
 	icon: string;
@@ -44,7 +44,7 @@ interface IInverters {
  * @interface ICommunicationsProducts
  * @typedef {ICommunicationsProducts}
  */
-interface ICommunicationsProducts {
+export interface ICommunicationsProducts {
 	communicationProductName: string;
 	numberOfCommunicationProducts: number;
 	icon: string;
@@ -57,7 +57,7 @@ interface ICommunicationsProducts {
  * @interface IModules
  * @typedef {IModules}
  */
-interface IModules {
+export interface IModules {
 	moduleName: string;
 	numberOfModules: number;
 	alignment: string;
@@ -71,7 +71,7 @@ interface IModules {
  * @interface IExpectedPlantProduction
  * @typedef {IExpectedPlantProduction}
  */
-interface IExpectedPlantProduction {
+export interface IExpectedPlantProduction {
 	expectedYield: string;
 	expectedYieldUnit: string;
 	expectedCO2Reduction: string;
@@ -85,16 +85,16 @@ interface IExpectedPlantProduction {
  * @interface IPlantHeader
  * @typedef {IPlantHeader}
  */
-interface IPlantHeader {
+export interface IPlantHeader {
 	plantname: string;
-	peakpower: string;
+	peakpower: number;
 	powerunit: string;
 	location: string;
 	startData: string;
 	description: string;
 	plantImage: string;
-	plantImageHight: string;
-	plantImageWidth: string;
+	plantImageHight: number;
+	plantImageWidth: number;
 }
 
 /**
@@ -106,21 +106,11 @@ interface IPlantHeader {
  * @typedef {IPlantProfile}
  */
 export interface IPlantProfile {
-	plantHeader: {
-		[key: string]: IPlantHeader;
-	};
-	expectedPlantProduction: {
-		[key: string]: IExpectedPlantProduction;
-	};
-	modules: {
-		[key: string]: IModules;
-	};
-	inverters: {
-		[key: string]: IInverters;
-	};
-	communicationProducts: {
-		[key: string]: ICommunicationsProducts;
-	};
+	plantHeader: IPlantHeader;
+	yield: IExpectedPlantProduction;
+	modules: IModules[];
+	inverters: IInverters[];
+	communicationsProducts: ICommunicationsProducts[];
 }
 
 /**
