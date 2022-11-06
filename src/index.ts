@@ -11,9 +11,7 @@ import { parseJSONPlantDeviceParameterData } from './controllers/plantDevicePara
 import { parseJSONPlantList } from './controllers/plantList.controller.js';
 import { IToken } from './intefaces/interfaces.js';
 import logger from './logger/index.js';
-import {
-	AuthenticationRequest
-} from './requests/BaseRequests.js';
+import { AuthenticationRequest } from './requests/BaseRequests.js';
 
 /**
  * function to get the login token
@@ -82,9 +80,6 @@ const dayOverviewRequestData = await parseJSONDayOverviewRequestData(
 	true
 );
 logger.debug(dayOverviewRequestData.service.data);
-// for (const key in dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel) {
-// 	logger.info(dayOverviewRequestData.service.data['overview-day-fifteen-total'].channel[key].day.fiveteen);
-// }
 
 // const today = new Date();
 // const datePreviousMonth = today.setDate(0);
@@ -114,9 +109,6 @@ const energyBalanceRequestData = await parseJSONEnergyBalanceRequestData(
 	false,
 	'W'
 );
-logger.info(energyBalanceRequestData.service);
-// for (const key in energyBalanceRequestData.service.data.energybalance.month.day) {
-// 	console.dir(energyBalanceRequestData.service.data.energybalance.month.day[key]);
-// }
+logger.debug(energyBalanceRequestData.service);
 
 logout();
