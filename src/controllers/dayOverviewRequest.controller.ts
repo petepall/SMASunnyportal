@@ -13,7 +13,11 @@ import { DataRequest } from '../requests/DataRequest.js';
  * @param {boolean} include_all
  * @returns {Promise<any>}
  */
-export async function parseJSONDayOverviewRequestData(date: string, quarter: boolean, include_all: boolean): Promise<any> {
+export async function parseJSONDayOverviewRequestData(
+	date: string,
+	quarter: boolean,
+	include_all: boolean
+): Promise<any> {
 	const request = new DataRequest(
 		'data',
 		'GET',

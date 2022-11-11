@@ -20,7 +20,10 @@
  */
 import { parser } from '../appConfig.js';
 import { conn, plantoid, token } from '../index.js';
-import { IEnergyBalanceInfiniteMonth, IEnergyBalanceInfiniteMonthTotal } from '../intefaces/IEnergyBalanceInfiniteMonthResponse.js';
+import {
+	IEnergyBalanceInfiniteMonth,
+	IEnergyBalanceInfiniteMonthTotal
+} from '../intefaces/IEnergyBalanceInfiniteMonthResponse.js';
 import {
 	IEnergyBalanceInfiniteYear,
 	IEnergyBalanceInfiniteYearTotal
@@ -68,10 +71,16 @@ export async function parseJSONEnergyBalanceInfiniteYear(
 		params.unit
 	);
 
-	const data: Promise<IEnergyBalanceInfiniteYear | IEnergyBalanceInfiniteYearTotal> = parser.parseStringPromise(requestData);
+	const data: Promise<
+		IEnergyBalanceInfiniteYear |
+		IEnergyBalanceInfiniteYearTotal
+	> = parser.parseStringPromise(requestData);
 	logger.debug(data);
 
-	return data as Promise<IEnergyBalanceInfiniteYear | IEnergyBalanceInfiniteYearTotal>;
+	return data as Promise<
+		IEnergyBalanceInfiniteYear |
+		IEnergyBalanceInfiniteYearTotal
+	>;
 }
 
 export async function parseJSONEnergyBalanceInfiniteMonth(
@@ -93,8 +102,14 @@ export async function parseJSONEnergyBalanceInfiniteMonth(
 		params.unit
 	);
 
-	const data: Promise<IEnergyBalanceInfiniteMonth | IEnergyBalanceInfiniteMonthTotal> = parser.parseStringPromise(requestData);
+	const data: Promise<
+		IEnergyBalanceInfiniteMonth |
+		IEnergyBalanceInfiniteMonthTotal
+	> = parser.parseStringPromise(requestData);
 	logger.debug(data);
 
-	return data as Promise<IEnergyBalanceInfiniteMonth | IEnergyBalanceInfiniteMonthTotal>;
+	return data as Promise<
+		IEnergyBalanceInfiniteMonth |
+		IEnergyBalanceInfiniteMonthTotal
+	>;
 }
