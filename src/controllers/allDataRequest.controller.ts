@@ -1,6 +1,6 @@
 import { parser } from '../appConfig.js';
 import { conn, plantoid, token } from '../index.js';
-import { IAllData, IAllDataHeader, IAllDataMonth, IAllDataYear } from "../intefaces/IAllData";
+import { IAllData, IAllDataHeader, IAllDataMonth, IAllDataYear } from "../intefaces/IAllDataResponse";
 import logger from '../logger/index.js';
 import { DataRequest } from '../requests/DataRequest.js';
 

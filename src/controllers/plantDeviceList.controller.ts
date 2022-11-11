@@ -1,6 +1,6 @@
 import { parser } from '../appConfig.js';
 import { conn, token } from '../index.js';
-import { IDeviceList } from "../intefaces/IDeviceList";
+import { IDeviceList } from "../intefaces/IDeviceListResponse";
 import logger from '../logger/index.js';
 import { PlantDeviceListRequest } from '../requests/BaseRequests.js';
 
