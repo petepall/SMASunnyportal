@@ -1,6 +1,6 @@
 import { parser } from '../appConfig.js';
 import { conn, token } from '../index.js';
-import { IPlantList } from "../intefaces/IPlantList";
+import { IPlantList } from "../intefaces/IPlantListResponse";
 import logger from '../logger/index.js';
 import { PlantListRequest } from '../requests/BaseRequests.js';
 
