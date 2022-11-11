@@ -2,7 +2,7 @@
 import { appConnection, getConfig } from './appConfig.js';
 import { parseJSONAllDataRequestData } from './controllers/allDataRequest.controller.js';
 import { parseJSONDayOverviewRequestData } from './controllers/dayOverviewRequest.controller.js';
-import { parseJSONEnergyBalanceInfiniteYear } from './controllers/energyBalanceRequest.controller.js';
+import { parseJSONEnergyBalanceInfiniteMonth, parseJSONEnergyBalanceInfiniteYear } from './controllers/energyBalanceRequest.controller.js';
 import { parseJSONLastDataExactData } from './controllers/lastDataExact.controller.js';
 import { logout } from './controllers/logout.controller.js';
 import { parseJSONPlantData } from './controllers/plantData.controller.js';
@@ -103,9 +103,15 @@ logger.debug(dayOverviewRequestData.service.data);
 // // }
 
 const EnergyBalanceInfiniteYear = await parseJSONEnergyBalanceInfiniteYear("2022-11-05", false);
-logger.info(EnergyBalanceInfiniteYear['sma.sunnyportal.services'].service);
+logger.debug(EnergyBalanceInfiniteYear['sma.sunnyportal.services'].service);
 
 const EnergyBalanceInfiniteYearTotal = await parseJSONEnergyBalanceInfiniteYear("2022-11-05", true);
-logger.info(EnergyBalanceInfiniteYearTotal['sma.sunnyportal.services'].service);
+logger.debug(EnergyBalanceInfiniteYearTotal['sma.sunnyportal.services'].service);
+
+const EnergyBalanceInfiniteMonth = await parseJSONEnergyBalanceInfiniteMonth("2022-11-05", false);
+logger.info(EnergyBalanceInfiniteMonth['sma.sunnyportal.services'].service);
+
+const EnergyBalanceInfiniteMonthTotal = await parseJSONEnergyBalanceInfiniteMonth("2022-11-05", true);
+logger.info(EnergyBalanceInfiniteMonthTotal['sma.sunnyportal.services'].service);
 
 logout();

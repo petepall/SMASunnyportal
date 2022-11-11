@@ -1,5 +1,6 @@
 /**
- * functions to retrieve the energy balance based on given period and interval from the sunny portal API.
+ * functions to retrieve the energy balance based on given period and interval
+ * from the sunny portal API.
  * functions based on perdiod and interval:
  *   Period     | Interval     | Unit
  *   =====================================
@@ -17,9 +18,13 @@
  *  Day        | hour         | W
  *  Day        | fifteen      | W
  */
-
 import { parser } from '../appConfig.js';
 import { conn, plantoid, token } from '../index.js';
+import { IEnergyBalanceInfiniteMonth, IEnergyBalanceInfiniteMonthTotal } from '../intefaces/IEnergyBalanceInfiniteMonthResponse.js';
+import {
+	IEnergyBalanceInfiniteYear,
+	IEnergyBalanceInfiniteYearTotal
+} from '../intefaces/IEnergyBalanceInfiniteYearResponse.js';
 import logger from '../logger/index.js';
 import { DataRequest } from '../requests/DataRequest.js';
 
@@ -44,7 +49,10 @@ function requestSetup() {
  * @param {?boolean} [total]
  * @returns {Promise<any>}
  */
-export async function parseJSONEnergyBalanceInfiniteYear(date: string, total = false): Promise<any> {
+export async function parseJSONEnergyBalanceInfiniteYear(
+	date: string,
+	total = false
+): Promise<IEnergyBalanceInfiniteYear | IEnergyBalanceInfiniteYearTotal> {
 	const request = requestSetup();
 	const params = {
 		period: 'infinite',
@@ -60,13 +68,33 @@ export async function parseJSONEnergyBalanceInfiniteYear(date: string, total = f
 		params.unit
 	);
 
-	const data = parser.parseStringPromise(requestData);
+	const data: Promise<IEnergyBalanceInfiniteYear | IEnergyBalanceInfiniteYearTotal> = parser.parseStringPromise(requestData);
 	logger.debug(data);
 
-	//TODO: parse the data to the IEnergyBalanceInfiniteYear interface
+	return data as Promise<IEnergyBalanceInfiniteYear | IEnergyBalanceInfiniteYearTotal>;
+}
 
+export async function parseJSONEnergyBalanceInfiniteMonth(
+	date: string,
+	total = false
+): Promise<IEnergyBalanceInfiniteMonth | IEnergyBalanceInfiniteMonthTotal> {
+	const request = requestSetup();
+	const params = {
+		period: 'infinite',
+		interval: 'month',
+		unit: 'kWh',
+	};
 
-	//TODO: parse the data to the IEnergyBalanceInfiniteYearTotal interface
+	const requestData = await request.getEnergeyBalanceRequestData(
+		date,
+		params.period,
+		params.interval,
+		total,
+		params.unit
+	);
 
-	return data;
+	const data: Promise<IEnergyBalanceInfiniteMonth | IEnergyBalanceInfiniteMonthTotal> = parser.parseStringPromise(requestData);
+	logger.debug(data);
+
+	return data as Promise<IEnergyBalanceInfiniteMonth | IEnergyBalanceInfiniteMonthTotal>;
 }
