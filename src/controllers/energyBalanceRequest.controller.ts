@@ -4,19 +4,19 @@
  * functions based on perdiod and interval:
  *   Period     | Interval     | Unit
  *   =====================================
- *  infinite   | year         | kWh
- *  infinite   | month        | kWh
- *  infinite   | day          | kWh
- *  Year       | year         | kWh
- *  Year       | month        | kWh
- *  Year       | day          | kWh
- *  Month      | month        | kWh
- *  Month      | day          | kWh
- *  Month      | hour         | W
- *  Month      | fifteen      | W
- *  Day        | day          | kWh
- *  Day        | hour         | W
- *  Day        | fifteen      | W
+ *  infinite   | year         | kWh 👍
+ *  infinite   | month        | kWh 👍
+ *  infinite   | day          | kWh ❌
+ *  Year       | year         | kWh ❌
+ *  Year       | month        | kWh ❌
+ *  Year       | day          | kWh ❌
+ *  Month      | month        | kWh ❌
+ *  Month      | day          | kWh ❌
+ *  Month      | hour         | W   ❌
+ *  Month      | fifteen      | W   ❌
+ *  Day        | day          | kWh ❌
+ *  Day        | hour         | W   ❌
+ *  Day        | fifteen      | W   ❌
  */
 import { parser } from '../appConfig.js';
 import { conn, plantoid, token } from '../index.js';
