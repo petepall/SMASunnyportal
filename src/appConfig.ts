@@ -1,7 +1,7 @@
 import axios from 'axios';
 import fs from 'fs';
 import { Parser } from 'xml2js';
-import { ISunnyConfig } from './intefaces/interfaces.js';
+import { ISunnyConfig } from "./intefaces/ISunnyConfig";
 import { askForLoginData, checkIfFileOrPathExists, createFolder, readConfigFile, writeJsonFile } from './lib/utils.js';
 import logger from './logger/index.js';
 

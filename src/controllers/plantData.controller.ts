@@ -1,6 +1,6 @@
 import { parser } from '../appConfig.js';
 import { conn, token } from '../index.js';
-import { ICommunicationsProducts, IExpectedPlantProduction, IInverters, IModules, IPlantHeader, IPlantProfile } from '../intefaces/interfaces.js';
+import { ICommunicationsProducts, IExpectedPlantProduction, IInverters, IModules, IPlantHeader, IPlantProfile } from "../intefaces/IInverters";
 import logger from '../logger/index.js';
 import { PlantProfileRequest } from '../requests/BaseRequests.js';
 

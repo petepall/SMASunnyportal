@@ -1,7 +1,7 @@
 import { AxiosError, AxiosInstance } from 'axios';
 import crypto from 'crypto';
 import { Parser } from 'xml2js';
-import { IToken } from '../intefaces/interfaces.js';
+import { IToken } from "../intefaces/IToken";
 import logger from '../logger/index.js';
 
 

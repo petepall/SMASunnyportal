@@ -1,6 +1,6 @@
 import { parser } from '../appConfig.js';
 import { conn, plantoid, token } from '../index.js';
-import { ILastDataExact } from '../intefaces/interfaces.js';
+import { ILastDataExact } from "../intefaces/ILastDataExact";
 import logger from '../logger/index.js';
 import { DataRequest } from '../requests/DataRequest.js';
 

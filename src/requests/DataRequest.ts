@@ -1,5 +1,5 @@
 import { AxiosInstance } from 'axios';
-import { IToken } from '../intefaces/interfaces.js';
+import { IToken } from "../intefaces/IToken";
 import { RequestBase } from './BaseRequests.js';
 
 /**

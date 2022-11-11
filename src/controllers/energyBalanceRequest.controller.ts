@@ -1,11 +1,6 @@
-import { parser } from '../appConfig.js';
-import { conn, plantoid, token } from '../index.js';
-import logger from '../logger/index.js';
-import { DataRequest } from '../requests/DataRequest.js';
-
 /**
- * function to retrieve the energy balance based on given period and interval from the sunny portal API.
- * Valid intervals for a given period:
+ * functions to retrieve the energy balance based on given period and interval from the sunny portal API.
+ * functions based on perdiod and interval:
  *   Period     | Interval     | Unit
  *   =====================================
  *  infinite   | year         | kWh
@@ -21,7 +16,25 @@ import { DataRequest } from '../requests/DataRequest.js';
  *  Day        | day          | kWh
  *  Day        | hour         | W
  *  Day        | fifteen      | W
- *
+ */
+
+import { parser } from '../appConfig.js';
+import { conn, plantoid, token } from '../index.js';
+import logger from '../logger/index.js';
+import { DataRequest } from '../requests/DataRequest.js';
+
+function requestSetup() {
+	return new DataRequest(
+		'data',
+		'GET',
+		conn,
+		token,
+		plantoid
+	);
+}
+
+/**
+ * function to retrieve the energy balance based on infinite and year.
  * @date 04/11/2022 - 16:08:59
  *
  * @async
@@ -31,27 +44,29 @@ import { DataRequest } from '../requests/DataRequest.js';
  * @param {?boolean} [total]
  * @returns {Promise<any>}
  */
-export async function parseJSONEnergyBalanceRequestData(
-	date: string,
-	period: string,
-	interval: string,
-	total?: boolean,
-	unit?: string
-): Promise<any> {
-	const request = new DataRequest(
-		'data',
-		'GET',
-		conn,
-		token,
-		plantoid
-	);
-	const allDataRequestData = await request.getEnergeyBalanceRequestData(date, period, interval, total, unit);
+export async function parseJSONEnergyBalanceInfiniteYear(date: string, total = false): Promise<any> {
+	const request = requestSetup();
+	const params = {
+		period: 'infinite',
+		interval: 'year',
+		unit: 'kWh',
+	};
 
-	let data = null;
-	parser.parseString(allDataRequestData, (err: any, result: any) => {
-		data = result['sma.sunnyportal.services'];
-		logger.debug(data);
-	});
+	const requestData = await request.getEnergeyBalanceRequestData(
+		date,
+		params.period,
+		params.interval,
+		total,
+		params.unit
+	);
+
+	const data = parser.parseStringPromise(requestData);
+	logger.debug(data);
+
+	//TODO: parse the data to the IEnergyBalanceInfiniteYear interface
+
+
+	//TODO: parse the data to the IEnergyBalanceInfiniteYearTotal interface
 
 	return data;
 }
