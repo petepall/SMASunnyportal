@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import fs from 'fs';
 import { Parser } from 'xml2js';
 import { ISunnyConfig } from "./intefaces/ISunnyConfig";
@@ -36,7 +36,7 @@ export function getConfig(): ISunnyConfig {
 }
 
 
-export function appConnection(sunnyConfig: ISunnyConfig) {
+export function appConnection(sunnyConfig: ISunnyConfig): AxiosInstance {
 	// Setup connection to Sunny Portal
 	const conn = axios.create({
 		baseURL: sunnyConfig.General.baseUrl,
