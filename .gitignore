@@ -132,3 +132,6 @@ dist
 
 # JSON to TS type generator
 typeGeneration.json
+
+# Others
+.DS_Store
