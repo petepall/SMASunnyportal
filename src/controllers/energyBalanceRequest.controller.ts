@@ -10,15 +10,18 @@
  *  Year       | month        | kWh 👍
  *  Year       | day          | kWh 👍
  *  Month      | month        | kWh 👍
- *  Month      | day          | kWh ❌
- *  Month      | hour         | W   ❌
- *  Month      | fifteen      | W   ❌
- *  Day        | day          | kWh ❌
- *  Day        | hour         | W   ❌
- *  Day        | fifteen      | W   ❌
+ *  Month      | day          | kWh 👍
+ *  Month      | hour         | W   👍 -> No totals
+ *  Month      | fifteen      | W   👍 -> No totals
+ *  Day        | day          | kWh 👍
+ *  Day        | hour         | W   ❌ -> No totals
+ *  Day        | fifteen      | W   ❌ -> No totals
  */
 import { parser } from '../appConfig.js';
 import { conn, plantoid, token } from '../index.js';
+import { IEnergyBalanceDayDay } from '../intefaces/IEnergyBalanceDayDayResponse.js';
+import { IEnergyBalanceDayHour } from '../intefaces/IEnergyBalanceDayHourResponse.js';
+import { IEnergyBalanceDayQuarter } from '../intefaces/IEnergyBalanceDayQuarterResponse.js';
 import {
 	IEnergyBalanceInfiniteMonth,
 	IEnergyBalanceInfiniteMonthTotal,
@@ -31,10 +34,12 @@ import {
 	IEnergyBalanceMonthDay,
 	IEnergyBalanceMonthDayTotal,
 } from '../intefaces/IEnergyBalanceMonthDayResponse.js';
+import { IEnergyBalanceMonthHour } from '../intefaces/IEnergyBalanceMonthHourRespone.js';
 import {
 	IEnergyBalanceMonthMonth,
 	IEnergyBalanceMonthMonthTotal,
 } from '../intefaces/IEnergyBalanceMonthMonthResponse.js';
+import { IEnergyBalanceMonthQuarter } from '../intefaces/IEnergyBalanceMonthQuarterResponse.js';
 import {
 	IEnergyBalanceYearDay,
 	IEnergyBalanceYearDayTotal,
@@ -253,4 +258,134 @@ export async function parseJSONEnergyBalanceMonthDay(
 	logger.debug(data);
 
 	return data as Promise<IEnergyBalanceMonthDay | IEnergyBalanceMonthDayTotal>;
+}
+
+export async function parseJSONEnergyBalanceMonthHour(
+	date: string,
+	total = false,
+): Promise<IEnergyBalanceMonthHour> {
+	const request = requestSetup();
+	const params = {
+		period: 'month',
+		interval: 'hour',
+		unit: 'W',
+	};
+
+	const requestData = await request.getEnergeyBalanceRequestData(
+		date,
+		params.period,
+		params.interval,
+		total,
+		params.unit,
+	);
+
+	const data: Promise<IEnergyBalanceMonthHour> =
+		parser.parseStringPromise(requestData);
+	logger.debug(data);
+
+	return data as Promise<IEnergyBalanceMonthHour>;
+}
+
+export async function parseJSONEnergyBalanceMonthQuarter(
+	date: string,
+	total = false,
+): Promise<IEnergyBalanceMonthQuarter> {
+	const request = requestSetup();
+	const params = {
+		period: 'month',
+		interval: 'fifteen',
+		unit: 'W',
+	};
+
+	const requestData = await request.getEnergeyBalanceRequestData(
+		date,
+		params.period,
+		params.interval,
+		total,
+		params.unit,
+	);
+
+	const data: Promise<IEnergyBalanceMonthQuarter> =
+		parser.parseStringPromise(requestData);
+	logger.debug(data);
+
+	return data as Promise<IEnergyBalanceMonthQuarter>;
+}
+
+export async function parseJSONEnergyBalanceDayDay(
+	date: string,
+	total = false,
+): Promise<IEnergyBalanceDayDay> {
+	const request = requestSetup();
+	const params = {
+		period: 'day',
+		interval: 'day',
+		unit: 'kWh',
+	};
+
+	const requestData = await request.getEnergeyBalanceRequestData(
+		date,
+		params.period,
+		params.interval,
+		total,
+		params.unit,
+	);
+
+	const data: Promise<IEnergyBalanceDayDay> =
+		parser.parseStringPromise(requestData);
+	logger.debug(data);
+
+	return data as Promise<IEnergyBalanceDayDay>;
+}
+
+export async function parseJSONEnergyBalanceDayHour(
+	date: string,
+	total = false,
+): Promise<IEnergyBalanceDayHour> {
+	const request = requestSetup();
+	const params = {
+		period: 'day',
+		interval: 'hour',
+		unit: 'W',
+	};
+
+	const requestData = await request.getEnergeyBalanceRequestData(
+		date,
+		params.period,
+		params.interval,
+		total,
+		params.unit,
+	);
+
+	const data: Promise<IEnergyBalanceDayHour> =
+		parser.parseStringPromise(requestData);
+	logger.debug(data);
+
+	return data as Promise<IEnergyBalanceDayHour>;
+}
+
+export async function parseJSONEnergyBalanceDayQuarter(
+	date: string,
+	total = false,
+): Promise<IEnergyBalanceDayQuarter> {
+	const request = requestSetup();
+	const params = {
+		period: 'day',
+		interval: 'fifteen',
+		unit: 'W',
+	};
+
+	const requestData = await request.getEnergeyBalanceRequestData(
+		date,
+		params.period,
+		params.interval,
+		total,
+		params.unit,
+	);
+
+	const data: Promise<IEnergyBalanceDayQuarter> =
+		parser.parseStringPromise(requestData);
+	logger.debug(data);
+
+	return data as Promise<IEnergyBalanceDayQuarter>;
 }

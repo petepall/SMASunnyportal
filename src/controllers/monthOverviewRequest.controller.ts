@@ -1,5 +1,6 @@
 import { parser } from '../appConfig.js';
 import { conn, plantoid, token } from '../index.js';
+import { IMonthOverview } from '../intefaces/IMonthOverviewResponse.js';
 import logger from '../logger/index.js';
 import { DataRequest } from '../requests/DataRequest.js';
 
@@ -13,15 +14,12 @@ import { DataRequest } from '../requests/DataRequest.js';
  */
 export async function parseJSONMonthOverviewRequestData(
 	date: string,
-): Promise<any> {
+): Promise<IMonthOverview> {
 	const request = new DataRequest('data', 'GET', conn, token, plantoid);
 	const allDataRequestData = await request.getMonthOverviewRequestData(date);
 
-	let data = null;
-	parser.parseString(allDataRequestData, (err: any, result: any) => {
-		data = result['sma.sunnyportal.services'];
-		logger.debug(data);
-	});
+	const data = parser.parseStringPromise(allDataRequestData);
+	logger.debug(data);
 
-	return data;
+	return data as Promise<IMonthOverview>;
 }

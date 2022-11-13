@@ -1,13 +1,11 @@
 import { appConnection, getConfig } from './appConfig.js';
-import { parseJSONEnergyBalanceMonthDay } from './controllers/energyBalanceRequest.controller.js';
 import { logout } from './controllers/logout.controller.js';
 import { parseJSONPlantData } from './controllers/plantData.controller.js';
 import { parseJSONPlantList } from './controllers/plantList.controller.js';
-import {
-	IEnergyBalanceMonthDay,
-	IEnergyBalanceMonthDayTotal,
-} from './intefaces/IEnergyBalanceMonthDayResponse.js';
+import { parseJSONYearlyOverviewRequestData } from './controllers/yearlyOverviewRequestData.controller.js';
 import { IToken } from './intefaces/IToken';
+import { IYearlyOverview } from './intefaces/IYearlyOverviewRessponse.js';
+import { getFirstDayOfTheMonth } from './lib/utils.js';
 import logger from './logger/index.js';
 import { AuthenticationRequest } from './requests/BaseRequests.js';
 
@@ -78,28 +76,39 @@ logger.debug(plantProfile);
 // );
 // logger.debug(dayOverviewRequestData.service.data);
 
-//TODO: Update from here
-// const today = new Date();
-// const datePreviousMonth = today.setDate(0);
+const today = new Date();
+const datePreviousMonth = today.setDate(0);
 
-// const monthOverviewRequestData = await parseJSONMonthOverviewRequestData(
-// 	getFirstDayOfTheMonth(
-// 		new Date(datePreviousMonth))
-// );
-// console.dir(monthOverviewRequestData.service.data);
-// for (const key in monthOverviewRequestData.service.data['overview-month-total'].channel) {
-// 	console.dir(monthOverviewRequestData.service.data['overview-month-total'].channel[key].month.day);
+// const monthOverviewRequestData: IMonthOverview =
+// 	await parseJSONMonthOverviewRequestData(
+// 		getFirstDayOfTheMonth(new Date(datePreviousMonth)),
+// 	);
+// logger.debug(monthOverviewRequestData['sma.sunnyportal.services'].service);
+// for (const _ in monthOverviewRequestData['sma.sunnyportal.services'].service
+// 	.data['overview-month-total']) {
+// 	logger.info(
+// 		monthOverviewRequestData['sma.sunnyportal.services'].service.data[
+// 			'overview-month-total'
+// 		],
+// 	);
 // }
 
-// const yearlyOverviewRequestData = await parseJSONYearlyOverviewRequestData(
-// 	getFirstDayOfTheMonth(
-// 		new Date(datePreviousMonth))
-// );
-// // console.dir(yearlyOverviewRequestData.service.data['overview-year-total'].channel);
-// // for (const key in yearlyOverviewRequestData.service.data['overview-year-total'].channel) {
-// // 	console.dir(yearlyOverviewRequestData.service.data['overview-year-total'].channel[key].year.month);
-// // }
-//TODO: End update
+const yearlyOverviewRequestData: IYearlyOverview =
+	await parseJSONYearlyOverviewRequestData(
+		getFirstDayOfTheMonth(new Date(datePreviousMonth)),
+	);
+logger.debug(yearlyOverviewRequestData['sma.sunnyportal.services'].service);
+
+let counter = 0;
+for (const _ in yearlyOverviewRequestData['sma.sunnyportal.services'].service
+	.data['overview-year-total'].channel[0].year.month) {
+	logger.debug(
+		yearlyOverviewRequestData['sma.sunnyportal.services'].service.data[
+			'overview-year-total'
+		].channel[0].year.month[counter].$,
+	);
+	counter++;
+}
 
 // const EnergyBalanceInfiniteYear: IEnergyBalanceInfiniteYear = await parseJSONEnergyBalanceInfiniteYear(
 // 	"2022-11-05",
@@ -173,20 +182,44 @@ logger.debug(plantProfile);
 // );
 // logger.info(EnergyBalanceMonthMonthTotal['sma.sunnyportal.services'].service);
 
-const EnergyBalanceMonthDay:
-	| IEnergyBalanceMonthDay
-	| IEnergyBalanceMonthDayTotal = await parseJSONEnergyBalanceMonthDay(
-	'2022-11-05',
-	false,
-);
-logger.info(EnergyBalanceMonthDay['sma.sunnyportal.services'].service);
+// const EnergyBalanceMonthDay:
+// 	| IEnergyBalanceMonthDay
+// 	| IEnergyBalanceMonthDayTotal = await parseJSONEnergyBalanceMonthDay(
+// 	'2022-11-05',
+// 	false,
+// );
+// logger.info(EnergyBalanceMonthDay['sma.sunnyportal.services'].service);
 
-const EnergyBalanceMonthDayTotal:
-	| IEnergyBalanceMonthDay
-	| IEnergyBalanceMonthDayTotal = await parseJSONEnergyBalanceMonthDay(
-	'2022-11-05',
-	true,
-);
-logger.info(EnergyBalanceMonthDayTotal['sma.sunnyportal.services'].service);
+// const EnergyBalanceMonthDayTotal:
+// 	| IEnergyBalanceMonthDay
+// 	| IEnergyBalanceMonthDayTotal = await parseJSONEnergyBalanceMonthDay(
+// 	'2022-11-05',
+// 	true,
+// );
+// logger.info(EnergyBalanceMonthDayTotal['sma.sunnyportal.services'].service);
+
+// const EnergyBalanceMonthHour: IEnergyBalanceMonthHour =
+// 	await parseJSONEnergyBalanceMonthHour('2022-11-05', false);
+// logger.debug(EnergyBalanceMonthHour['sma.sunnyportal.services'].service);
+
+// const EnergyBalanceMonthQuarter: IEnergyBalanceMonthQuarter =
+// 	await parseJSONEnergyBalanceMonthHour('2022-11-05', false);
+// logger.debug(EnergyBalanceMonthQuarter['sma.sunnyportal.services'].service);
+
+// const EnergyBalanceDayDay: IEnergyBalanceDayDay =
+// 	await parseJSONEnergyBalanceDayDay('2022-11-05', false);
+// logger.info(EnergyBalanceDayDay['sma.sunnyportal.services'].service);
+
+// const EnergyBalanceDayDayTotal: IEnergyBalanceDayDay =
+// 	await parseJSONEnergyBalanceDayDay('2022-11-05', false);
+// logger.info(EnergyBalanceDayDayTotal['sma.sunnyportal.services'].service);
+
+// const EnergyBalanceDayhour: IEnergyBalanceDayHour =
+// 	await parseJSONEnergyBalanceDayHour('2022-11-05', false);
+// logger.debug(EnergyBalanceDayhour['sma.sunnyportal.services'].service);
+
+// const EnergyBalanceDayQuarter: IEnergyBalanceDayQuarter =
+// 	await parseJSONEnergyBalanceDayQuarter('2022-11-05', false);
+// logger.debug(EnergyBalanceDayQuarter['sma.sunnyportal.services'].service);
 
 logout();
