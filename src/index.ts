@@ -1,12 +1,14 @@
 
 import { appConnection, getConfig } from './appConfig.js';
 import {
-	parseJSONEnergyBalanceYearDay
+	parseJSONEnergyBalanceMonthDay,
+	parseJSONEnergyBalanceMonthMonth
 } from './controllers/energyBalanceRequest.controller.js';
 import { logout } from './controllers/logout.controller.js';
 import { parseJSONPlantData } from './controllers/plantData.controller.js';
 import { parseJSONPlantList } from './controllers/plantList.controller.js';
-import { IEnergyBalanceYearDay, IEnergyBalanceYearDayTotal } from './intefaces/IEnergyBalanceYearDayResponse.js';
+import { IEnergyBalanceMonthDay, IEnergyBalanceMonthDayTotal } from './intefaces/IEnergyBalanceMonthDayResponse.js';
+import { IEnergyBalanceMonthMonth, IEnergyBalanceMonthMonthTotal } from './intefaces/IEnergyBalanceMonthMonthResponse.js';
 import { IToken } from "./intefaces/IToken";
 import logger from './logger/index.js';
 import { AuthenticationRequest } from './requests/BaseRequests.js';
@@ -150,16 +152,40 @@ logger.debug(plantProfile);
 // );
 // logger.debug(EnergyBalanceYearMonthTotal['sma.sunnyportal.services'].service);
 
-const EnergyBalanceYearDay: IEnergyBalanceYearDay | IEnergyBalanceYearDayTotal = await parseJSONEnergyBalanceYearDay(
+// const EnergyBalanceYearDay: IEnergyBalanceYearDay | IEnergyBalanceYearDayTotal = await parseJSONEnergyBalanceYearDay(
+// 	"2022-11-05",
+// 	false
+// );
+// logger.debug(EnergyBalanceYearDay['sma.sunnyportal.services'].service);
+
+// const EnergyBalanceYearDayTotal: IEnergyBalanceYearDay | IEnergyBalanceYearDayTotal = await parseJSONEnergyBalanceYearDay(
+// 	"2022-11-05",
+// 	true
+// );
+// logger.debug(EnergyBalanceYearDayTotal['sma.sunnyportal.services'].service);
+
+// const EnergyBalanceMonthMonth: IEnergyBalanceMonthMonth | IEnergyBalanceMonthMonthTotal = await parseJSONEnergyBalanceMonthMonth(
+// 	"2022-11-05",
+// 	false
+// );
+// logger.info(EnergyBalanceMonthMonth['sma.sunnyportal.services'].service);
+
+// const EnergyBalanceMonthMonthTotal: IEnergyBalanceMonthMonth | IEnergyBalanceMonthMonthTotal = await parseJSONEnergyBalanceMonthMonth(
+// 	"2022-11-05",
+// 	true
+// );
+// logger.info(EnergyBalanceMonthMonthTotal['sma.sunnyportal.services'].service);
+
+const EnergyBalanceMonthDay: IEnergyBalanceMonthDay | IEnergyBalanceMonthDayTotal = await parseJSONEnergyBalanceMonthDay(
 	"2022-11-05",
 	false
 );
-logger.info(EnergyBalanceYearDay['sma.sunnyportal.services'].service);
+logger.info(EnergyBalanceMonthDay['sma.sunnyportal.services'].service);
 
-const EnergyBalanceYearDayTotal: IEnergyBalanceYearDay | IEnergyBalanceYearDayTotal = await parseJSONEnergyBalanceYearDay(
+const EnergyBalanceMonthDayTotal: IEnergyBalanceMonthDay | IEnergyBalanceMonthDayTotal = await parseJSONEnergyBalanceMonthDay(
 	"2022-11-05",
 	true
 );
-logger.info(EnergyBalanceYearDayTotal['sma.sunnyportal.services'].service);
+logger.info(EnergyBalanceMonthDayTotal['sma.sunnyportal.services'].service);
 
 logout();
