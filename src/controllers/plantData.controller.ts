@@ -6,11 +6,10 @@ import {
 	IInverters,
 	IModules,
 	IPlantHeader,
-	IPlantProfile
-} from "../intefaces/IPlantProfileResponse";
+	IPlantProfile,
+} from '../intefaces/IPlantProfileResponse';
 import logger from '../logger/index.js';
 import { PlantProfileRequest } from '../requests/BaseRequests.js';
-
 
 /**
  * Function to retrieve the plant information based on the plantID and return the data as a JSON object.
@@ -20,17 +19,13 @@ import { PlantProfileRequest } from '../requests/BaseRequests.js';
  * @param {string} plantId
  * @returns {Promise<IPlantProfile>}
  */
-export async function parseJSONPlantData(plantId: string): Promise<IPlantProfile> {
-	const request = new PlantProfileRequest(
-		'plant',
-		'GET',
-		conn,
-		token
-	);
+export async function parseJSONPlantData(
+	plantId: string,
+): Promise<IPlantProfile> {
+	const request = new PlantProfileRequest('plant', 'GET', conn, token);
 	const plantData = await request.getPlantData(plantId);
 	const data = await parser.parseStringPromise(plantData);
 	logger.debug(data);
-
 
 	// const plantProfile: IPlantProfile = {
 	// 	plantHeader: {
@@ -64,7 +59,8 @@ export async function parseJSONPlantData(plantId: string): Promise<IPlantProfile
 		powerunit: plantHeader['peak-power'].$.unit,
 		location: plantHeader['city-country']._,
 		startData: plantHeader['start-date']._,
-		description: plantHeader.description._ === '&nbsp' ? plantHeader.description._ : '',
+		description:
+			plantHeader.description._ === '&nbsp' ? plantHeader.description._ : '',
 		plantImage: plantHeader['plant-image']._,
 		plantImageHight: parseInt(plantHeader['plant-image'].$.height),
 		plantImageWidth: parseInt(plantHeader['plant-image'].$.width),
@@ -76,7 +72,8 @@ export async function parseJSONPlantData(plantId: string): Promise<IPlantProfile
 		expectedCO2Reduction: '',
 		expectedCO2ReductionUnit: '',
 	};
-	const expectedPlantProduction = data['sma.sunnyportal.services'].service.plant['production-data'].channel;
+	const expectedPlantProduction =
+		data['sma.sunnyportal.services'].service.plant['production-data'].channel;
 	plantYield = {
 		expectedYield: expectedPlantProduction[0]._,
 		expectedYieldUnit: expectedPlantProduction[0].$.unit,
@@ -147,14 +144,19 @@ export async function parseJSONPlantData(plantId: string): Promise<IPlantProfile
 	}
 
 	const plantCommunication: ICommunicationsProducts[] = [];
-	const communicationProducts = data['sma.sunnyportal.services'].service.plant.communicationProducts;
+	const communicationProducts =
+		data['sma.sunnyportal.services'].service.plant.communicationProducts;
 	counter = 0;
 	for (const key in communicationProducts.communicationProduct) {
 		const details = [];
 		if (communicationProducts.communicationProduct.length === undefined) {
 			if (key === '$') {
-				for (const communicationsKey in communicationProducts.communicationProduct[key]) {
-					details.push(communicationProducts.communicationProduct[key][communicationsKey]);
+				for (const communicationsKey in communicationProducts.communicationProduct[
+					key
+				]) {
+					details.push(
+						communicationProducts.communicationProduct[key][communicationsKey],
+					);
 				}
 				plantCommunication[counter] = {
 					communicationProductName: communicationProducts.communicationProduct._,
@@ -164,8 +166,12 @@ export async function parseJSONPlantData(plantId: string): Promise<IPlantProfile
 				counter++;
 			}
 		} else {
-			for (const communicationsKey in communicationProducts.communicationProduct[key].$) {
-				details.push(communicationProducts.communicationProduct[key].$[communicationsKey]);
+			for (const communicationsKey in communicationProducts.communicationProduct[
+				key
+			].$) {
+				details.push(
+					communicationProducts.communicationProduct[key].$[communicationsKey],
+				);
 			}
 			plantCommunication[counter] = {
 				communicationProductName: communicationProducts.communicationProduct[key]._,

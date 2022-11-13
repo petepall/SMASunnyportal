@@ -11,14 +11,10 @@ import { DataRequest } from '../requests/DataRequest.js';
  * @param {string} date
  * @returns {Promise<any>}
  */
-export async function parseJSONYearlyOverviewRequestData(date: string): Promise<any> {
-	const request = new DataRequest(
-		'data',
-		'GET',
-		conn,
-		token,
-		plantoid
-	);
+export async function parseJSONYearlyOverviewRequestData(
+	date: string,
+): Promise<any> {
+	const request = new DataRequest('data', 'GET', conn, token, plantoid);
 	const allDataRequestData = await request.getYearOverviewRequestData(date);
 
 	let data = null;

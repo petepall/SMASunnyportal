@@ -1,6 +1,6 @@
 import { parser } from '../appConfig.js';
 import { conn, plantoid, token } from '../index.js';
-import { ILastDataExact } from "../intefaces/ILastDataExactResponse";
+import { ILastDataExact } from '../intefaces/ILastDataExactResponse';
 import logger from '../logger/index.js';
 import { DataRequest } from '../requests/DataRequest.js';
 
@@ -13,14 +13,10 @@ import { DataRequest } from '../requests/DataRequest.js';
  * @param {string} date
  * @returns {Promise<ILastDataExact>}
  */
-export async function parseJSONLastDataExactData(date: string): Promise<ILastDataExact> {
-	const request = new DataRequest(
-		'data',
-		'GET',
-		conn,
-		token,
-		plantoid
-	);
+export async function parseJSONLastDataExactData(
+	date: string,
+): Promise<ILastDataExact> {
+	const request = new DataRequest('data', 'GET', conn, token, plantoid);
 	const lastDataExactData = await request.getLastDataExactData(date);
 
 	const data = await parser.parseStringPromise(lastDataExactData);
@@ -39,7 +35,7 @@ export async function parseJSONLastDataExactData(date: string): Promise<ILastDat
 			timestamp: '',
 			absolute: 0,
 			difference: 0,
-		}
+		},
 	};
 
 	const lastData = data['sma.sunnyportal.services'].service.data.Energy.channel;

@@ -15,7 +15,6 @@ module.exports = {
 	plugins: [],
 	rules: {
 		'no-tabs': 'off',
-		indent: [1, 'tab'],
 		'no-console': 'off',
 		semi: ['error', 'always'],
 	},

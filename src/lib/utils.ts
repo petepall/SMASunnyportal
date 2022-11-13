@@ -55,7 +55,10 @@ export function askForLoginData(): any {
 	console.log("The configuration file is missing. let's set it up \n");
 
 	const prompt = promptSync();
-	const baseUrl = prompt('Press enter to set default baseUrl (https://com.sunny-portal.de) Or enter your base url: ', { value: 'https://com.sunny-portal.de' });
+	const baseUrl = prompt(
+		'Press enter to set default baseUrl (https://com.sunny-portal.de) Or enter your base url: ',
+		{ value: 'https://com.sunny-portal.de' },
+	);
 	const email = prompt('Please enter your email: ');
 	const password = prompt('Please enter your password: ', { echo: '*' });
 
@@ -70,8 +73,8 @@ export function askForLoginData(): any {
  * @param {*} data
  */
 export function writeJsonFile(path: string, data: any): void {
-	const jsonData = JSON.stringify(data, null, "\t");
-	fs.writeFile(path, jsonData, 'utf8', err => {
+	const jsonData = JSON.stringify(data, null, '\t');
+	fs.writeFile(path, jsonData, 'utf8', (err) => {
 		if (err) {
 			logger.error(`The following error ocurred\n ${err}`);
 		} else {
@@ -105,23 +108,21 @@ export function getFirstDayOfTheMonth(date: Date): string {
  * @returns {*}
  */
 export const keyExists = (obj: any, key: string): any => {
-	if (!obj || (typeof obj !== "object" && !Array.isArray(obj))) {
+	if (!obj || (typeof obj !== 'object' && !Array.isArray(obj))) {
 		return false;
 	}
 
 	// eslint-disable-next-line no-prototype-builtins
 	else if (obj.hasOwnProperty(key)) {
 		return true;
-	}
-	else if (Array.isArray(obj)) {
+	} else if (Array.isArray(obj)) {
 		for (let i = 0; i < obj.length; i++) {
 			const result1 = keyExists(obj[i], key);
 			if (result1) {
 				return result1;
 			}
 		}
-	}
-	else {
+	} else {
 		for (const k in obj) {
 			const result1 = keyExists(obj[k], key);
 			if (result1) {

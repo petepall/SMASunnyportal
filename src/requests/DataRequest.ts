@@ -1,5 +1,5 @@
 import { AxiosInstance } from 'axios';
-import { IToken } from "../intefaces/IToken";
+import { IToken } from '../intefaces/IToken';
 import { RequestBase } from './BaseRequests.js';
 
 /**
@@ -32,7 +32,7 @@ export class DataRequest extends RequestBase {
 		method: string,
 		conn: AxiosInstance,
 		token: IToken,
-		plantID: string
+		plantID: string,
 	) {
 		super(service, method, conn, token);
 		{
@@ -50,15 +50,12 @@ export class DataRequest extends RequestBase {
 	 * @returns {Promise<any>}
 	 */
 	async getLastDataExactData(date: string): Promise<any> {
-		const url = this.prepareUrl(
-			[this.plantID, "Energy", date],
-			{
-				"culture": "en-gb",
-				"identifier": this.token.identifier,
-				"unit": "kWh",
-				"view": "Lastdataexact"
-			}
-		);
+		const url = this.prepareUrl([this.plantID, 'Energy', date], {
+			culture: 'en-gb',
+			identifier: this.token.identifier,
+			unit: 'kWh',
+			view: 'Lastdataexact',
+		});
 		const lastDataExactData = await this.executeRequest(url);
 
 		return lastDataExactData;
@@ -74,16 +71,13 @@ export class DataRequest extends RequestBase {
 	 * @returns {Promise<any>}
 	 */
 	async getAllDataRequestData(date: string, interval: string): Promise<any> {
-		const url = this.prepareUrl(
-			[this.plantID, "Energy", date],
-			{
-				"culture": "en-gb",
-				"identifier": this.token.identifier,
-				"period": "infinite",
-				"interval": interval,
-				"unit": "kWh",
-			}
-		);
+		const url = this.prepareUrl([this.plantID, 'Energy', date], {
+			culture: 'en-gb',
+			identifier: this.token.identifier,
+			period: 'infinite',
+			interval: interval,
+			unit: 'kWh',
+		});
 		const allDataRequestData = await this.executeRequest(url);
 
 		return allDataRequestData;
@@ -99,19 +93,22 @@ export class DataRequest extends RequestBase {
 	 * @param {boolean} [include_all=false]
 	 * @returns {Promise<any>}
 	 */
-	async getDayOverviewRequestData(date: string, quarter = true, include_all = false): Promise<any> {
-		const datatype = quarter ? "day-fifteen" : "day";
+	async getDayOverviewRequestData(
+		date: string,
+		quarter = true,
+		include_all = false,
+	): Promise<any> {
+		const datatype = quarter ? 'day-fifteen' : 'day';
 		const url = this.prepareUrl(
 			[this.plantID, `overview-${datatype}-total`, date],
 			{
-				"culture": "en-gb",
-				"identifier": this.token.identifier,
-			}
+				culture: 'en-gb',
+				identifier: this.token.identifier,
+			},
 		);
 		const dayOverviewRequestData = await this.executeRequest(url);
 
 		return dayOverviewRequestData;
-
 	}
 
 	/**
@@ -123,13 +120,10 @@ export class DataRequest extends RequestBase {
 	 * @returns {Promise<any>}
 	 */
 	async getMonthOverviewRequestData(date: string): Promise<any> {
-		const url = this.prepareUrl(
-			[this.plantID, `overview-month-total`, date],
-			{
-				"culture": "en-gb",
-				"identifier": this.token.identifier,
-			}
-		);
+		const url = this.prepareUrl([this.plantID, `overview-month-total`, date], {
+			culture: 'en-gb',
+			identifier: this.token.identifier,
+		});
 		const monthOverviewRequestData = await this.executeRequest(url);
 
 		return monthOverviewRequestData;
@@ -144,13 +138,10 @@ export class DataRequest extends RequestBase {
 	 * @returns {Promise<any>}
 	 */
 	async getYearOverviewRequestData(date: string): Promise<any> {
-		const url = this.prepareUrl(
-			[this.plantID, `overview-year-total`, date],
-			{
-				"culture": "en-gb",
-				"identifier": this.token.identifier,
-			}
-		);
+		const url = this.prepareUrl([this.plantID, `overview-year-total`, date], {
+			culture: 'en-gb',
+			identifier: this.token.identifier,
+		});
 		const yearOverviewRequestData = await this.executeRequest(url);
 
 		return yearOverviewRequestData;
@@ -161,27 +152,24 @@ export class DataRequest extends RequestBase {
 		period: string,
 		interval: string,
 		total = false,
-		unit = 'kWh'
+		unit = 'kWh',
 	): Promise<any> {
 		/**
-		* Valid intervals for a given period:
-		*		- infinite: year, month
-		*		- year: year, month, day
-		*		- month: month, day, hour, fifteen
-		*		- day: day, hour, fifteen
-		*/
-		const datatype = total ? "energybalancetotal" : "energybalance";
+		 * Valid intervals for a given period:
+		 *		- infinite: year, month
+		 *		- year: year, month, day
+		 *		- month: month, day, hour, fifteen
+		 *		- day: day, hour, fifteen
+		 */
+		const datatype = total ? 'energybalancetotal' : 'energybalance';
 
-		const url = this.prepareUrl(
-			[this.plantID, "sets", datatype, date],
-			{
-				"culture": "en-gb",
-				"identifier": this.token.identifier,
-				"period": period,
-				"interval": interval,
-				"unit": unit,
-			}
-		);
+		const url = this.prepareUrl([this.plantID, 'sets', datatype, date], {
+			culture: 'en-gb',
+			identifier: this.token.identifier,
+			period: period,
+			interval: interval,
+			unit: unit,
+		});
 		const energyBalanceRequestData = await this.executeRequest(url);
 
 		return energyBalanceRequestData;

@@ -1,6 +1,6 @@
 import { parser } from '../appConfig.js';
 import { conn, token } from '../index.js';
-import { IPlantList } from "../intefaces/IPlantListResponse";
+import { IPlantList } from '../intefaces/IPlantListResponse';
 import logger from '../logger/index.js';
 import { PlantListRequest } from '../requests/BaseRequests.js';
 
@@ -12,20 +12,17 @@ import { PlantListRequest } from '../requests/BaseRequests.js';
  * @returns {Promise<IPlantList>}
  */
 export async function parseJSONPlantList(): Promise<IPlantList> {
-	const request = new PlantListRequest(
-		'plantlist',
-		'GET',
-		conn,
-		token
-	);
+	const request = new PlantListRequest('plantlist', 'GET', conn, token);
 	const plantList: IPlantList = {
 		plantname: '',
 		plantoid: '',
 	};
 	const parsePlantListData = await request.getPlantListData();
 	parser.parseString(parsePlantListData, (err: Error | null, result: any) => {
-		plantList.plantname = result['sma.sunnyportal.services'].service.plantlist.plant.$.name;
-		plantList.plantoid = result['sma.sunnyportal.services'].service.plantlist.plant.$.oid;
+		plantList.plantname =
+			result['sma.sunnyportal.services'].service.plantlist.plant.$.name;
+		plantList.plantoid =
+			result['sma.sunnyportal.services'].service.plantlist.plant.$.oid;
 		logger.debug(plantList);
 	});
 	return plantList;

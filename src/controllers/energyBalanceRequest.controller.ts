@@ -21,28 +21,37 @@ import { parser } from '../appConfig.js';
 import { conn, plantoid, token } from '../index.js';
 import {
 	IEnergyBalanceInfiniteMonth,
-	IEnergyBalanceInfiniteMonthTotal
+	IEnergyBalanceInfiniteMonthTotal,
 } from '../intefaces/IEnergyBalanceInfiniteMonthResponse.js';
 import {
 	IEnergyBalanceInfiniteYear,
-	IEnergyBalanceInfiniteYearTotal
+	IEnergyBalanceInfiniteYearTotal,
 } from '../intefaces/IEnergyBalanceInfiniteYearResponse.js';
-import { IEnergyBalanceMonthDay, IEnergyBalanceMonthDayTotal } from '../intefaces/IEnergyBalanceMonthDayResponse.js';
-import { IEnergyBalanceMonthMonth, IEnergyBalanceMonthMonthTotal } from '../intefaces/IEnergyBalanceMonthMonthResponse.js';
-import { IEnergyBalanceYearDay, IEnergyBalanceYearDayTotal } from '../intefaces/IEnergyBalanceYearDayResponse.js';
-import { IEnergyBalanceYearYear, IEnergyBalanceYearYearTotal } from '../intefaces/IEnergyBalanceYearYearResponse.js';
-import { IEnergyBalanceYearMonth, IEnergyBalanceYearMonthTotal } from '../intefaces/IEnergyBalkanceYearMonthResponse.js';
+import {
+	IEnergyBalanceMonthDay,
+	IEnergyBalanceMonthDayTotal,
+} from '../intefaces/IEnergyBalanceMonthDayResponse.js';
+import {
+	IEnergyBalanceMonthMonth,
+	IEnergyBalanceMonthMonthTotal,
+} from '../intefaces/IEnergyBalanceMonthMonthResponse.js';
+import {
+	IEnergyBalanceYearDay,
+	IEnergyBalanceYearDayTotal,
+} from '../intefaces/IEnergyBalanceYearDayResponse.js';
+import {
+	IEnergyBalanceYearYear,
+	IEnergyBalanceYearYearTotal,
+} from '../intefaces/IEnergyBalanceYearYearResponse.js';
+import {
+	IEnergyBalanceYearMonth,
+	IEnergyBalanceYearMonthTotal,
+} from '../intefaces/IEnergyBalkanceYearMonthResponse.js';
 import logger from '../logger/index.js';
 import { DataRequest } from '../requests/DataRequest.js';
 
 function requestSetup() {
-	return new DataRequest(
-		'data',
-		'GET',
-		conn,
-		token,
-		plantoid
-	);
+	return new DataRequest('data', 'GET', conn, token, plantoid);
 }
 
 /**
@@ -58,7 +67,7 @@ function requestSetup() {
  */
 export async function parseJSONEnergyBalanceInfiniteYear(
 	date: string,
-	total = false
+	total = false,
 ): Promise<IEnergyBalanceInfiniteYear | IEnergyBalanceInfiniteYearTotal> {
 	const request = requestSetup();
 	const params = {
@@ -72,24 +81,22 @@ export async function parseJSONEnergyBalanceInfiniteYear(
 		params.period,
 		params.interval,
 		total,
-		params.unit
+		params.unit,
 	);
 
 	const data: Promise<
-		IEnergyBalanceInfiniteYear |
-		IEnergyBalanceInfiniteYearTotal
+		IEnergyBalanceInfiniteYear | IEnergyBalanceInfiniteYearTotal
 	> = parser.parseStringPromise(requestData);
 	logger.debug(data);
 
 	return data as Promise<
-		IEnergyBalanceInfiniteYear |
-		IEnergyBalanceInfiniteYearTotal
+		IEnergyBalanceInfiniteYear | IEnergyBalanceInfiniteYearTotal
 	>;
 }
 
 export async function parseJSONEnergyBalanceInfiniteMonth(
 	date: string,
-	total = false
+	total = false,
 ): Promise<IEnergyBalanceInfiniteMonth | IEnergyBalanceInfiniteMonthTotal> {
 	const request = requestSetup();
 	const params = {
@@ -103,24 +110,22 @@ export async function parseJSONEnergyBalanceInfiniteMonth(
 		params.period,
 		params.interval,
 		total,
-		params.unit
+		params.unit,
 	);
 
 	const data: Promise<
-		IEnergyBalanceInfiniteMonth |
-		IEnergyBalanceInfiniteMonthTotal
+		IEnergyBalanceInfiniteMonth | IEnergyBalanceInfiniteMonthTotal
 	> = parser.parseStringPromise(requestData);
 	logger.debug(data);
 
 	return data as Promise<
-		IEnergyBalanceInfiniteMonth |
-		IEnergyBalanceInfiniteMonthTotal
+		IEnergyBalanceInfiniteMonth | IEnergyBalanceInfiniteMonthTotal
 	>;
 }
 
 export async function parseJSONEnergyBalanceYearYear(
 	date: string,
-	total = false
+	total = false,
 ): Promise<IEnergyBalanceYearYear | IEnergyBalanceYearYearTotal> {
 	const request = requestSetup();
 	const params = {
@@ -134,22 +139,19 @@ export async function parseJSONEnergyBalanceYearYear(
 		params.period,
 		params.interval,
 		total,
-		params.unit
+		params.unit,
 	);
 
-	const data: Promise<
-		IEnergyBalanceYearYear | IEnergyBalanceYearYearTotal
-	> = parser.parseStringPromise(requestData);
+	const data: Promise<IEnergyBalanceYearYear | IEnergyBalanceYearYearTotal> =
+		parser.parseStringPromise(requestData);
 	logger.debug(data);
 
-	return data as Promise<
-		IEnergyBalanceYearYear | IEnergyBalanceYearYearTotal
-	>;
+	return data as Promise<IEnergyBalanceYearYear | IEnergyBalanceYearYearTotal>;
 }
 
 export async function parseJSONEnergyBalanceYearMonth(
 	date: string,
-	total = false
+	total = false,
 ): Promise<IEnergyBalanceYearMonth | IEnergyBalanceYearMonthTotal> {
 	const request = requestSetup();
 	const params = {
@@ -163,22 +165,19 @@ export async function parseJSONEnergyBalanceYearMonth(
 		params.period,
 		params.interval,
 		total,
-		params.unit
+		params.unit,
 	);
 
-	const data: Promise<
-		IEnergyBalanceYearMonth | IEnergyBalanceYearMonthTotal
-	> = parser.parseStringPromise(requestData);
+	const data: Promise<IEnergyBalanceYearMonth | IEnergyBalanceYearMonthTotal> =
+		parser.parseStringPromise(requestData);
 	logger.debug(data);
 
-	return data as Promise<
-		IEnergyBalanceYearMonth | IEnergyBalanceYearMonthTotal
-	>;
+	return data as Promise<IEnergyBalanceYearMonth | IEnergyBalanceYearMonthTotal>;
 }
 
 export async function parseJSONEnergyBalanceYearDay(
 	date: string,
-	total = false
+	total = false,
 ): Promise<IEnergyBalanceYearDay | IEnergyBalanceYearDayTotal> {
 	const request = requestSetup();
 	const params = {
@@ -192,22 +191,19 @@ export async function parseJSONEnergyBalanceYearDay(
 		params.period,
 		params.interval,
 		total,
-		params.unit
+		params.unit,
 	);
 
-	const data: Promise<
-		IEnergyBalanceYearDay | IEnergyBalanceYearDayTotal
-	> = parser.parseStringPromise(requestData);
+	const data: Promise<IEnergyBalanceYearDay | IEnergyBalanceYearDayTotal> =
+		parser.parseStringPromise(requestData);
 	logger.debug(data);
 
-	return data as Promise<
-		IEnergyBalanceYearDay | IEnergyBalanceYearDayTotal
-	>;
+	return data as Promise<IEnergyBalanceYearDay | IEnergyBalanceYearDayTotal>;
 }
 
 export async function parseJSONEnergyBalanceMonthMonth(
 	date: string,
-	total = false
+	total = false,
 ): Promise<IEnergyBalanceMonthMonth | IEnergyBalanceMonthMonthTotal> {
 	const request = requestSetup();
 	const params = {
@@ -221,12 +217,11 @@ export async function parseJSONEnergyBalanceMonthMonth(
 		params.period,
 		params.interval,
 		total,
-		params.unit
+		params.unit,
 	);
 
-	const data: Promise<
-		IEnergyBalanceMonthMonth | IEnergyBalanceMonthMonthTotal
-	> = parser.parseStringPromise(requestData);
+	const data: Promise<IEnergyBalanceMonthMonth | IEnergyBalanceMonthMonthTotal> =
+		parser.parseStringPromise(requestData);
 	logger.debug(data);
 
 	return data as Promise<
@@ -236,7 +231,7 @@ export async function parseJSONEnergyBalanceMonthMonth(
 
 export async function parseJSONEnergyBalanceMonthDay(
 	date: string,
-	total = false
+	total = false,
 ): Promise<IEnergyBalanceMonthDay | IEnergyBalanceMonthDayTotal> {
 	const request = requestSetup();
 	const params = {
@@ -250,15 +245,12 @@ export async function parseJSONEnergyBalanceMonthDay(
 		params.period,
 		params.interval,
 		total,
-		params.unit
+		params.unit,
 	);
 
-	const data: Promise<
-		IEnergyBalanceMonthDay | IEnergyBalanceMonthDayTotal
-	> = parser.parseStringPromise(requestData);
+	const data: Promise<IEnergyBalanceMonthDay | IEnergyBalanceMonthDayTotal> =
+		parser.parseStringPromise(requestData);
 	logger.debug(data);
 
-	return data as Promise<
-		IEnergyBalanceMonthDay | IEnergyBalanceMonthDayTotal
-	>;
+	return data as Promise<IEnergyBalanceMonthDay | IEnergyBalanceMonthDayTotal>;
 }

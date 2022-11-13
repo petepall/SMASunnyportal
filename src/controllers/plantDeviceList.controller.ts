@@ -1,6 +1,6 @@
 import { parser } from '../appConfig.js';
 import { conn, token } from '../index.js';
-import { IDeviceList } from "../intefaces/IDeviceListResponse";
+import { IDeviceList } from '../intefaces/IDeviceListResponse';
 import logger from '../logger/index.js';
 import { PlantDeviceListRequest } from '../requests/BaseRequests.js';
 
@@ -13,13 +13,10 @@ import { PlantDeviceListRequest } from '../requests/BaseRequests.js';
  * @param {string} plantId
  * @returns {Promise<IDeviceList[]>}
  */
-export async function parseJSONPlantDeviceListData(plantId: string): Promise<IDeviceList[]> {
-	const request = new PlantDeviceListRequest(
-		'device',
-		'GET',
-		conn,
-		token
-	);
+export async function parseJSONPlantDeviceListData(
+	plantId: string,
+): Promise<IDeviceList[]> {
+	const request = new PlantDeviceListRequest('device', 'GET', conn, token);
 	const plantDeviceListData = await request.getPlantDeviceListData(plantId);
 
 	const data = await parser.parseStringPromise(plantDeviceListData);

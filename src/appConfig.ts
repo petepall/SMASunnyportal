@@ -1,10 +1,15 @@
 import axios, { AxiosInstance } from 'axios';
 import fs from 'fs';
 import { Parser } from 'xml2js';
-import { ISunnyConfig } from "./intefaces/ISunnyConfig";
-import { askForLoginData, checkIfFileOrPathExists, createFolder, readConfigFile, writeJsonFile } from './lib/utils.js';
+import { ISunnyConfig } from './intefaces/ISunnyConfig';
+import {
+	askForLoginData,
+	checkIfFileOrPathExists,
+	createFolder,
+	readConfigFile,
+	writeJsonFile,
+} from './lib/utils.js';
 import logger from './logger/index.js';
-
 
 export function getConfig(): ISunnyConfig {
 	const configFile = './config/config.json';
@@ -20,7 +25,7 @@ export function getConfig(): ISunnyConfig {
 
 	if (checkIfFileOrPathExists(configFile) && fs.statSync(configFile).size > 0) {
 		sunnyConfig = readConfigFile(configFile);
-		logger.info("config file successfully read");
+		logger.info('config file successfully read');
 	} else {
 		const info = askForLoginData();
 		sunnyConfig.Login.email = info.email;
@@ -35,13 +40,12 @@ export function getConfig(): ISunnyConfig {
 	return sunnyConfig;
 }
 
-
 export function appConnection(sunnyConfig: ISunnyConfig): AxiosInstance {
 	// Setup connection to Sunny Portal
 	const conn = axios.create({
 		baseURL: sunnyConfig.General.baseUrl,
 		timeout: 8000,
-		headers: { 'Content-Type': 'application/xlm' }
+		headers: { 'Content-Type': 'application/xlm' },
 	});
 
 	return conn;

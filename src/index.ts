@@ -1,15 +1,13 @@
-
 import { appConnection, getConfig } from './appConfig.js';
-import {
-	parseJSONEnergyBalanceMonthDay,
-	parseJSONEnergyBalanceMonthMonth
-} from './controllers/energyBalanceRequest.controller.js';
+import { parseJSONEnergyBalanceMonthDay } from './controllers/energyBalanceRequest.controller.js';
 import { logout } from './controllers/logout.controller.js';
 import { parseJSONPlantData } from './controllers/plantData.controller.js';
 import { parseJSONPlantList } from './controllers/plantList.controller.js';
-import { IEnergyBalanceMonthDay, IEnergyBalanceMonthDayTotal } from './intefaces/IEnergyBalanceMonthDayResponse.js';
-import { IEnergyBalanceMonthMonth, IEnergyBalanceMonthMonthTotal } from './intefaces/IEnergyBalanceMonthMonthResponse.js';
-import { IToken } from "./intefaces/IToken";
+import {
+	IEnergyBalanceMonthDay,
+	IEnergyBalanceMonthDayTotal,
+} from './intefaces/IEnergyBalanceMonthDayResponse.js';
+import { IToken } from './intefaces/IToken';
 import logger from './logger/index.js';
 import { AuthenticationRequest } from './requests/BaseRequests.js';
 
@@ -23,11 +21,7 @@ import { AuthenticationRequest } from './requests/BaseRequests.js';
  * @returns {Promise<IToken>}
  */
 async function getToken(username: string, password: string): Promise<IToken> {
-	const request = new AuthenticationRequest(
-		'Authentication',
-		'GET',
-		conn
-	);
+	const request = new AuthenticationRequest('Authentication', 'GET', conn);
 	const token = await request.getToken(username, password);
 
 	return token;
@@ -35,7 +29,7 @@ async function getToken(username: string, password: string): Promise<IToken> {
 
 /*
  * Main program execution.
-*/
+ */
 
 if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
 	console.log('-------');
@@ -46,7 +40,10 @@ if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
 const sunnyConfig = getConfig();
 export const conn = appConnection(sunnyConfig);
 
-export const token = await getToken(sunnyConfig.Login.email, sunnyConfig.Login.password);
+export const token = await getToken(
+	sunnyConfig.Login.email,
+	sunnyConfig.Login.password,
+);
 const plantlist = await parseJSONPlantList();
 export const plantoid = plantlist.plantoid;
 const plantProfile = await parseJSONPlantData(plantoid);
@@ -176,15 +173,19 @@ logger.debug(plantProfile);
 // );
 // logger.info(EnergyBalanceMonthMonthTotal['sma.sunnyportal.services'].service);
 
-const EnergyBalanceMonthDay: IEnergyBalanceMonthDay | IEnergyBalanceMonthDayTotal = await parseJSONEnergyBalanceMonthDay(
-	"2022-11-05",
-	false
+const EnergyBalanceMonthDay:
+	| IEnergyBalanceMonthDay
+	| IEnergyBalanceMonthDayTotal = await parseJSONEnergyBalanceMonthDay(
+	'2022-11-05',
+	false,
 );
 logger.info(EnergyBalanceMonthDay['sma.sunnyportal.services'].service);
 
-const EnergyBalanceMonthDayTotal: IEnergyBalanceMonthDay | IEnergyBalanceMonthDayTotal = await parseJSONEnergyBalanceMonthDay(
-	"2022-11-05",
-	true
+const EnergyBalanceMonthDayTotal:
+	| IEnergyBalanceMonthDay
+	| IEnergyBalanceMonthDayTotal = await parseJSONEnergyBalanceMonthDay(
+	'2022-11-05',
+	true,
 );
 logger.info(EnergyBalanceMonthDayTotal['sma.sunnyportal.services'].service);
 

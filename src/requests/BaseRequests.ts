@@ -1,9 +1,8 @@
 import { AxiosError, AxiosInstance } from 'axios';
 import crypto from 'crypto';
 import { Parser } from 'xml2js';
-import { IToken } from "../intefaces/IToken";
+import { IToken } from '../intefaces/IToken';
 import logger from '../logger/index.js';
-
 
 /**
  * Class for handling requests to the Sunny Portal API.
@@ -83,14 +82,17 @@ export class RequestBase {
 		method: string,
 		service: string,
 		timestamp: string,
-		identifier: string
+		identifier: string,
 	): string {
-		return encodeURIComponent(crypto.createHmac('sha1', secretKey)
-			.update(method.toLowerCase())
-			.update(service.toLowerCase())
-			.update(timestamp)
-			.update(identifier.toLowerCase())
-			.digest('base64'));
+		return encodeURIComponent(
+			crypto
+				.createHmac('sha1', secretKey)
+				.update(method.toLowerCase())
+				.update(service.toLowerCase())
+				.update(timestamp)
+				.update(identifier.toLowerCase())
+				.digest('base64'),
+		);
 	}
 
 	/**
@@ -110,7 +112,7 @@ export class RequestBase {
 				this.method,
 				this.service,
 				timeStamp,
-				this.token.identifier
+				this.token.identifier,
 			);
 			params['signature-method'] = 'auth';
 			params['signature-version'] = this.version.toString();
@@ -120,7 +122,6 @@ export class RequestBase {
 		this.url += segments.length > 0 ? `/${segments.join('/')}` : '';
 		this.url += `?${new URLSearchParams(params)}`;
 		return this.url;
-
 	}
 
 	/**
@@ -133,7 +134,7 @@ export class RequestBase {
 	 * @returns {Promise<any>}
 	 */
 	async executeRequest(url: string): Promise<any> {
-		if (url.includes("password=")) {
+		if (url.includes('password=')) {
 			const passUrl = url.split('password=')[0] + 'password=********';
 			logger.info(`${this.method} request to ${passUrl}`);
 		} else {
@@ -209,8 +210,10 @@ export class AuthenticationRequest extends RequestBase {
 			secret_key: '',
 		};
 		this.parser.parseString(loginData, (err: any, result: any) => {
-			token.identifier = result['sma.sunnyportal.services'].service.authentication.$.identifier;
-			token.secret_key = result['sma.sunnyportal.services'].service.authentication.$.key;
+			token.identifier =
+				result['sma.sunnyportal.services'].service.authentication.$.identifier;
+			token.secret_key =
+				result['sma.sunnyportal.services'].service.authentication.$.key;
 			logger.info('Login successful');
 			logger.debug(result);
 		});
@@ -305,7 +308,6 @@ export class PlantListRequest extends RequestBase {
 		}
 	}
 
-
 	/**
 	 * Get the plant ID for the users regisered plants from the sunny portal API.
 	 * @date 25/10/2022 - 14:31:39
@@ -314,7 +316,6 @@ export class PlantListRequest extends RequestBase {
 	 * @returns {Promise<any>}
 	 */
 	async getPlantListData(): Promise<any> {
-
 		const url = this.prepareUrl([this.token.identifier]);
 		const plantListData = await this.executeRequest(url);
 
@@ -364,15 +365,12 @@ export class PlantProfileRequest extends RequestBase {
 	 * @returns {Promise<any>}
 	 */
 	async getPlantData(plantID: string): Promise<any> {
-		const url = this.prepareUrl(
-			[plantID],
-			{
-				'view': 'profile',
-				"culture": "en-gb",
-				"plant-image-size": "64px",
-				"identifier": this.token.identifier
-			}
-		);
+		const url = this.prepareUrl([plantID], {
+			view: 'profile',
+			culture: 'en-gb',
+			'plant-image-size': '64px',
+			identifier: this.token.identifier,
+		});
 		const plantData = await this.executeRequest(url);
 
 		return plantData;
@@ -422,12 +420,9 @@ export class PlantDeviceListRequest extends RequestBase {
 	 * @returns {Promise<any>}
 	 */
 	async getPlantDeviceListData(plantID: string): Promise<any> {
-		const url = this.prepareUrl(
-			[plantID],
-			{
-				"identifier": this.token.identifier
-			}
-		);
+		const url = this.prepareUrl([plantID], {
+			identifier: this.token.identifier,
+		});
 		const plantDeviceListData = await this.executeRequest(url);
 
 		return plantDeviceListData;
@@ -476,14 +471,14 @@ export class PlantDeviceParametersRequest extends RequestBase {
 	 * @param {string} deviceID
 	 * @returns {Promise<any>}
 	 */
-	async getPlantDeviceParametersData(plantID: string, deviceID: string): Promise<any> {
-		const url = this.prepareUrl(
-			[plantID, deviceID],
-			{
-				"view": 'parameter',
-				"identifier": this.token.identifier
-			}
-		);
+	async getPlantDeviceParametersData(
+		plantID: string,
+		deviceID: string,
+	): Promise<any> {
+		const url = this.prepareUrl([plantID, deviceID], {
+			view: 'parameter',
+			identifier: this.token.identifier,
+		});
 		const plantDeviceParametersData = await this.executeRequest(url);
 
 		return plantDeviceParametersData;

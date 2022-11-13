@@ -16,16 +16,14 @@ import { DataRequest } from '../requests/DataRequest.js';
 export async function parseJSONDayOverviewRequestData(
 	date: string,
 	quarter: boolean,
-	include_all: boolean
+	include_all: boolean,
 ): Promise<any> {
-	const request = new DataRequest(
-		'data',
-		'GET',
-		conn,
-		token,
-		plantoid
+	const request = new DataRequest('data', 'GET', conn, token, plantoid);
+	const allDataRequestData = await request.getDayOverviewRequestData(
+		date,
+		quarter,
+		include_all,
 	);
-	const allDataRequestData = await request.getDayOverviewRequestData(date, quarter, include_all);
 
 	let data = null;
 	parser.parseString(allDataRequestData, (err: any, result: any) => {

@@ -1,6 +1,11 @@
 import { parser } from '../appConfig.js';
 import { conn, plantoid, token } from '../index.js';
-import { IAllData, IAllDataHeader, IAllDataMonth, IAllDataYear } from "../intefaces/IAllDataResponse";
+import {
+	IAllData,
+	IAllDataHeader,
+	IAllDataMonth,
+	IAllDataYear,
+} from '../intefaces/IAllDataResponse';
 import logger from '../logger/index.js';
 import { DataRequest } from '../requests/DataRequest.js';
 
@@ -13,14 +18,11 @@ import { DataRequest } from '../requests/DataRequest.js';
  * @param {string} interval
  * @returns {Promise<any>}
  */
-export async function parseJSONAllDataRequestData(date: string, interval: string): Promise<IAllData> {
-	const request = new DataRequest(
-		'data',
-		'GET',
-		conn,
-		token,
-		plantoid
-	);
+export async function parseJSONAllDataRequestData(
+	date: string,
+	interval: string,
+): Promise<IAllData> {
+	const request = new DataRequest('data', 'GET', conn, token, plantoid);
 	const allDataRequestData = await request.getAllDataRequestData(date, interval);
 
 	const data = await parser.parseStringPromise(allDataRequestData);
@@ -28,21 +30,24 @@ export async function parseJSONAllDataRequestData(date: string, interval: string
 
 	const allDataHeader: IAllDataHeader = {
 		name: data['sma.sunnyportal.services'].service.data.Energy.channel.$.name,
-		metaName: data['sma.sunnyportal.services'].service.data.Energy.channel.$['meta-name'],
-		energyUnit: data['sma.sunnyportal.services'].service.data.Energy.channel.$.unit,
+		metaName:
+			data['sma.sunnyportal.services'].service.data.Energy.channel.$['meta-name'],
+		energyUnit:
+			data['sma.sunnyportal.services'].service.data.Energy.channel.$.unit,
 	};
 	logger.debug(allDataHeader);
 
 	const allDataMonth: IAllDataMonth[] = [];
 
 	if (interval === 'month') {
-		for (const key of data['sma.sunnyportal.services'].service.data.Energy.channel.infinite.month) {
+		for (const key of data['sma.sunnyportal.services'].service.data.Energy.channel
+			.infinite.month) {
 			allDataMonth.push({
 				timestamp: key.$.timestamp,
 				Energy: {
 					absolute: parseFloat(key.$.absolute),
 					difference: parseFloat(key.$.difference),
-				}
+				},
 			});
 		}
 	}
@@ -50,7 +55,8 @@ export async function parseJSONAllDataRequestData(date: string, interval: string
 
 	const allDataYear: IAllDataYear[] = [];
 	if (interval === 'year') {
-		const key = data['sma.sunnyportal.services'].service.data.Energy.channel.infinite.year;
+		const key =
+			data['sma.sunnyportal.services'].service.data.Energy.channel.infinite.year;
 		allDataYear.push({
 			timestamp: key.$.timestamp,
 			absolute: parseFloat(key.$.absolute),

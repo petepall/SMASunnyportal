@@ -13,14 +13,15 @@ import { PlantDeviceParametersRequest } from '../requests/BaseRequests.js';
  * @param {string} deviceId
  * @returns {Promise<any>}
  */
-export async function parseJSONPlantDeviceParameterData(plantId: string, deviceId: string): Promise<any> {
-	const request = new PlantDeviceParametersRequest(
-		'device',
-		'GET',
-		conn,
-		token
+export async function parseJSONPlantDeviceParameterData(
+	plantId: string,
+	deviceId: string,
+): Promise<any> {
+	const request = new PlantDeviceParametersRequest('device', 'GET', conn, token);
+	const plantDeviceParameterData = await request.getPlantDeviceParametersData(
+		plantId,
+		deviceId,
 	);
-	const plantDeviceParameterData = await request.getPlantDeviceParametersData(plantId, deviceId);
 
 	let data = null;
 	parser.parseString(plantDeviceParameterData, (_err: any, result: any) => {

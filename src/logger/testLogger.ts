@@ -1,7 +1,6 @@
 import { createLogger, format, Logger, transports } from 'winston';
 
 function testLogger(): Logger {
-
 	const logFormat = format.printf(({ level, message, timestamp, stack }) => {
 		return `${timestamp} ${level}: ${message || stack}`;
 	});
@@ -22,7 +21,7 @@ function testLogger(): Logger {
 			//
 			// new winston.transports.File({ filename: 'error.log', level: 'error' }),
 			// new winston.transports.File({ filename: 'combined.log' }),
-			new transports.Console()
+			new transports.Console(),
 		],
 	});
 }

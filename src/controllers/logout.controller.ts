@@ -11,11 +11,6 @@ import { LogoutRequest } from '../requests/BaseRequests.js';
  * @returns {*}
  */
 export async function logout(): Promise<void> {
-	const request = new LogoutRequest(
-		'authentication',
-		'DELETE',
-		conn,
-		token
-	);
+	const request = new LogoutRequest('authentication', 'DELETE', conn, token);
 	await request.logout();
 }
