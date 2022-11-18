@@ -14,8 +14,8 @@
  *  Month      | hour         | W   👍 -> No totals
  *  Month      | fifteen      | W   👍 -> No totals
  *  Day        | day          | kWh 👍
- *  Day        | hour         | W   ❌ -> No totals
- *  Day        | fifteen      | W   ❌ -> No totals
+ *  Day        | hour         | W   👍 -> No totals
+ *  Day        | fifteen      | W   👍 -> No totals
  */
 import { parser } from '../appConfig.js';
 import { conn, plantoid, token } from '../index.js';
