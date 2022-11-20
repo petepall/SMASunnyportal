@@ -1,6 +1,8 @@
 import fs from 'fs';
 import promptSync from 'prompt-sync';
+import { ISunnyConfig } from '../intefaces/ISunnyConfig.js';
 import logger from '../logger/index.js';
+import { LoginData } from '../types/LoginData';
 
 /**
  * Create a logger instance
@@ -17,9 +19,9 @@ import logger from '../logger/index.js';
  * @param {string} configFile
  * @returns {*}
  */
-export function readConfigFile(configFile: string): any {
+export function readConfigFile(configFile: string): ISunnyConfig {
 	const config = JSON.parse(fs.readFileSync(configFile).toString());
-	return config;
+	return config as ISunnyConfig;
 }
 
 /**
@@ -51,7 +53,7 @@ export function createFolder(path: string): void {
  *
  * @returns {*}
  */
-export function askForLoginData(): any {
+export function askForLoginData(): LoginData {
 	console.log("The configuration file is missing. let's set it up \n");
 
 	const prompt = promptSync();
@@ -72,7 +74,7 @@ export function askForLoginData(): any {
  * @param {string} path
  * @param {*} data
  */
-export function writeJsonFile(path: string, data: any): void {
+export function writeJsonFile(path: string, data: ISunnyConfig): void {
 	const jsonData = JSON.stringify(data, null, '\t');
 	fs.writeFile(path, jsonData, 'utf8', (err) => {
 		if (err) {
@@ -107,7 +109,7 @@ export function getFirstDayOfTheMonth(date: Date): string {
  * @param {string} key
  * @returns {*}
  */
-export const keyExists = (obj: any, key: string): any => {
+export const keyExists = (obj: any, key: string): boolean => {
 	if (!obj || (typeof obj !== 'object' && !Array.isArray(obj))) {
 		return false;
 	}
