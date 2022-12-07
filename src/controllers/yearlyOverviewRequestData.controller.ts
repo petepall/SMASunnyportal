@@ -10,7 +10,7 @@ import { DataRequest } from '../requests/DataRequest.js';
  *
  * @async
  * @param {string} date
- * @returns {Promise<any>}
+ * @returns {Promise<IYearlyOverview>}
  */
 export async function parseJSONYearlyOverviewRequestData(
 	date: string,
